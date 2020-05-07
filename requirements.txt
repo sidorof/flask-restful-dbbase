@@ -1,0 +1,3 @@
+Flask-Restful
+dbbase
+Flask-JWT-extended
