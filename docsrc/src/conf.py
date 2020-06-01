@@ -14,16 +14,16 @@
 #import sys
 ## sys.path.insert(0, os.path.abspath('.'))
 import sphinx_material
-import dbbase
+import flask_restful_dbbase
 
 # -- Project information -----------------------------------------------------
 
-project = 'dbbase'
+project = 'flask_restful_dbbase'
 copyright = '2020, Don Smiley'
 author = 'Don Smiley'
 
 # The full version, including alpha/beta/rc tags
-release = dbbase.__version__
+release = flask_restful_dbbase.__version__
 pygments_style = "default"
 highlight_language = "python3"
 
@@ -82,22 +82,22 @@ html_theme = "sphinx_material"
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-# html_favicon = "illustrations/dbbase0_blue_tight_favicon.ico"
+# html_favicon = "illustrations/flask_restful_dbbase0_blue_tight_favicon.ico"
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
-    "nav_title": "dbbase {}".format(release),
+    "nav_title": "Flask-RESTful-DBBase {}".format(release),
     # Set you GA account ID to enable tracking
     # "google_analytics_account": 'here',
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
-    "base_url": "https://dbbase.github.io",
+    "base_url": "https://flask_restful_dbbase.github.io",
     # Set the color and the accent color
     "color_primary": "blue",
     # Set the repo location to get a badge with stats
-    "repo_url": "https://github.com/sidorof/dbbase/",
-    "repo_name": "dbbase",
+    "repo_url": "https://github.com/sidorof/flask_restful_dbbase/",
+    "repo_name": "flask_restful_dbbase",
     # Visible levels of the global TOC; -1 means unlimited
     "globaltoc_depth": 1,
     # If False, expand all TOC entries

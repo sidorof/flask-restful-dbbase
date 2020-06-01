@@ -1,11 +1,11 @@
 API Reference
 =============
 
-This section is a reference for classes and functions of **dbbase**.
+This section is a reference for classes and functions of **Flask-RESTful-DBBase**.
 
 .. rubric:: Base classes and functions
 
-.. currentmodule:: dbbase
+.. currentmodule:: flask_restless_dbbase
 .. autosummary::
     :toctree: _generated/
     :nosignatures:
@@ -13,33 +13,11 @@ This section is a reference for classes and functions of **dbbase**.
 
    DB
 
-.. currentmodule:: dbbase.model
+.. currentmodule:: flask_restless_dbbase.model_resource
 .. autosummary::
     :toctree: _generated/
     :nosignatures:
     :template: class.rst
 
-   Model
+   ModelResource
 
-.. rubric:: Maintenance
-
-.. currentmodule:: dbbase.maint
-.. autosummary::
-    :toctree: _generated/
-    :nosignatures:
-    :template: class.rst
-
-   create_database
-   drop_database
-
-
-.. rubric:: Utilities
-
-.. currentmodule:: dbbase.utils
-.. autosummary::
-    :toctree: _generated/
-    :nosignatures:
-    :template: class.rst
-
-   db_config
-   xlate

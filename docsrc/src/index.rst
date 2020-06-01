@@ -1,9 +1,7 @@
-dbbase documentation
-====================
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+Flask-RESTful-DBBase documentation
+==================================
 
+.. mdinclude:: ../../README.md
 
 .. toctree::
    :maxdepth: 3
@@ -16,9 +14,6 @@ dbbase documentation
    testing.rst
    license.rst
    changelog.rst
-
-.. mdinclude:: ../../README.md
-
 
 Indices and tables
 ==================
