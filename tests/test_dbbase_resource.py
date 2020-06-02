@@ -4,8 +4,6 @@ from flask_restful_dbbase.resources import DBBaseResource
 
 from .models.user_address import User, Address
 
-import pytest
-
 
 def create_models(db):
     class Author(db.Model):
