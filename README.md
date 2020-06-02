@@ -16,4 +16,4 @@ And, if the issue encountered does not fit this package's approach, the original
 
 The design of Flask-RESTful-DBBase creates Flask-RESTful style Resources, but are derived directly from the SQLAlchemy model classes.
 
-# This version is not yet usable. More testing and coding is continuing.
+## This version is not yet usable. More testing and coding continues.
