@@ -1,4 +1,5 @@
 # tests/test_dbbase_resource.py
+import pytest
 from dbbase import DB
 from flask_restful_dbbase.resources import DBBaseResource
 
@@ -188,22 +189,22 @@ def test_get_obj_params_with_colprops():
     assert obj_params == expected_result
 
 
-def test_pre_save():
+def test_pre_commit():
     """
     Prototype functions
     """
     item = "this is a test"
     self = None
-    assert DBBaseResource.pre_save(self, item) == item
+    assert DBBaseResource.pre_commit(self, item) == item
 
 
-def test_post_save():
+def test_post_commit():
     """
     Prototype functions
     """
     item = "this is a test"
     self = None
-    assert DBBaseResource.post_save(self, item) == item
+    assert DBBaseResource.post_commit(self, item) == item
 
 
 def test_format_key():
@@ -253,7 +254,7 @@ def test__check_key():
     kwargs = {"something": "else"}
 
     # does not find the key
-    assert resource._check_key(kwargs) == ({"message": "invalid key"}, None)
+    pytest.raises(ValueError, resource._check_key, kwargs)
 
 
 def test__get_serial_fields():

@@ -32,6 +32,7 @@ class DBBaseResource(Resource):
 
 
     """
+
     # done this way as cleaner way when expressing meta info
     model_class = None
     url_prefix = "/"
@@ -58,16 +59,17 @@ class DBBaseResource(Resource):
             key (str | list) : In the case of multiple primary keys
                 a list of keys is returned.
         """
-        columns = cls.get_obj_params(column_props=['primary_key', 'type'])
+        columns = cls.get_obj_params(column_props=["primary_key", "type"])
         if formatted:
             keys = []
             for key, value in columns.items():
-                if 'primary_key' in value:
-                    keys.append(cls.format_key(key, value['type']))
+                if "primary_key" in value:
+                    keys.append(cls.format_key(key, value["type"]))
         else:
             keys = [
-                key for key, value in columns.items()
-                if value.get('primary_key')
+                key
+                for key, value in columns.items()
+                if value.get("primary_key")
             ]
 
         return keys if len(keys) > 1 else keys[0]
@@ -86,12 +88,11 @@ class DBBaseResource(Resource):
             (dict) : The object properties of the model class
         """
         return cls.model_class.db.doc_table(
-            cls.model_class,
-            column_props=column_props
+            cls.model_class, column_props=column_props
         )[cls.model_class._class()]["properties"]
 
-    def pre_save(self, item):
-        """pre_save
+    def pre_commit(self, item):
+        """pre_commit
 
         This function is a placeholder for a function that could
         called just prior to saving an item.
@@ -100,8 +101,8 @@ class DBBaseResource(Resource):
         """
         return item
 
-    def post_save(self, item):
-        """pre_save
+    def post_commit(self, item):
+        """pre_commit
 
         This function is a placeholder for a function that could
         called just after saving an item.
@@ -112,7 +113,7 @@ class DBBaseResource(Resource):
 
     @staticmethod
     def format_key(key, key_type):
-        if key_type == 'integer':
+        if key_type == "integer":
             return f"<int:{key}>"
 
         return f"<string:{key}>"
@@ -129,13 +130,13 @@ class DBBaseResource(Resource):
 
         """
         if cls.model_class is None:
-            raise ValueError('A model class must be defined')
+            raise ValueError("A model class must be defined")
 
         url = cls.create_url()
         keys = cls.get_key(formatted=True)
         if isinstance(keys, list):
-            keys = ''.join(keys)
-        url_with_id = '/'.join([url, keys])
+            keys = "".join(keys)
+        url_with_id = "/".join([url, keys])
 
         return [url, url_with_id]
 
@@ -148,7 +149,7 @@ class DBBaseResource(Resource):
         tmp = {
             "model_class": cls.model_class,
             "url_prefix": cls.url_prefix,
-            'output': {
+            "output": {
                 "serial_fields": cls.serial_fields,
                 "serial_field_relations": cls.serial_field_relations,
             },
@@ -157,7 +158,7 @@ class DBBaseResource(Resource):
                 "default_sort": cls.default_sort,
                 "requires_parameter": cls.requires_parameter,
                 "fields": cls.fields,
-            }
+            },
         }
 
         tmp["url"] = cls.get_base_url()
@@ -165,31 +166,33 @@ class DBBaseResource(Resource):
         methods = [
             method
             for method in [
-                #"head",
-                #"options",
+                # "head",
+                # "options",
                 "get",
                 "post",
                 "put",
                 "patch",
-                "delete"
+                "delete",
             ]
             if hasattr(cls, method)
         ]
         tmp["methods"] = methods
 
         if cls.method_decorators is None:
-            tmp['method_decorators'] = None
+            tmp["method_decorators"] = None
         elif isinstance(cls.method_decorators, list):
-            tmp['method_decorators'] = [func.__name__ for func in cls.method_decorators]
+            tmp["method_decorators"] = [
+                func.__name__ for func in cls.method_decorators
+            ]
         elif isinstance(cls.method_decorators, dict):
             tmp_md = {}
             for key, value in cls.method_decorators.items():
                 tmp_md[key] = [func.__name__ for func in value]
-            tmp['method_decorators'] = tmp_md
+            tmp["method_decorators"] = tmp_md
         else:
-            tmp['method_decorators'] = cls.method_decorators
+            tmp["method_decorators"] = cls.method_decorators
 
-        tmp['parser'] = cls.display_parser()
+        tmp["parser"] = cls.display_parser()
         return tmp
 
     @classmethod
@@ -198,8 +201,12 @@ class DBBaseResource(Resource):
         # kwargs without ** is intentional
         key_name = cls.get_key()
         if key_name not in kwargs:
-            return {"message": "invalid key"}, None
-
+            name = cls.model_class._class()
+            raise ValueError(
+                f"No key for {name} given. "
+                "This is a configuration problem in the url for "
+                "this kind of method."
+            )
         return key_name, kwargs[key_name]
 
     @classmethod
@@ -337,8 +344,6 @@ class DBBaseResource(Resource):
 
         if tmp_errors:
             errors.extend(tmp_errors)
-        if items:
-            return False, {"max length exceeded": items}
 
         # check for numerics -- skipping check integer size for now
         tmp_errors = self._check_numeric_casting(data, obj_params)
@@ -365,9 +370,9 @@ class DBBaseResource(Resource):
                 if obj_params[field]["type"] in ["integer", "float"]:
                     if isinstance(value, str):
                         if not value.isnumeric():
-                            errors.append({
-                                field: f"The value {value} is not a number"
-                            })
+                            errors.append(
+                                {field: f"The value {value} is not a number"}
+                            )
         return errors
 
     @staticmethod
@@ -385,7 +390,8 @@ class DBBaseResource(Resource):
 
                     errors.append(
                         {
-                            field: "The data exceeds the maximum length " f"{max_len}"
+                            field: "The data exceeds the maximum length "
+                            f"{max_len}"
                         }
                     )
 
@@ -406,7 +412,6 @@ class DBBaseResource(Resource):
                 if field in obj_params
             ]
         )
-
 
     @staticmethod
     def _missing_required(data, required):
