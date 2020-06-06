@@ -31,21 +31,35 @@ class ModelResource(DBBaseResource):
 
     """
 
+    process_get_input = None
+    process_post_input = None
+    process_put_input = None
+    process_patch_input = None
+    process_delete_input = None
+
     def get(self, **kwargs):
+        """ Get """
+        FUNC_NAME = 'get'
         name = self.model_class._class()
 
         # the correct key test - raises error if improper url
         key_name, key = self._check_key(kwargs)
 
+        qry = self.model_class.query
+        if self.process_get_input is not None:
+            qry = self.process_get_input(qry, kwargs)
+
         try:
-            item = self.model_class.query.get(key)
+            item = qry.filter(
+                getattr(self.model_class, key_name) == key
+            ).first()
         except:
             url = request.path
-            msg = f"Internal Server Error: method get: {url}"
+            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
             logger.error(msg)
             return {"message": msg}, 500
 
-        sfields, sfield_relations = self._get_serializations("get")
+        sfields, sfield_relations = self._get_serializations(FUNC_NAME)
 
         if item:
             result = item.to_dict(
@@ -58,10 +72,13 @@ class ModelResource(DBBaseResource):
 
         msg = f"{name} with {key_name} of {key} not found"
         logger.debug(msg)
-        return {"error": {"message": msg,}}, 404
+        return {"message": msg}, 404
 
-    def post(self):
+    def post(self, *args, **kwargs):
         """ Post """
+        FUNC_NAME = 'post'
+        status_code = 201
+
         if request.is_json:
             data = request.json
         elif request.values:
@@ -69,8 +86,13 @@ class ModelResource(DBBaseResource):
         elif request.data:
             data = request.data
         else:
-            # running out of possibilities here
             data = request.args
+
+        if self.process_post_input is not None:
+            try:
+                data = self.process_post_input(data, kwargs)
+            except Exception as err:
+                return {"message": err.args[0]}, 400
 
         status, data = self.screen_data(
             self.model_class.deserialize(data), self.get_obj_params()
@@ -87,7 +109,7 @@ class ModelResource(DBBaseResource):
                 item = self.model_class.query.get(key)
             except:
                 url = request.path
-                msg = f"Internal Server Error: method post: {url}"
+                msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
                 logger.error(msg)
                 return {"message": msg}, 500
 
@@ -98,7 +120,12 @@ class ModelResource(DBBaseResource):
 
         status, errors = item.validate_record(camel_case=True)
 
-        item = self.pre_commit(item)
+        adjust_before = self.before_commit.get(FUNC_NAME)
+        if adjust_before is not None:
+            if callable(adjust_before):
+                item, status_code = adjust_before(self, item, status_code)
+            else:
+                item, status_code = adjust_before.run(self, item, status_code)
 
         try:
             item.save()
@@ -116,34 +143,34 @@ class ModelResource(DBBaseResource):
                 500,
             )
 
-        item = self.post_commit(item)
+        adjust_after = self.after_commit.get(FUNC_NAME)
+        if adjust_after is not None:
+            if callable(adjust_after):
+                item, status_code = adjust_after(self, item, status_code)
+            else:
+                # class, requires a run function
+                item, status_code = adjust_after.run(self, item, status_code)
 
-        ser_list, rel_ser_lists = self._get_serializations("post")
+        ser_list, rel_ser_lists = self._get_serializations(FUNC_NAME)
 
         return (
             item.to_dict(
                 serial_fields=ser_list, serial_field_relations=rel_ser_lists,
             ),
-            201,
+            status_code,
         )
 
     def put(self, **kwargs):
         """ put
 
         """
+        FUNC_NAME = 'put'
+        status_code = 200
         try:
             key_name, key = self._check_key(kwargs)
         except Exception as err:
             logger.error(err.args[0])
             return {"message": err.args[0]}, 400
-
-        try:
-            item = self.model_class.query.get(key)
-        except:
-            url = request.path
-            msg = f"Internal Server Error: method put: {url}"
-            logger.error(msg)
-            return {"message": msg}, 500
 
         if request.is_json:
             data = request.json
@@ -154,7 +181,24 @@ class ModelResource(DBBaseResource):
         else:
             data = request.args
 
-        self.model_class.deserialize(data)
+        qry = self.model_class.query
+        if self.process_put_input is not None:
+            try:
+                qry, data = self.process_put_input(qry, data, kwargs)
+            except Exception as err:
+                return {"message": err.args[0]}, 400
+
+        try:
+            item = qry.filter(
+                getattr(self.model_class, key_name) == key
+            ).first()
+        except:
+            url = request.path
+            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            logger.error(msg)
+            return {"message": msg}, 500
+
+        data = self.model_class.deserialize(data)
 
         # use the key from the url
         data[key_name] = key
@@ -170,8 +214,13 @@ class ModelResource(DBBaseResource):
                 setattr(item, key, value)
 
         status, errors = item.validate_record(camel_case=True)
+        adjust_before = self.before_commit.get(FUNC_NAME)
+        if adjust_before is not None:
+            if callable(adjust_before):
+                item, status_code = adjust_before(self, item, status_code)
+            else:
+                item, status_code = adjust_before.run(self, item, status_code)
 
-        item = self.pre_commit(item)
         try:
             item.save()
         except IntegrityError as err:
@@ -188,15 +237,21 @@ class ModelResource(DBBaseResource):
                 500,
             )
 
-        item = self.post_commit(item)
+        adjust_after = self.after_commit.get(FUNC_NAME)
+        if adjust_after is not None:
+            if callable(adjust_after):
+                item, status_code = adjust_after(self, item, status_code)
+            else:
+                # class, requires a run function
+                item, status_code = adjust_after.run(self, item, status_code)
 
-        ser_list, rel_ser_lists = self._get_serializations("put")
+        ser_list, rel_ser_lists = self._get_serializations(FUNC_NAME)
 
         return (
             item.to_dict(
                 serial_fields=ser_list, serial_field_relations=rel_ser_lists,
             ),
-            201,
+            status_code,
         )
 
         return data, 400
@@ -205,6 +260,8 @@ class ModelResource(DBBaseResource):
         """ Patch
 
         """
+        FUNC_NAME = 'patch'
+        status_code = 200
         name = self.model_class._class()
 
         try:
@@ -212,14 +269,6 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             logger.error(err.args[0])
             return {"message": err.args[0]}, 400
-
-        try:
-            item = self.model_class.query.get(key)
-        except:
-            url = request.path
-            msg = f"Internal Server Error: method patch: {url}"
-            logger.error(msg)
-            return {"message": msg}, 500
 
         if request.is_json:
             data = request.json
@@ -230,7 +279,23 @@ class ModelResource(DBBaseResource):
         else:
             data = request.args
 
-        self.model_class.deserialize(data)
+        qry = self.model_class.query
+        if self.process_patch_input is not None:
+            try:
+                qry, data = self.process_patch_input(qry, data, kwargs)
+            except Exception as err:
+                return {"message": err.args[0]}, 400
+        try:
+            item = qry.filter(
+                getattr(self.model_class, key_name) == key
+            ).first()
+        except:
+            url = request.path
+            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            logger.error(msg)
+            return {"message": msg}, 500
+
+        data = self.model_class.deserialize(data)
 
         # use the key from the url
         data[key_name] = key
@@ -248,7 +313,13 @@ class ModelResource(DBBaseResource):
 
         status, errors = item.validate_record(camel_case=True)
 
-        item = self.pre_commit(item)
+        adjust_before = self.before_commit.get(FUNC_NAME)
+        if adjust_before is not None:
+            if callable(adjust_before):
+                item, status_code = adjust_before(self, item, status_code)
+            else:
+                item, status_code = adjust_before.run(self, item, status_code)
+
         try:
             item.save()
         except IntegrityError as err:
@@ -265,15 +336,21 @@ class ModelResource(DBBaseResource):
                 500,
             )
 
-        item = self.post_commit(item)
+        adjust_after = self.after_commit.get(FUNC_NAME)
+        if adjust_after is not None:
+            if callable(adjust_after):
+                item, status_code = adjust_after(self, item, status_code)
+            else:
+                # class, requires a run function
+                item, status_code = adjust_after.run(self, item, status_code)
 
-        ser_list, rel_ser_lists = self._get_serializations("put")
+        ser_list, rel_ser_lists = self._get_serializations(FUNC_NAME)
 
         return (
             item.to_dict(
                 serial_fields=ser_list, serial_field_relations=rel_ser_lists,
             ),
-            201,
+            status_code,
         )
 
         return data, 400
@@ -281,6 +358,8 @@ class ModelResource(DBBaseResource):
     def delete(self, **kwargs):
         """ Delete
         """
+        FUNC_NAME = 'delete'
+        status_code = 200
         name = self.model_class._class()
 
         try:
@@ -289,20 +368,32 @@ class ModelResource(DBBaseResource):
             logger.error(err.args[0])
             return {"message": err.args[0]}, 400
 
+        qry = self.model_class.query
+        if self.process_delete_input is not None:
+            qry = self.process_delete_input(qry, kwargs)
+
         try:
-            item = self.model_class.query.get(key)
+            item = qry.filter(
+                getattr(self.model_class, key_name) == key
+            ).first()
         except:
             url = request.path
-            msg = f"Internal Server Error: method delete: {url}"
+            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
             logger.error(msg)
             return {"message": msg}, 500
 
         if item is None:
             msg = f"{name} with {key_name} of {key} not found"
             logger.debug(msg)
-            return {"error": {"message": msg,}}, 404
+            return {"message": msg,}, 404
 
-        item = self.pre_commit(item)
+        adjust_before = self.before_commit.get(FUNC_NAME)
+        if adjust_before is not None:
+            if callable(adjust_before):
+                item, status_code = adjust_before(self, item, status_code)
+            else:
+                item, status_code = adjust_before.run(self, item, status_code)
+
         try:
             item.delete()
         except IntegrityError as err:
@@ -320,4 +411,4 @@ class ModelResource(DBBaseResource):
             )
 
         msg = f"{name} with {key_name} of {key} is deleted"
-        return {"message": msg}, 200
+        return {"message": msg}, status_code

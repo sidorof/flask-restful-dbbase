@@ -46,6 +46,9 @@ class DBBaseResource(Resource):
     requires_parameter = False
     fields = None
 
+    before_commit = {}
+    after_commit = {}
+
     @classmethod
     def get_key(cls, formatted=False):
         """ get_key
@@ -90,26 +93,6 @@ class DBBaseResource(Resource):
         return cls.model_class.db.doc_table(
             cls.model_class, column_props=column_props
         )[cls.model_class._class()]["properties"]
-
-    def pre_commit(self, item):
-        """pre_commit
-
-        This function is a placeholder for a function that could
-        called just prior to saving an item.
-
-        In this case, it just passes the item back out again.
-        """
-        return item
-
-    def post_commit(self, item):
-        """pre_commit
-
-        This function is a placeholder for a function that could
-        called just after saving an item.
-
-        In this case, it just passes the item back out again.
-        """
-        return item
 
     @staticmethod
     def format_key(key, key_type):
@@ -222,8 +205,8 @@ class DBBaseResource(Resource):
         else:
             serial_fields = cls.serial_fields
 
-        if serial_fields is None:
-            serial_fields = cls.model_class.get_serial_fields()
+        #if serial_fields is None:
+        #    serial_fields = cls.model_class.get_serial_fields()
 
         return serial_fields
 

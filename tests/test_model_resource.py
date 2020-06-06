@@ -10,6 +10,13 @@ from flask_restful_dbbase.resources import ModelResource
 
 logging.disable(logging.CRITICAL)
 
+def passthrough(self, item, status_code):
+    """ passthrough
+
+    For testing before/after commit functions
+    """
+    return item, status_code
+
 
 def create_models(db):
     """create some sample models and a few records"""
@@ -75,6 +82,18 @@ class TestModelResource(unittest.TestCase):
 
             class BookResource(ModelResource):
                 model_class = cls.Book
+                before_commit = {
+                    "post": passthrough,
+                    "put": passthrough,
+                    "patch": passthrough,
+                    "delete": passthrough,
+                }
+
+                after_commit = {
+                    "post": passthrough,
+                    "put": passthrough,
+                    "patch": passthrough,
+                }
 
             class AuthorResource(ModelResource):
                 model_class = cls.Author
@@ -115,7 +134,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
                 res.get_json(),
-                {"error": {"message": "Book with id of 10 not found"}},
+                {"message": "Book with id of 10 not found"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -389,7 +408,7 @@ class TestModelResource(unittest.TestCase):
             res = client.put(
                 f"/book/{id}", data=json.dumps(book), headers=self.headers
             )
-            self.assertEqual(res.status_code, 201)
+            self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
                 {
@@ -455,7 +474,7 @@ class TestModelResource(unittest.TestCase):
             res = client.patch(
                 f"/book/{id}", data=json.dumps(book), headers=self.headers
             )
-            self.assertEqual(res.status_code, 201)
+            self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
                 {
@@ -485,7 +504,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
                 res.get_json(),
-                {"error": {"message": "Book with id of 10 not found"}},
+                {"message": "Book with id of 10 not found"},
             )
             self.assertEqual(res.content_type, "application/json")
 

@@ -189,24 +189,6 @@ def test_get_obj_params_with_colprops():
     assert obj_params == expected_result
 
 
-def test_pre_commit():
-    """
-    Prototype functions
-    """
-    item = "this is a test"
-    self = None
-    assert DBBaseResource.pre_commit(self, item) == item
-
-
-def test_post_commit():
-    """
-    Prototype functions
-    """
-    item = "this is a test"
-    self = None
-    assert DBBaseResource.post_commit(self, item) == item
-
-
 def test_format_key():
 
     key = "test"
