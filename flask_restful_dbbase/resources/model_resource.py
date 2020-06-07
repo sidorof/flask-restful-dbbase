@@ -39,6 +39,7 @@ class ModelResource(DBBaseResource):
 
     def get(self, **kwargs):
         """ Get """
+        url = request.path
         FUNC_NAME = 'get'
         name = self.model_class._class()
 
@@ -53,11 +54,11 @@ class ModelResource(DBBaseResource):
             item = qry.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
-        except:
-            url = request.path
-            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            logger.error(msg)
-            return {"message": msg}, 500
+        except Exception as err:
+            msg = err.args[0]
+            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return {"message": return_msg}, 500
 
         sfields, sfield_relations = self._get_serializations(FUNC_NAME)
 
@@ -77,6 +78,7 @@ class ModelResource(DBBaseResource):
     def post(self, *args, **kwargs):
         """ Post """
         FUNC_NAME = 'post'
+        url = request.path
         status_code = 201
 
         if request.is_json:
@@ -92,6 +94,7 @@ class ModelResource(DBBaseResource):
             try:
                 data = self.process_post_input(data, kwargs)
             except Exception as err:
+                # NOTE uncertain about how much logging to do here
                 return {"message": err.args[0]}, 400
 
         status, data = self.screen_data(
@@ -108,9 +111,9 @@ class ModelResource(DBBaseResource):
             try:
                 item = self.model_class.query.get(key)
             except:
-                url = request.path
-                msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-                logger.error(msg)
+                msg = err.args[0]
+                return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+                logger.error(f"{url} method {FUNC_NAME}: {msg}")
                 return {"message": msg}, 500
 
             if item:
@@ -131,17 +134,17 @@ class ModelResource(DBBaseResource):
             item.save()
         except IntegrityError as err:
             # may be helpful
-            msg = str(err).split("\n")[0]
+            msg = err.args[0]
             self.model_class.db.session.rollback()
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": msg}, 400
 
         except Exception as err:
-            name = self.model_class._class()
             self.model_class.db.session.rollback()
-            return (
-                {"message": f"An error occurred inserting the {name}."},
-                500,
-            )
+            msg = err.args[0]
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return_msg = f"An error occurred inserting the {name}."
+            return {"message": return_msg}, 500
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after is not None:
@@ -164,6 +167,7 @@ class ModelResource(DBBaseResource):
         """ put
 
         """
+        url = request.path
         FUNC_NAME = 'put'
         status_code = 200
         try:
@@ -186,17 +190,19 @@ class ModelResource(DBBaseResource):
             try:
                 qry, data = self.process_put_input(qry, data, kwargs)
             except Exception as err:
-                return {"message": err.args[0]}, 400
+                msg = err.args[0]
+                logger.error(f"{url} method {FUNC_NAME}: {msg}")
+                return {"message": msg}, 400
 
         try:
             item = qry.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
-        except:
-            url = request.path
-            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            logger.error(msg)
-            return {"message": msg}, 500
+        except Exception as err:
+            msg = err.args[0]
+            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return {"message": return_msg}, 500
 
         data = self.model_class.deserialize(data)
 
@@ -224,14 +230,14 @@ class ModelResource(DBBaseResource):
         try:
             item.save()
         except IntegrityError as err:
-            # may be helpful
-            msg = str(err).split("\n")[0]
+            msg = err.args[0]
             self.model_class.db.session.rollback()
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": msg}, 400
 
         except Exception as err:
-            name = self.model_class._class()
             self.model_class.db.session.rollback()
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {"message": f"An error occurred updating the {name}."},
                 500,
@@ -260,6 +266,7 @@ class ModelResource(DBBaseResource):
         """ Patch
 
         """
+        url = request.path
         FUNC_NAME = 'patch'
         status_code = 200
         name = self.model_class._class()
@@ -267,8 +274,10 @@ class ModelResource(DBBaseResource):
         try:
             key_name, key = self._check_key(kwargs)
         except Exception as err:
-            logger.error(err.args[0])
-            return {"message": err.args[0]}, 400
+            msg = err.args[0]
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+
+            return {"message": msg}, 400
 
         if request.is_json:
             data = request.json
@@ -289,11 +298,11 @@ class ModelResource(DBBaseResource):
             item = qry.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
-        except:
-            url = request.path
-            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            logger.error(msg)
-            return {"message": msg}, 500
+        except Exception as err:
+            msg = err.args[0]
+            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return {"message": return_msg}, 500
 
         data = self.model_class.deserialize(data)
 
@@ -323,14 +332,14 @@ class ModelResource(DBBaseResource):
         try:
             item.save()
         except IntegrityError as err:
-            # may be helpful
-            msg = str(err).split("\n")[0]
+            msg = err.args[0]
             self.model_class.db.session.rollback()
             return {"message": msg}, 400
 
         except Exception as err:
-            name = self.model_class._class()
+            msg = err.args[0]
             self.model_class.db.session.rollback()
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {"message": f"An error occurred updating the {name}."},
                 500,
@@ -358,6 +367,7 @@ class ModelResource(DBBaseResource):
     def delete(self, **kwargs):
         """ Delete
         """
+        url = request.path
         FUNC_NAME = 'delete'
         status_code = 200
         name = self.model_class._class()
@@ -376,16 +386,16 @@ class ModelResource(DBBaseResource):
             item = qry.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
-        except:
-            url = request.path
-            msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+        except Exception as err:
+            msg = err.args[0]
+            msg = f"Internal Server Error: method {FUNC_NAME}: {url}: {msg}"
             logger.error(msg)
             return {"message": msg}, 500
 
         if item is None:
             msg = f"{name} with {key_name} of {key} not found"
             logger.debug(msg)
-            return {"message": msg,}, 404
+            return {"message": msg}, 404
 
         adjust_before = self.before_commit.get(FUNC_NAME)
         if adjust_before is not None:
@@ -397,16 +407,17 @@ class ModelResource(DBBaseResource):
         try:
             item.delete()
         except IntegrityError as err:
-            # may be helpful
-            msg = str(err).split("\n")[0]
             self.model_class.db.session.rollback()
+            logger.error(msg)
             return {"message": msg}, 400
 
         except Exception as err:
             name = self.model_class._class()
             self.model_class.db.session.rollback()
+            msg = err.args[0]
+            logger.error(msg)
             return (
-                {"message": f"An error occurred deleting the {name}."},
+                {"message": f"An error occurred deleting the {name}: {msg}."},
                 500,
             )
 
