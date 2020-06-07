@@ -1,6 +1,9 @@
 # tests/test_dbbase_resource.py
 import pytest
 from dbbase import DB
+import flask
+import flask_restful
+from flask_restful_dbbase import DBBase
 from flask_restful_dbbase.resources import DBBaseResource
 
 from .models.user_address import User, Address
@@ -22,7 +25,7 @@ def create_models(db):
     class Book(db.Model):
         __tablename__ = "book"
 
-        id = db.Column(db.Integer, primary_key=True)
+        id = db.Column(db.Integer, nullable=True, primary_key=True)
         isbn = db.Column(db.String(20), nullable=True)
         title = db.Column(db.String(100), nullable=False)
         pub_year = db.Column(db.Integer, nullable=False)
@@ -62,25 +65,25 @@ def test_default_class_variables():
 
 def test_get_key():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
-    assert resource.get_key(formatted=False) == "username"
-    assert resource.get_key(formatted=True) == "<string:username>"
+    assert UserResource.get_key(formatted=False) == "username"
+    assert UserResource.get_key(formatted=True) == "<string:username>"
 
-    resource = DBBaseResource
-    resource.model_class = Address
+    class AddressResource(DBBaseResource):
+        model_class = Address
 
-    assert resource.get_key(formatted=False) == "id"
-    assert resource.get_key(formatted=True) == "<int:id>"
+    assert AddressResource.get_key(formatted=False) == "id"
+    assert AddressResource.get_key(formatted=True) == "<int:id>"
 
 
 def test_get_obj_params():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
-    obj_params = resource.get_obj_params()
+    obj_params = UserResource.get_obj_params()
 
     expected_result = {
         "username": {
@@ -165,10 +168,10 @@ def test_get_obj_params_with_colprops():
     """
     Test with column property filtering
     """
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
-    obj_params = resource.get_obj_params(column_props=["type", "nullable"])
+    obj_params = UserResource.get_obj_params(column_props=["type", "nullable"])
 
     expected_result = {
         "username": {"type": "string", "nullable": False},
@@ -203,17 +206,17 @@ def test_format_key():
 
 def test_get_urls():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
-    urls = resource.get_urls()
+    urls = UserResource.get_urls()
 
     assert urls == ["/user", "/user/<string:username>"]
 
-    resource.url_prefix = "/api/v1"
-    resource.url_name = "users"
+    UserResource.url_prefix = "/api/v1"
+    UserResource.url_name = "users"
 
-    urls = resource.get_urls()
+    urls = UserResource.get_urls()
 
     assert urls == ["/api/v1/users", "/api/v1/users/<string:username>"]
 
@@ -225,32 +228,29 @@ def test_get_meta():
 
 def test__check_key():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
     kwargs = {"username": "test"}
 
     # finds the key
-    assert resource._check_key(kwargs) == ("username", "test")
+    assert UserResource._check_key(kwargs) == ("username", "test")
 
     kwargs = {"something": "else"}
 
     # does not find the key
-    pytest.raises(ValueError, resource._check_key, kwargs)
+    pytest.raises(ValueError, UserResource._check_key, kwargs)
 
 
 def test__get_serial_fields():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
     # nothing special for methods
-    assert (
-        resource._get_serial_fields(method="something")
-        == resource.model_class.get_serial_fields()
-    )
+    assert UserResource._get_serial_fields(method="something") is None
 
-    resource.serial_fields = {
+    UserResource.serial_fields = {
         "get": ["username", "company", "email"],
         "post": [
             "date_joined",
@@ -270,13 +270,13 @@ def test__get_serial_fields():
         "patch": ["email"],
     }
 
-    assert resource._get_serial_fields(method="get") == [
+    assert UserResource._get_serial_fields(method="get") == [
         "username",
         "company",
         "email",
     ]
 
-    assert resource._get_serial_fields(method="post") == [
+    assert UserResource._get_serial_fields(method="post") == [
         "date_joined",
         "addresses",
         "last_login",
@@ -292,65 +292,63 @@ def test__get_serial_fields():
         "is_staff",
     ]
 
-    assert resource._get_serial_fields(method="patch") == ["email"]
+    assert UserResource._get_serial_fields(method="patch") == ["email"]
 
     # unspecified for particular method, but still a dict
-    assert set(resource._get_serial_fields(method="put")) == set(
-        resource.model_class.get_serial_fields()
-    )
+    assert UserResource._get_serial_fields(method="put") is None
 
 
 def test__get_serial_field_relations():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
     User.SERIAL_FIELD_RELATIONS = {"Address": ["city", "state"]}
 
-    assert resource._get_serial_field_relations(method="get") == {
+    assert UserResource._get_serial_field_relations(method="get") == {
         "Address": ["city", "state"]
     }
 
-    resource.serial_field_relations = {
+    UserResource.serial_field_relations = {
         "get": {"Address": ["city"]},
         "post": {"Address": ["city", "state", "company"]},
     }
 
-    assert resource._get_serial_field_relations("get") == {"Address": ["city"]}
+    assert UserResource._get_serial_field_relations("get") == {"Address": ["city"]}
 
-    assert resource._get_serial_field_relations("post") == {
+    assert UserResource._get_serial_field_relations("post") == {
         "Address": ["city", "state", "company"]
     }
 
-    assert resource._get_serial_field_relations("other") == {
+    assert UserResource._get_serial_field_relations("other") == {
         "Address": ["city", "state"]
     }
 
 
 def test__get_serializations():
 
-    resource = DBBaseResource
-    resource.model_class = User
+    class UserResource(DBBaseResource):
+        model_class = User
 
-    resource.serial_fields = {
+    UserResource.serial_fields = {
         "get": ["username", "company", "email"],
         "post": ["date_joined", "addresses", "last_login"],
         "patch": ["email"],
     }
 
-    resource.serial_field_relations = {"Address": ["city", "state"]}
+    UserResource.serial_field_relations = {"Address": ["city", "state"]}
 
-    assert resource._get_serializations(method="get") == (
+    assert UserResource._get_serializations(method="get") == (
         ["username", "company", "email"],
         {"Address": ["city", "state"]},
     )
 
-    assert resource._get_serializations(method="post") == (
+    assert UserResource._get_serializations(method="post") == (
         ["date_joined", "addresses", "last_login"],
         {"Address": ["city", "state"]},
     )
 
-    assert resource._get_serializations(method="patch") == (
+    assert UserResource._get_serializations(method="patch") == (
         ["email"],
         {"Address": ["city", "state"]},
     )
@@ -358,28 +356,28 @@ def test__get_serializations():
 
 def test__check_config_error():
 
-    resource = DBBaseResource
-    resource.model_class = None
+    class UserResource(DBBaseResource):
+        pass
 
-    assert resource._check_config_error() == (
+    assert UserResource._check_config_error() == (
         {"message": f"Configuration error: missing model_class."},
         500,
     )
 
-    resource.model_class = User
+    UserResource.model_class = User
 
-    assert resource._check_config_error() is None
+    assert UserResource._check_config_error() is None
 
 
 def test_create_url():
 
-    resource = DBBaseResource
-    resource.model_class = User
-    resource.url_name = None
-    resource.url_prefix = "/api/v2"
+    class UserResource(DBBaseResource):
+        model_class = User
+        url_name = None
+        url_prefix = "/api/v2"
 
     # url_name is None
-    assert resource.create_url() == "/api/v2/user"
+    assert UserResource.create_url() == "/api/v2/user"
 
     # another class name
     class CustomerOrder(object):
@@ -387,12 +385,12 @@ def test_create_url():
         def _class(cls):
             return cls.__name__
 
-    resource.model_class = CustomerOrder
-    assert resource.create_url() == "/api/v2/customer-order"
+    UserResource.model_class = CustomerOrder
+    assert UserResource.create_url() == "/api/v2/customer-order"
 
     # url_name is valid
-    resource.url_name = "different"
-    assert resource.create_url() == "/api/v2/different"
+    UserResource.url_name = "different"
+    assert UserResource.create_url() == "/api/v2/different"
 
 
 def test_screen_data():
@@ -416,24 +414,23 @@ def test_screen_data():
 
 def test__check_numeric_casting():
 
-    # db1 = DB(config="sqlite:///test1231.db")
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    resource = DBBaseResource
-    resource.model_class = Book
+    class BookResource(DBBaseResource):
+        model_class = Book
 
-    obj_params = resource.get_obj_params()
+    obj_params = BookResource.get_obj_params()
     book_data = book.to_dict(to_camel_case=False)
 
     # follow the filtering first as found in screen
-    book_data = resource._remove_unnecessary_data(book_data, obj_params)
+    book_data = BookResource._remove_unnecessary_data(book_data, obj_params)
 
     # since the source of data is from stored info in database, it is clean
-    assert resource._check_numeric_casting(book_data, obj_params) == []
+    assert BookResource._check_numeric_casting(book_data, obj_params) == []
 
     book_data["pub_year"] = "two thousand four"
-    assert resource._check_numeric_casting(book_data, obj_params) == [
+    assert BookResource._check_numeric_casting(book_data, obj_params) == [
         {"pub_year": "The value two thousand four is not a number"}
     ]
 
@@ -443,21 +440,21 @@ def test__check_max_text_lengths():
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    resource = DBBaseResource
-    resource.model_class = Book
+    class BookResource(DBBaseResource):
+        model_class = Book
 
-    obj_params = resource.get_obj_params()
+    obj_params = BookResource.get_obj_params()
     book_data = book.to_dict(to_camel_case=False)
 
     # follow the filtering first as found in screen
-    book_data = resource._remove_unnecessary_data(book_data, obj_params)
+    book_data = BookResource._remove_unnecessary_data(book_data, obj_params)
 
     # since the source of data is from stored info in database, it is clean
-    assert resource._check_max_text_lengths(book_data, obj_params) == []
+    assert BookResource._check_max_text_lengths(book_data, obj_params) == []
 
     book_data["title"] = book_data["title"] * 100
 
-    assert resource._check_max_text_lengths(book_data, obj_params) == [
+    assert BookResource._check_max_text_lengths(book_data, obj_params) == [
         {"title": "The data exceeds the maximum length 100"}
     ]
 
@@ -467,17 +464,17 @@ def test__remove_unnecessary_data():
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    resource = DBBaseResource
-    resource.model_class = Book
+    class BookResource(DBBaseResource):
+        model_class = Book
 
-    obj_params = resource.get_obj_params()
-    obj_params = resource._exclude_read_only(obj_params)
+    obj_params = BookResource.get_obj_params()
+    obj_params = BookResource._exclude_read_only(obj_params)
     book_data = book.to_dict(to_camel_case=False)
 
     # add another extraneous field
     book_data["test"] = "this is a"
 
-    assert "test" not in resource._remove_unnecessary_data(
+    assert "test" not in BookResource._remove_unnecessary_data(
         book_data, obj_params
     )
 
@@ -487,20 +484,20 @@ def test__missing_required():
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    resource = DBBaseResource
-    resource.model_class = Book
+    class BookResource(DBBaseResource):
+        model_class = Book
 
-    obj_params = resource.get_obj_params()
-    obj_params = resource._exclude_read_only(obj_params)
+    obj_params = BookResource.get_obj_params()
+    obj_params = BookResource._exclude_read_only(obj_params)
     book_data = book.to_dict(to_camel_case=False)
 
-    assert resource._missing_required(book_data, obj_params) is None
+    assert BookResource._missing_required(book_data, obj_params) is None
 
     # delete title and author_id
     book_data.pop("title")
     book_data.pop("author_id")
 
-    assert resource._missing_required(book_data, obj_params) == {
+    assert BookResource._missing_required(book_data, obj_params) == {
         "missing_columns": ["title", "author_id"]
     }
 
@@ -510,15 +507,15 @@ def test__exclude_read_only():
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    resource = DBBaseResource
-    resource.model_class = Book
+    class BookResource(DBBaseResource):
+        model_class = Book
 
-    obj_params = resource.get_obj_params()
+    obj_params = BookResource.get_obj_params()
 
     obj_params_copy = dict([[key, value] for key, value in obj_params.items()])
     obj_params_copy.pop("author")
 
-    assert resource._exclude_read_only(obj_params) == obj_params_copy
+    assert BookResource._exclude_read_only(obj_params) == obj_params_copy
 
 
 def test__get_required():
@@ -526,14 +523,14 @@ def test__get_required():
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    resource = DBBaseResource
-    resource.model_class = Book
+    class BookResource(DBBaseResource):
+        model_class = Book
 
-    obj_params = resource.get_obj_params()
+    obj_params = BookResource.get_obj_params()
 
     # required fields are title, author_id, pub_year
     # NOTE: check this. an id can be assigned a default, but not really
     # required t
-    assert set(resource._get_required(obj_params)) == set(
-        ["id", "title", "author_id", "pub_year"]
+    assert set(BookResource._get_required(obj_params)) == set(
+        ["title", "author_id", "pub_year"]
     )
