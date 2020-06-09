@@ -1,25 +1,29 @@
 # tests/models/user_address.py
 import os
 from datetime import date, datetime
-from flask_restful_dbbase import DBBase, WriteOnlyColumn
+from flask_restful_dbbase import DBBase
 
-os.environ['SQLALCHEMY_DATABASE_URI'] = ":memory:"
+os.environ["SQLALCHEMY_DATABASE_URI"] = ":memory:"
 
 db = DBBase()
 
 
 class User(db.Model):
     """
-    This class creates a simplified user model. Note that no security measures on the password are taken, this package has no opinion on the security model used.
-    However, the info parameter is used to mark the password as write-only.
-    The username is used as an id to test proper url generation
+    This class creates a simplified user model. Note that no security
+    measures on the password are taken, this package has no opinion on
+    the security model used. However, the info parameter is used to mark the
+    password as write-only. The username is used as an id to test proper url
+    generation
     """
+
     __tablename__ = "user"
 
     # essential
     username = db.Column(db.String(80), primary_key=True, nullable=False)
     password = db.WriteOnlyColumn(
-        db.String(80), nullable=False, info={"write-only": True})
+        db.String(80), nullable=False, info={"write-only": True}
+    )
     email = db.Column(db.String(80), unique=True, nullable=False)
 
     first_name = db.Column(db.String(80), nullable=True)
@@ -37,8 +41,8 @@ class User(db.Model):
     addresses = db.relationship("Address", backref="user", lazy="immediate")
 
     SERIAL_STOPLIST = [
-        'generate_password_hash',
-        'valid_password',
+        "generate_password_hash",
+        "valid_password",
     ]
 
     def __init__(
@@ -70,7 +74,6 @@ class User(db.Model):
         self.last_login = None
 
         self.date_joined = datetime.now()
-
 
 
 class Address(db.Model):
