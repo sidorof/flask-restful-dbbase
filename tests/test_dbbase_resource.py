@@ -1,9 +1,6 @@
 # tests/test_dbbase_resource.py
 import pytest
 from dbbase import DB
-import flask
-import flask_restful
-from flask_restful_dbbase import DBBase
 from flask_restful_dbbase.resources import DBBaseResource
 
 from .models.user_address import User, Address
@@ -64,7 +61,6 @@ def test_default_class_variables():
 
 
 def test_get_key():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -79,7 +75,6 @@ def test_get_key():
 
 
 def test_get_obj_params():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -164,34 +159,6 @@ def test_get_obj_params():
     assert obj_params == expected_result
 
 
-def test_get_obj_params_with_colprops():
-    """
-    Test with column property filtering
-    """
-    class UserResource(DBBaseResource):
-        model_class = User
-
-    obj_params = UserResource.get_obj_params(column_props=["type", "nullable"])
-
-    expected_result = {
-        "username": {"type": "string", "nullable": False},
-        "password": {"type": "string", "nullable": False},
-        "email": {"type": "string", "nullable": False},
-        "first_name": {"type": "string", "nullable": True},
-        "last_name": {"type": "string", "nullable": True},
-        "company": {"type": "string", "nullable": True},
-        "is_superuser": {"type": "boolean", "nullable": False},
-        "is_staff": {"type": "boolean", "nullable": False},
-        "is_active": {"type": "boolean", "nullable": False},
-        "is_account_current": {"type": "boolean", "nullable": False},
-        "date_joined": {"type": "date", "nullable": False},
-        "last_login": {"type": "date-time", "nullable": True},
-        "addresses": {},
-    }
-
-    assert obj_params == expected_result
-
-
 def test_format_key():
 
     key = "test"
@@ -205,7 +172,6 @@ def test_format_key():
 
 
 def test_get_urls():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -221,13 +187,7 @@ def test_get_urls():
     assert urls == ["/api/v1/users", "/api/v1/users/<string:username>"]
 
 
-def test_get_meta():
-
-    print("test_get_meta is not done")
-
-
 def test__check_key():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -243,7 +203,6 @@ def test__check_key():
 
 
 def test__get_serial_fields():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -299,7 +258,6 @@ def test__get_serial_fields():
 
 
 def test__get_serial_field_relations():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -314,7 +272,9 @@ def test__get_serial_field_relations():
         "post": {"Address": ["city", "state", "company"]},
     }
 
-    assert UserResource._get_serial_field_relations("get") == {"Address": ["city"]}
+    assert UserResource._get_serial_field_relations("get") == {
+        "Address": ["city"]
+    }
 
     assert UserResource._get_serial_field_relations("post") == {
         "Address": ["city", "state", "company"]
@@ -326,7 +286,6 @@ def test__get_serial_field_relations():
 
 
 def test__get_serializations():
-
     class UserResource(DBBaseResource):
         model_class = User
 
@@ -355,7 +314,6 @@ def test__get_serializations():
 
 
 def test__check_config_error():
-
     class UserResource(DBBaseResource):
         pass
 
@@ -370,7 +328,6 @@ def test__check_config_error():
 
 
 def test_create_url():
-
     class UserResource(DBBaseResource):
         model_class = User
         url_name = None
@@ -393,25 +350,6 @@ def test_create_url():
     assert UserResource.create_url() == "/api/v2/different"
 
 
-def test_screen_data():
-    """
-    test_screen_data
-
-
-    This function and the next few are concerned with the
-    evaluation of incoming data in light of the requirements
-    of the model for complete information.
-
-    This will use the book and author example with a few
-    pretend records.
-    """
-    # test_screen_data(
-    #    data,
-    #    obj_params,
-    #    skip_missing_data=False)
-    pass
-
-
 def test__check_numeric_casting():
 
     db1 = DB(config=":memory:")
@@ -420,17 +358,16 @@ def test__check_numeric_casting():
     class BookResource(DBBaseResource):
         model_class = Book
 
-    obj_params = BookResource.get_obj_params()
     book_data = book.to_dict(to_camel_case=False)
 
     # follow the filtering first as found in screen
-    book_data = BookResource._remove_unnecessary_data(book_data, obj_params)
+    book_data = BookResource._remove_unnecessary_data(book_data)
 
     # since the source of data is from stored info in database, it is clean
-    assert BookResource._check_numeric_casting(book_data, obj_params) == []
+    assert BookResource._check_numeric_casting(book_data) == []
 
     book_data["pub_year"] = "two thousand four"
-    assert BookResource._check_numeric_casting(book_data, obj_params) == [
+    assert BookResource._check_numeric_casting(book_data) == [
         {"pub_year": "The value two thousand four is not a number"}
     ]
 
@@ -443,18 +380,17 @@ def test__check_max_text_lengths():
     class BookResource(DBBaseResource):
         model_class = Book
 
-    obj_params = BookResource.get_obj_params()
     book_data = book.to_dict(to_camel_case=False)
 
     # follow the filtering first as found in screen
-    book_data = BookResource._remove_unnecessary_data(book_data, obj_params)
+    book_data = BookResource._remove_unnecessary_data(book_data)
 
     # since the source of data is from stored info in database, it is clean
-    assert BookResource._check_max_text_lengths(book_data, obj_params) == []
+    assert BookResource._check_max_text_lengths(book_data) == []
 
     book_data["title"] = book_data["title"] * 100
 
-    assert BookResource._check_max_text_lengths(book_data, obj_params) == [
+    assert BookResource._check_max_text_lengths(book_data) == [
         {"title": "The data exceeds the maximum length 100"}
     ]
 
@@ -467,16 +403,12 @@ def test__remove_unnecessary_data():
     class BookResource(DBBaseResource):
         model_class = Book
 
-    obj_params = BookResource.get_obj_params()
-    obj_params = BookResource._exclude_read_only(obj_params)
     book_data = book.to_dict(to_camel_case=False)
 
     # add another extraneous field
     book_data["test"] = "this is a"
 
-    assert "test" not in BookResource._remove_unnecessary_data(
-        book_data, obj_params
-    )
+    assert "test" not in BookResource._remove_unnecessary_data(book_data)
 
 
 def test__missing_required():
@@ -487,50 +419,387 @@ def test__missing_required():
     class BookResource(DBBaseResource):
         model_class = Book
 
-    obj_params = BookResource.get_obj_params()
-    obj_params = BookResource._exclude_read_only(obj_params)
     book_data = book.to_dict(to_camel_case=False)
 
-    assert BookResource._missing_required(book_data, obj_params) is None
+    assert BookResource._missing_required(book_data) is None
 
     # delete title and author_id
     book_data.pop("title")
     book_data.pop("author_id")
 
-    assert BookResource._missing_required(book_data, obj_params) == {
+    assert BookResource._missing_required(book_data) == {
         "missing_columns": ["title", "author_id"]
     }
 
 
-def test__exclude_read_only():
+def test_get_meta():
+    """ test_get_meta
+
+    This version does all.
+    """
+    db1 = DB(config=":memory:")
+    Author, Book, author, book = create_models(db1)
+
+    def my_decorator():
+        pass
+
+    class BookResource(DBBaseResource):
+        model_class = Book
+        method_decorators = {"get": [my_decorator]}
+
+        # since this is DBBaseResource subclassed
+        # some fake methods
+        def get():
+            pass
+
+        def post():
+            pass
+
+        def delete():
+            pass
+
+    assert BookResource.get_meta() == {
+        "model_class": "Book",
+        "url_prefix": "/",
+        "url": "/book",
+        "methods": {
+            "get": {
+                "url": "/book/<int:id>",
+                "requirements": ["my_decorator"],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": True,
+                        "info": {},
+                    }
+                },
+                "responses": {
+                    "fields": {
+                        "pub_year": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "isbn": {
+                            "type": "string",
+                            "maxLength": 20,
+                            "nullable": True,
+                            "info": {},
+                        },
+                        "author_id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": False,
+                            "foreign_key": "author.id",
+                            "info": {},
+                        },
+                        "author": {
+                            "readOnly": True,
+                            "relationship": {
+                                "type": "single",
+                                "entity": "Author",
+                            },
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": True,
+                            "nullable": True,
+                            "info": {},
+                        },
+                        "title": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "nullable": False,
+                            "info": {},
+                        },
+                    }
+                },
+            },
+            "post": {
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": True,
+                        "info": {},
+                    },
+                    "isbn": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "nullable": True,
+                        "info": {},
+                    },
+                    "title": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "pubYear": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "authorId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": False,
+                        "foreign_key": "author.id",
+                        "info": {},
+                    },
+                },
+                "responses": {
+                    "fields": {
+                        "pub_year": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "isbn": {
+                            "type": "string",
+                            "maxLength": 20,
+                            "nullable": True,
+                            "info": {},
+                        },
+                        "author_id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": False,
+                            "foreign_key": "author.id",
+                            "info": {},
+                        },
+                        "author": {
+                            "readOnly": True,
+                            "relationship": {
+                                "type": "single",
+                                "entity": "Author",
+                            },
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": True,
+                            "nullable": True,
+                            "info": {},
+                        },
+                        "title": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "nullable": False,
+                            "info": {},
+                        },
+                    }
+                },
+            },
+            "delete": {
+                "url": "/book/<int:id>",
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": True,
+                        "info": {},
+                    }
+                },
+                "responses": {},
+            },
+        },
+        "table": {
+            "Book": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": True,
+                        "info": {},
+                    },
+                    "isbn": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "nullable": True,
+                        "info": {},
+                    },
+                    "title": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "pub_year": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "author_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": False,
+                        "foreign_key": "author.id",
+                        "info": {},
+                    },
+                    "author": {
+                        "readOnly": True,
+                        "relationship": {"type": "single", "entity": "Author"},
+                    },
+                },
+                "xml": "Book",
+            }
+        },
+    }
+
+
+def test__meta_method():
+    db1 = DB(config=":memory:")
+    Author, Book, author, book = create_models(db1)
+
+    def my_decorator():
+        pass
+
+    class BookResource(DBBaseResource):
+        model_class = Book
+        method_decorators = {"get": [my_decorator]}
+
+    assert BookResource._meta_method("get") == {
+        "url": "/book/<int:id>",
+        "requirements": ["my_decorator"],
+        "input": {
+            "id": {
+                "type": "integer",
+                "format": "int32",
+                "primary_key": True,
+                "nullable": True,
+                "info": {},
+            }
+        },
+        "responses": {
+            "fields": {
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "nullable": False,
+                    "info": {},
+                },
+                "author_id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "nullable": False,
+                    "foreign_key": "author.id",
+                    "info": {},
+                },
+                "pub_year": {
+                    "type": "integer",
+                    "format": "int32",
+                    "nullable": False,
+                    "info": {},
+                },
+                "isbn": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "nullable": True,
+                    "info": {},
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "primary_key": True,
+                    "nullable": True,
+                    "info": {},
+                },
+                "author": {
+                    "readOnly": True,
+                    "relationship": {"type": "single", "entity": "Author"},
+                },
+            }
+        },
+    }
+
+
+def test__meta_method_decorators():
+    db1 = DB(config=":memory:")
+    Author, Book, author, book = create_models(db1)
+
+    def my_decorator():
+        pass
+
+    class BookResource(DBBaseResource):
+        model_class = Book
+        method_decorators = [my_decorator]
+
+    class BookResource1(DBBaseResource):
+        model_class = Book
+        method_decorators = {"get": [my_decorator]}
+
+    assert BookResource._meta_method_decorators("get") == ["my_decorator"]
+
+    assert BookResource1._meta_method_decorators("get") == ["my_decorator"]
+
+    assert BookResource._meta_method_decorators("post") == ["my_decorator"]
+
+    assert BookResource1._meta_method_decorators("post") == []
+
+
+def test__meta_method_response():
 
     db1 = DB(config=":memory:")
     Author, Book, author, book = create_models(db1)
 
-    class BookResource(DBBaseResource):
-        model_class = Book
-
-    obj_params = BookResource.get_obj_params()
-
-    obj_params_copy = dict([[key, value] for key, value in obj_params.items()])
-    obj_params_copy.pop("author")
-
-    assert BookResource._exclude_read_only(obj_params) == obj_params_copy
-
-
-def test__get_required():
-
-    db1 = DB(config=":memory:")
-    Author, Book, author, book = create_models(db1)
+    def my_decorator():
+        pass
 
     class BookResource(DBBaseResource):
         model_class = Book
+        method_decorators = [my_decorator]
 
-    obj_params = BookResource.get_obj_params()
-
-    # required fields are title, author_id, pub_year
-    # NOTE: check this. an id can be assigned a default, but not really
-    # required t
-    assert set(BookResource._get_required(obj_params)) == set(
-        ["title", "author_id", "pub_year"]
-    )
+    assert BookResource._meta_method_response("get") == {
+        "fields": {
+            "pub_year": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": False,
+                "info": {},
+            },
+            "isbn": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": True,
+                "info": {},
+            },
+            "author": {
+                "readOnly": True,
+                "relationship": {"type": "single", "entity": "Author"},
+            },
+            "author_id": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": False,
+                "foreign_key": "author.id",
+                "info": {},
+            },
+            "id": {
+                "type": "integer",
+                "format": "int32",
+                "primary_key": True,
+                "nullable": True,
+                "info": {},
+            },
+            "title": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": False,
+                "info": {},
+            },
+        }
+    }

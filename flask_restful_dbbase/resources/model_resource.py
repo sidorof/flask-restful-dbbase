@@ -97,9 +97,7 @@ class ModelResource(DBBaseResource):
                 # NOTE uncertain about how much logging to do here
                 return {"message": err.args[0]}, 400
 
-        status, data = self.screen_data(
-            self.model_class.deserialize(data), self.get_obj_params()
-        )
+        status, data = self.screen_data(self.model_class.deserialize(data))
         if status is False:
             return {"message": data}, 400
 
@@ -110,11 +108,12 @@ class ModelResource(DBBaseResource):
             key = data[key_name]
             try:
                 item = self.model_class.query.get(key)
-            except:
+            except Exception as err:
                 msg = err.args[0]
-                return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+                return_msg = f"Internal Server Error: method {FUNC_NAME}: "
+                f"{url}"
                 logger.error(f"{url} method {FUNC_NAME}: {msg}")
-                return {"message": msg}, 500
+                return {"message": return_msg}, 500
 
             if item:
                 return {"message": f"{key} for {name} already exists."}, 409
@@ -173,8 +172,10 @@ class ModelResource(DBBaseResource):
         try:
             key_name, key = self._check_key(kwargs)
         except Exception as err:
-            logger.error(err.args[0])
-            return {"message": err.args[0]}, 400
+            # NOTE: error check this
+            msg = err.args[0]
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return {"message": msg}, 400
 
         if request.is_json:
             data = request.json
@@ -208,8 +209,7 @@ class ModelResource(DBBaseResource):
 
         # use the key from the url
         data[key_name] = key
-
-        status, data = self.screen_data(data, self.get_obj_params())
+        status, data = self.screen_data(data)
         if status is False:
             return {"message": data}, 400
 
@@ -237,11 +237,10 @@ class ModelResource(DBBaseResource):
 
         except Exception as err:
             self.model_class.db.session.rollback()
+            msg = err.args[0]
+            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
             logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return (
-                {"message": f"An error occurred updating the {name}."},
-                500,
-            )
+            return {"message": return_msg}, 500
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after is not None:
@@ -308,9 +307,7 @@ class ModelResource(DBBaseResource):
 
         # use the key from the url
         data[key_name] = key
-        status, data = self.screen_data(
-            data, self.get_obj_params(), skip_missing_data=True
-        )
+        status, data = self.screen_data(data, skip_missing_data=True)
         if status is False:
             return {"message": data}, 400
 
@@ -388,9 +385,10 @@ class ModelResource(DBBaseResource):
             ).first()
         except Exception as err:
             msg = err.args[0]
-            msg = f"Internal Server Error: method {FUNC_NAME}: {url}: {msg}"
-            logger.error(msg)
-            return {"message": msg}, 500
+            return_msg = f"Internal Server Error: method "
+            f"{FUNC_NAME}: {url}: {msg}"
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return {"message": return_msg}, 500
 
         if item is None:
             msg = f"{name} with {key_name} of {key} not found"
@@ -408,14 +406,16 @@ class ModelResource(DBBaseResource):
             item.delete()
         except IntegrityError as err:
             self.model_class.db.session.rollback()
-            logger.error(msg)
-            return {"message": msg}, 400
+            msg = err.args[0]
+            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            return {"message": return_msg}, 400
 
         except Exception as err:
             name = self.model_class._class()
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            logger.error(msg)
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {"message": f"An error occurred deleting the {name}: {msg}."},
                 500,

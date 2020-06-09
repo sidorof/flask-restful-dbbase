@@ -4,11 +4,9 @@ This module implements a starting point for model resources.
 
 """
 from os import path
-from inspect import signature
 
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource
 from dbbase.utils import xlate
-from ..utils import check_existing_id, check_mismatch_ids
 
 
 class DBBaseResource(Resource):
@@ -26,10 +24,67 @@ class DBBaseResource(Resource):
         explicit name if necessary.
 
     serial_fields: if left as None, it uses the serial list from
-        the model class. However, it can be a list of field names
-        or
+        the model class. Left as None, it will default to the
+        underlying model.
 
+    serial_field_relations: can customize how relationship variables
+        are presented in output.
 
+    before_commit/after_commit: These variables are designed to extend
+        the capabilities of the methods be enabling a function or
+        class to modify the data just prior to commit, or after. By
+        using these, it is possible to send data to message queues,
+        adjust the data, or otherwise change the data.
+
+        There are expectations of about the functions/classes.
+
+        Format for a before/after function:
+
+        `def myfunc(resource_self, item, status_code):`
+
+        Args:
+            resource_self: (obj) : This is the self of the resource.
+                This provides access to the resource itself.
+            item: (obj) : This is SQLAlchemy record.
+            status_code (int) : If due to the processing that status_code
+                should change, you can change it here. Otherwise, simply
+                return it.
+        Returns:
+            item: (obj) : The modified record
+            status_code (int) : The possibly altered response status_code
+
+        Example of a Class:
+        A class can be used to hold additional data.
+        This example shows how a resource can receive a POSTed object, but
+        return the job created as a result instead.
+
+        A class requires that a `run` function be implemented with the
+        input variables as shown below.
+
+        class JobCreator(object):
+            def __init__(self, class_name):
+                self.Job = class_name
+
+            def run(self, resource_self, item, status_code):
+                # obj_self gives access resource characteristics
+                # but not used in this case
+                data = item.to_dict(to_camel_case=False)
+                job = self.Job()
+                job = self.Job(
+                    owner_id=data['owner_id'],
+                    model_id=data['id'],
+                    job_type_id=0,
+                    status_id=0
+                ).save()
+                if resource_self.serial_fields is None:
+                    resource_self.serial_fields = {}
+                resource_self.serial_fields['post'] = \
+                    self.Job.get_serial_fields()
+
+                # job submitted here ->
+
+                status_code = 202
+                return job, status_code
 
     """
 
@@ -62,7 +117,9 @@ class DBBaseResource(Resource):
             key (str | list) : In the case of multiple primary keys
                 a list of keys is returned.
         """
-        columns = cls.get_obj_params(column_props=["primary_key", "type"])
+        columns = cls.model_class.filter_columns(
+            column_props=["primary_key", "type"]
+        )
         if formatted:
             keys = []
             for key, value in columns.items():
@@ -78,21 +135,19 @@ class DBBaseResource(Resource):
         return keys if len(keys) > 1 else keys[0]
 
     @classmethod
-    def get_obj_params(cls, column_props=None):
+    def get_obj_params(cls):
         """get_obj_params
 
         This is a convenience function for getting documentation
         parameters from the model class.
 
-        Args:
-            column_props: (None | list) : filtered properties
-
         Returns:
             (dict) : The object properties of the model class
+
         """
-        return cls.model_class.db.doc_table(
-            cls.model_class, column_props=column_props
-        )[cls.model_class._class()]["properties"]
+        return cls.model_class.db.doc_table(cls.model_class)[
+            cls.model_class._class()
+        ]["properties"]
 
     @staticmethod
     def format_key(key, key_type):
@@ -124,59 +179,151 @@ class DBBaseResource(Resource):
         return [url, url_with_id]
 
     @classmethod
-    def get_meta(cls):
+    def get_meta(cls, method=None):
         """
         This function returns the settings for the resource.
 
+        Args:
+            method: (str : None) : choices are get/post/put/patch/delete.
+
+        Returns:
+            meta_data (dict) : A dict with the resource characteristics.
+            If a method is preferred, the focus will be narrowed to that
+            method.
+
+        The intent of this function is to show relevant information for someone
+        interacting with an API.
+
         """
-        tmp = {
-            "model_class": cls.model_class,
+        db = cls.model_class.db
+
+        doc = {
+            "model_class": cls.model_class._class(),
             "url_prefix": cls.url_prefix,
-            "output": {
-                "serial_fields": cls.serial_fields,
-                "serial_field_relations": cls.serial_field_relations,
-            },
-            "input": {
-                "use_db": cls.use_db,
-                "default_sort": cls.default_sort,
-                "requires_parameter": cls.requires_parameter,
-                "fields": cls.fields,
-            },
+            "url": cls.create_url(),
         }
 
-        tmp["url"] = cls.get_base_url()
+        doc["methods"] = {}
 
-        methods = [
-            method
-            for method in [
-                # "head",
-                # "options",
-                "get",
-                "post",
-                "put",
-                "patch",
-                "delete",
-            ]
-            if hasattr(cls, method)
-        ]
-        tmp["methods"] = methods
-
-        if cls.method_decorators is None:
-            tmp["method_decorators"] = None
-        elif isinstance(cls.method_decorators, list):
-            tmp["method_decorators"] = [
-                func.__name__ for func in cls.method_decorators
-            ]
-        elif isinstance(cls.method_decorators, dict):
-            tmp_md = {}
-            for key, value in cls.method_decorators.items():
-                tmp_md[key] = [func.__name__ for func in value]
-            tmp["method_decorators"] = tmp_md
+        if method is None:
+            # this is done to force order without OrderedDict
+            for method in ["get", "post", "put", "patch", "delete"]:
+                if hasattr(cls, method):
+                    doc["methods"][method] = cls._meta_method(method)
         else:
-            tmp["method_decorators"] = cls.method_decorators
+            doc["method"][method] = cls._meta_method(method)
 
-        tmp["parser"] = cls.display_parser()
-        return tmp
+        doc["table"] = db.doc_table(cls.model_class)
+
+        return doc
+
+    @classmethod
+    def _meta_method(cls, method):
+        """
+        This function builds the dict meta data object for a specific method.
+
+        Args:
+            method: (str) : The method to be documented.
+        """
+        db = cls.model_class.db
+
+        method_dict = {}
+
+        if method in ["get", "put", "patch", "delete"]:
+            # NOTE: need to identify a collection resource here
+            method_dict["url"] = cls.get_urls()[1]
+
+        method_dict["requirements"] = cls._meta_method_decorators(method)
+
+        if method in ["get", "delete"]:
+            key = cls.get_key()
+            if isinstance(key, list):
+                method_dict["input"] = [
+                    dict(key, db.doc_column(cls.model_class, key_part))
+                    for key_part in key
+                ]
+            else:
+                method_dict["input"] = {
+                    key: db.doc_column(cls.model_class, key)
+                }
+
+        else:
+            # select all columns that are not read only
+            method_dict["input"] = cls.model_class.filter_columns(
+                column_props=["!readOnly"], to_camel_case=True,
+            )
+
+        method_dict["responses"] = cls._meta_method_response(method)
+
+        return method_dict
+
+    @classmethod
+    def _meta_method_decorators(cls, method):
+        # method decorators go in as requirements
+
+        requirements = []
+        if isinstance(cls.method_decorators, list):
+            requirements = [func.__name__ for func in cls.method_decorators]
+        elif isinstance(cls.method_decorators, dict):
+            if method in cls.method_decorators:
+                requirements = [
+                    func.__name__ for func in cls.method_decorators[method]
+                ]
+
+        return requirements
+
+    @classmethod
+    def _meta_method_response(cls, method):
+        """ _meta_method_response
+
+        The real way to do this:
+
+        NOTE: Develop a resolved list of serial fields and serial field
+        relations. Then pass both a doc function and use the
+        serialization routines to follow relationships to the source.
+        This would capture the detail associated with the relationships
+        as well. Part of the issue is that related serializations work
+        well with instantiated data, because the related classes are
+        available when using to_dict(). However, the related classes
+        within a class method might need to plumb metadata(?) to get
+        all the pieces.
+        """
+        db = cls.model_class.db
+
+        outputs = {}
+
+        if isinstance(cls.serial_fields, list):
+            serial_fields = cls.serial_fields[:]
+        elif isinstance(cls.serial_fields, dict):
+            if method in cls.serial_fields:
+                serial_fields = cls.serial_fields[method][:]
+        if not outputs:
+            serial_fields = cls.model_class.get_serial_fields()
+
+        # this does not matter now, but will later
+        # if isinstance(cls.serial_field_relations, list):
+        #     outputs["field relations"] = cls.serial_field_relations[:]
+        # elif isinstance(cls.serial_field_relations, dict):
+        #     if method in cls.serial_field_relations:
+        #         outputs["field relations"] = cls.serial_field_relations[
+        #             method
+        #         ][:]
+        #
+        # if "field relations" not in outputs:
+        #     if cls.model_class.SERIAL_FIELD_RELATIONS is not None:
+        #         outputs[
+        #             "field relations"
+        #         ] = cls.model_class.SERIAL_FIELD_RELATIONS
+
+        if method != "delete":
+            doc = db.doc_table(cls.model_class, serial_fields=serial_fields)[
+                cls.model_class._class()
+            ]
+            outputs["fields"] = doc["properties"]
+
+            # here is where the default sort would go for collections
+
+        return outputs
 
     @classmethod
     def _check_key(cls, kwargs):
@@ -205,7 +352,7 @@ class DBBaseResource(Resource):
         else:
             serial_fields = cls.serial_fields
 
-        #if serial_fields is None:
+        # if serial_fields is None:
         #    serial_fields = cls.model_class.get_serial_fields()
 
         return serial_fields
@@ -277,7 +424,7 @@ class DBBaseResource(Resource):
         url = path.join(url_prefix, url_name)
         return f"{url}"
 
-    def screen_data(self, data, obj_params, skip_missing_data=False):
+    def screen_data(self, data, skip_missing_data=False):
         """
         Assumes data is deserialized
 
@@ -310,26 +457,21 @@ class DBBaseResource(Resource):
         """
         # filtering first
         errors = []
-        obj_params = self._exclude_read_only(obj_params)
-        data = self._remove_unnecessary_data(data, obj_params)
+        data = self._remove_unnecessary_data(data)
 
         if not skip_missing_data:
-            required = self._get_required(obj_params)
-
             # check required first
-            missing_columns = self._missing_required(data, required)
-
+            missing_columns = self._missing_required(data)
             if missing_columns:
                 errors.append(missing_columns)
-
         # check lengths of text
-        tmp_errors = self._check_max_text_lengths(data, obj_params)
+        tmp_errors = self._check_max_text_lengths(data)
 
         if tmp_errors:
             errors.extend(tmp_errors)
 
         # check for numerics -- skipping check integer size for now
-        tmp_errors = self._check_numeric_casting(data, obj_params)
+        tmp_errors = self._check_numeric_casting(data)
         if tmp_errors:
             errors.extend(tmp_errors)
 
@@ -338,8 +480,8 @@ class DBBaseResource(Resource):
 
         return True, data
 
-    @staticmethod
-    def _check_numeric_casting(data, obj_params):
+    @classmethod
+    def _check_numeric_casting(cls, data):
         """ _check_numeric_casting
 
         This function just makes a quick to see if a numeric field
@@ -348,9 +490,13 @@ class DBBaseResource(Resource):
         No check is made on integer or float sizes.
         """
         errors = []
+        column_types = cls.model_class.filter_columns(
+            column_props=["type"], only_props=True
+        )
+
         for field, value in data.items():
-            if "type" in obj_params[field]:
-                if obj_params[field]["type"] in ["integer", "float"]:
+            if "type" in column_types[field]:
+                if column_types[field]["type"] in ["integer", "float"]:
                     if isinstance(value, str):
                         if not value.isnumeric():
                             errors.append(
@@ -358,89 +504,66 @@ class DBBaseResource(Resource):
                             )
         return errors
 
-    @staticmethod
-    def _check_max_text_lengths(data, obj_params):
+    @classmethod
+    def _check_max_text_lengths(cls, data):
         """ _check_max_text_lengths
 
         This function compares a maximum length, if available with
         the data value.
         """
+        columns = cls.model_class.filter_columns(
+            column_props=["maxLength"], only_props=True
+        )
         errors = []
-        for field, value in data.items():
-            if "maxLength" in obj_params[field]:
-                if len(value.strip()) > obj_params[field]["maxLength"]:
-                    max_len = obj_params[field]["maxLength"]
+        for column, col_length in columns.items():
+            max_len = col_length["maxLength"]
+            if column in data:
+                value = data[column]
 
+                if len(value.strip()) > max_len:
                     errors.append(
                         {
-                            field: "The data exceeds the maximum length "
+                            column: "The data exceeds the maximum length "
                             f"{max_len}"
                         }
                     )
-
         return errors
 
-    @staticmethod
-    def _remove_unnecessary_data(data, obj_params):
+    @classmethod
+    def _remove_unnecessary_data(cls, data):
         """ _remove_unnecessary_data
 
         This function removes any fields that are unnecessary.
-        It is assumed that obj_params has been purged of read only
-        fields first.
+
         """
+        column_types = cls.model_class.filter_columns(
+            column_props=["!readOnly"], only_props=True
+        )
         return dict(
             [
                 (field, value)
                 for field, value in data.items()
-                if field in obj_params
+                if field in column_types
             ]
         )
 
-    @staticmethod
-    def _missing_required(data, required):
+    @classmethod
+    def _missing_required(cls, data):
         """ _missing_required
 
         This function reports required fields that are missing data.
         """
+        # NOTE: filtering needs improvement, includes relationships
+        #       this is due to no nullable in relationship
+        requireds = cls.model_class.filter_columns(
+            column_props=["!nullable"], only_props=True
+        )
         missing_columns = []
-        for column in required:
-            if column not in data:
-                missing_columns.append(column)
-
+        for column in requireds.keys():
+            if "nullable" in requireds[column]:
+                if column not in data:
+                    missing_columns.append(column)
         if missing_columns:
             return {"missing_columns": missing_columns}
 
         return None
-
-    @staticmethod
-    def _exclude_read_only(obj_params):
-        """_exclude_read_only
-
-        This function filters out read only fields from obj_params.
-
-        Args:
-            obj_params: (dict) : the properties for a table
-        """
-        obj_params = dict(
-            [
-                (column, value)
-                for column, value in obj_params.items()
-                if "readOnly" not in value
-            ]
-        )
-        return obj_params
-
-    @staticmethod
-    def _get_required(obj_params):
-        """_get_required
-
-        This function makes a list of the columns that are required.
-
-        Args:
-            obj_params: (dict) : the properties for a table
-        """
-        return [
-            column
-            for column, values in obj_params.items()
-            if values.get("nullable") is False
-        ]

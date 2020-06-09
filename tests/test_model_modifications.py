@@ -4,21 +4,22 @@ This module tests ways to use the sample resources beyond the
 basic REST functionality.
 
 Tests
-* linkage with permission decorators : such decorators can be connected with the methods to limit or filter access to the
-database such as by owner or staff.
+* linkage with permission decorators : such decorators can be connected
+with the methods to limit or filter access to the database such as by owner
+or staff.
 
 * before_commit : Prior to a save/delete can make adjustments to a
 record as necessary..
 
-* after_commit : After saving, a function can be run, by method, that could possiby do such things as initiate a job and return
-the job particulars in place of the original sample.
+* after_commit : After saving, a function can be run, by method, that could
+possiby do such things as initiate a job and return the job particulars in
+place of the original sample.
 
 """
 import unittest
 import logging
 import json
-from functools import wraps
-from datetime import date, datetime
+from datetime import datetime
 
 import flask
 import flask_restful
@@ -28,15 +29,14 @@ from flask_restful_dbbase.resources import ModelResource
 
 logging.disable(logging.CRITICAL)
 
-TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-
 
 def create_samples(db):
     """
     create sample samples that have permissions on owner_id
     """
+
     class Sample(db.Model):
-        __tablename__ = 'sample'
+        __tablename__ = "sample"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
         owner_id = db.Column(db.Integer, nullable=False)
         param1 = db.Column(db.Integer, nullable=False)
@@ -44,7 +44,7 @@ def create_samples(db):
         status_id = db.Column(db.SmallInteger, default=0, nullable=True)
 
     class OtherSample(db.Model):
-        __tablename__ = 'other_sample'
+        __tablename__ = "other_sample"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
         owner_id = db.Column(db.Integer, nullable=False)
 
@@ -64,8 +64,9 @@ def create_models(db):
     """
     create models that have permissions on owner_id
     """
+
     class MlModel(db.Model):
-        __tablename__ = 'ml_model'
+        __tablename__ = "ml_model"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
         owner_id = db.Column(db.Integer, nullable=False)
         param1 = db.Column(db.Integer, nullable=False)
@@ -82,19 +83,23 @@ def create_models(db):
         #       add relation here
         owner_id = db.Column(db.Integer, nullable=False)
         model_id = db.Column(db.Integer, nullable=False)
-        start_time = db.Column(db.DateTime, default=datetime.now, nullable=False)
+        start_time = db.Column(
+            db.DateTime, default=datetime.now, nullable=False
+        )
         end_time = db.Column(db.DateTime)
         job_type_id = db.Column(db.Integer, nullable=False)
         status_id = db.Column(db.SmallInteger, default=0, nullable=True)
 
     class SmallBefore(db.Model):
         """ small and generic """
-        __tablename__ = 'small_before'
+
+        __tablename__ = "small_before"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
 
     class SmallAfter(db.Model):
         """ small and generic """
-        __tablename__ = 'small_after'
+
+        __tablename__ = "small_after"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
 
     db.create_all()
@@ -103,7 +108,6 @@ def create_models(db):
 
 
 class TestModelProcResource(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         """
@@ -146,7 +150,7 @@ class TestModelProcResource(unittest.TestCase):
 
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
-                    if data.get('ownerId') == user_id:
+                    if data.get("ownerId") == user_id:
                         return data
 
                     raise ValueError("The user id does not match the owner id")
@@ -158,7 +162,7 @@ class TestModelProcResource(unittest.TestCase):
 
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
-                    if data.get('ownerId') == user_id:
+                    if data.get("ownerId") == user_id:
                         return qry, data
 
                     raise ValueError("The user id does not match the owner id")
@@ -170,7 +174,7 @@ class TestModelProcResource(unittest.TestCase):
 
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
-                    if data.get('ownerId') == user_id:
+                    if data.get("ownerId") == user_id:
                         return qry, data
 
                     raise ValueError("The user id does not match the owner id")
@@ -182,7 +186,9 @@ class TestModelProcResource(unittest.TestCase):
                     qry = qry.filter_by(owner_id=user_id)
                     return qry
 
-            cls.api.add_resource(OtherSampleResource, *OtherSampleResource.get_urls())
+            cls.api.add_resource(
+                OtherSampleResource, *OtherSampleResource.get_urls()
+            )
             cls.api.add_resource(SampleResource, *SampleResource.get_urls())
             cls.needs_setup = False
 
@@ -205,7 +211,6 @@ class TestModelProcResource(unittest.TestCase):
         cls.db = None
         del cls.db
 
-
     def test_get_with_input_processing(self):
         """ test_get_with_input_processing
 
@@ -225,11 +230,11 @@ class TestModelProcResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'id': 1,
-                    'ownerId': 1,
-                    'param1': 1,
-                    'param2': 2,
-                    'statusId': 0,
+                    "id": 1,
+                    "ownerId": 1,
+                    "param1": 1,
+                    "param2": 2,
+                    "statusId": 0,
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -242,11 +247,9 @@ class TestModelProcResource(unittest.TestCase):
             res = client.get(f"/sample/{id}", headers=self.headers)
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
-                res.get_json(),
-                {'message': 'Sample with id of 2 not found'},
+                res.get_json(), {"message": "Sample with id of 2 not found"},
             )
             self.assertEqual(res.content_type, "application/json")
-
 
     def test_post_with_input_processing(self):
         """ test_post_with_input_processing
@@ -265,14 +268,12 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/sample",
-                data=json.dumps(sample),
-                headers=self.headers
+                f"/sample", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': 'The user id does not match the owner id'},
+                {"message": "The user id does not match the owner id"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -283,26 +284,18 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/sample",
-                data=json.dumps(sample),
-                headers=self.headers
+                f"/sample", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 201)
 
             # remove the id
             result = res.get_json()
-            result.pop('id')
+            result.pop("id")
             self.assertDictEqual(
                 result,
-                {
-                    'ownerId': 1,
-                    'param1': 5,
-                    'param2': 6,
-                    'statusId': 0,
-                },
+                {"ownerId": 1, "param1": 5, "param2": 6, "statusId": 0},
             )
             self.assertEqual(res.content_type, "application/json")
-
 
     def test_put_with_input_processing(self):
         """ test_put_with_input_processing
@@ -317,49 +310,43 @@ class TestModelProcResource(unittest.TestCase):
         here, and a specialized filter to the query is needed to complete?
         That is the reason that the query passes through the function.
         """
-        sample = { "id": 1, "ownerId": 2, "param1": 5, "param2": 6}
+        sample = {"id": 1, "ownerId": 2, "param1": 5, "param2": 6}
 
         # mismatch owner id
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/sample/1",
-                data=json.dumps(sample),
-                headers=self.headers
+                f"/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': 'The user id does not match the owner id'},
+                {"message": "The user id does not match the owner id"},
             )
             self.assertEqual(res.content_type, "application/json")
 
-
-        sample = { "id": 1, "ownerId": 1, "param1": 5, "param2": 6}
+        sample = {"id": 1, "ownerId": 1, "param1": 5, "param2": 6}
 
         # owner id matches user i
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/sample/1",
-                data=json.dumps(sample),
-                headers=self.headers
+                f"/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'id': 1,
-                    'ownerId': 1,
-                    'param1': 5,
-                    'param2': 6,
-                    'statusId': 0
+                    "id": 1,
+                    "ownerId": 1,
+                    "param1": 5,
+                    "param2": 6,
+                    "statusId": 0,
                 },
             )
             self.assertEqual(res.content_type, "application/json")
-
 
     def test_patch_with_input_processing(self):
         """ test_patch_with_input_processing
@@ -374,45 +361,40 @@ class TestModelProcResource(unittest.TestCase):
         here, and a specialized filter to the query is needed to complete?
         That is the reason that the query passes through the function.
         """
-        sample = { "id": 1, "ownerId": 2, "param1": 5, "param2": 6}
+        sample = {"id": 1, "ownerId": 2, "param1": 5, "param2": 6}
 
         # mismatch owner id
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
             res = client.patch(
-                f"/sample/1",
-                data=json.dumps(sample),
-                headers=self.headers
+                f"/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': 'The user id does not match the owner id'},
+                {"message": "The user id does not match the owner id"},
             )
             self.assertEqual(res.content_type, "application/json")
 
-
-        sample = { "id": 1, "ownerId": 1, "param1": 5, "param2": 6}
+        sample = {"id": 1, "ownerId": 1, "param1": 5, "param2": 6}
 
         # owner id matches user i
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
             res = client.patch(
-                f"/sample/1",
-                data=json.dumps(sample),
-                headers=self.headers
+                f"/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'id': 1,
-                    'ownerId': 1,
-                    'param1': 5,
-                    'param2': 6,
-                    'statusId': 0
+                    "id": 1,
+                    "ownerId": 1,
+                    "param1": 5,
+                    "param2": 6,
+                    "statusId": 0,
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -435,41 +417,30 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(
-                f"/sample/100",
-                headers=self.headers
-            )
+            res = client.delete(f"/sample/100", headers=self.headers)
 
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
-                res.get_json(),
-                {'message': 'Sample with id of 100 not found'},
+                res.get_json(), {"message": "Sample with id of 100 not found"},
             )
             self.assertEqual(res.content_type, "application/json")
-
-
-        sample = { "id": 1, "ownerId": 1, "param1": 5, "param2": 6}
 
         # owner id matches user id
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(
-                f"/other-sample/1",
-                headers=self.headers
-            )
+            res = client.delete(f"/other-sample/1", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': 'OtherSample with id of 1 is deleted'},
+                {"message": "OtherSample with id of 1 is deleted"},
             )
             self.assertEqual(res.content_type, "application/json")
 
 
 class JobCreator(object):
-
     def __init__(self, class_name):
         self.Job = class_name
 
@@ -479,14 +450,14 @@ class JobCreator(object):
         data = item.to_dict(to_camel_case=False)
         job = self.Job()
         job = self.Job(
-            owner_id=data['owner_id'],
-            model_id=data['id'],
+            owner_id=data["owner_id"],
+            model_id=data["id"],
             job_type_id=0,
-            status_id=0
+            status_id=0,
         ).save()
         if resource_self.serial_fields is None:
             resource_self.serial_fields = {}
-        resource_self.serial_fields['post'] = self.Job.get_serial_fields()
+        resource_self.serial_fields["post"] = self.Job.get_serial_fields()
 
         # job submitted here ->
 
@@ -495,13 +466,13 @@ class JobCreator(object):
 
 
 class GenericAdjustment(object):
-
     def __init__(self, *args, **kwargs):
         pass
 
     def run(self, resource_self, item, status_code):
         # change status code to teapot
         return item, 418
+
 
 def generic_adjustment(resource_self, item, status_code):
     return item, 418
@@ -513,6 +484,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
     This class tests creating a sample, submitting it to a queue
     as a job, returning the job particulars instead.
     """
+
     @classmethod
     def setUpClass(cls):
         """
@@ -538,9 +510,8 @@ class TestModelBeforeAftertResource(unittest.TestCase):
 
             class MlModel(ModelResource):
                 model_class = cls.MlModel
-                after_commit = {
-                    "post": JobCreator(class_name=cls.Job)
-                }
+                after_commit = {"post": JobCreator(class_name=cls.Job)}
+
             cls.api.add_resource(Job, *Job.get_urls())
             cls.api.add_resource(MlModel, *MlModel.get_urls())
 
@@ -601,25 +572,23 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/ml-model",
-                data=json.dumps(new_model),
-                headers=self.headers
+                f"/ml-model", data=json.dumps(new_model), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 202)
 
             # popping the start time, it will never match
             result = res.get_json()
-            result.pop('startTime')
+            result.pop("startTime")
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'id': 1,
-                    'ownerId': 2,
-                    'modelId': 1,
-                    'statusId': 0,
-                    'jobTypeId': 0,
-                    'endTime': None,
+                    "id": 1,
+                    "ownerId": 2,
+                    "modelId": 1,
+                    "statusId": 0,
+                    "jobTypeId": 0,
+                    "endTime": None,
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -632,9 +601,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-before",
-                data=json.dumps({}),
-                headers=self.headers
+                f"/small-before", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -645,7 +612,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.put(
                 f"/small-before/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 418)
 
@@ -658,7 +625,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.patch(
                 f"/small-before/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 418)
@@ -671,13 +638,13 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.delete(
                 f"/small-before/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 418)
 
         # switch to class based adjustments
-        a = self.app.view_functions['smallbefore']
+        a = self.app.view_functions["smallbefore"]
         a.view_class.before_commit = {
             "post": GenericAdjustment(),
             "put": GenericAdjustment(),
@@ -689,9 +656,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-before",
-                data=json.dumps({}),
-                headers=self.headers
+                f"/small-before", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -702,7 +667,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.put(
                 f"/small-before/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 418)
 
@@ -715,7 +680,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.patch(
                 f"/small-before/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 418)
@@ -728,7 +693,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.delete(
                 f"/small-before/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 418)
@@ -741,9 +706,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-after",
-                data=json.dumps({}),
-                headers=self.headers
+                f"/small-after", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -754,7 +717,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.put(
                 f"/small-after/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 418)
 
@@ -767,13 +730,13 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.patch(
                 f"/small-after/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 418)
 
         # switch to class based adjustments
-        a = self.app.view_functions['smallafter']
+        a = self.app.view_functions["smallafter"]
         a.view_class.after_commit = {
             "post": GenericAdjustment(),
             "put": GenericAdjustment(),
@@ -784,9 +747,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-after",
-                data=json.dumps({}),
-                headers=self.headers
+                f"/small-after", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -797,7 +758,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.put(
                 f"/small-after/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 418)
 
@@ -810,7 +771,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.patch(
                 f"/small-after/{small.id}",
                 data=json.dumps(small.to_dict()),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 418)
