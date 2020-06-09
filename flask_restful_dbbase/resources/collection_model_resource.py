@@ -3,10 +3,11 @@
 This module implements a starting point for collection model resources.
 
 """
-from sqlalchemy.exc import IntegrityError
 from flask_restful import request
 from .dbbase_resource import DBBaseResource
-#from . import db
+import logging
+
+logger = logging.getLogger(__file__)
 
 
 class CollectionModelResource(DBBaseResource):
