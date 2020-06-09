@@ -5,7 +5,6 @@ from sqlalchemy import Table
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
 
 from dbbase import DB
-from dbbase.base import _filter_column_props
 from dbbase.model import Model
 from dbbase.column_types import WriteOnlyColumn
 
@@ -43,7 +42,6 @@ class DBBase(SQLAlchemy):
         setattr(DBBase, 'doc_tables', DB.doc_tables)
         setattr(DBBase, 'doc_table', DB.doc_table)
         setattr(DBBase, 'doc_column', DB.doc_column)
-        DBBase._filter_column_props = _filter_column_props
         setattr(DBBase, '_process_table_args', DB._process_table_args)
 
         # add flask_sqlalchemy specific items to stop list
