@@ -1,4 +1,4 @@
-# flask_restful/resources/model_resource.py
+# flask_restful_dbbase/resources/model_resource.py
 """"
 This module implements a starting point for model resources.
 

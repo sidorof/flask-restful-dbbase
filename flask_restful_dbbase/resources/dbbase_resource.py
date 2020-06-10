@@ -1,4 +1,4 @@
-# flask_restful/resources/dbbase_resource.py
+# flask_restful_dbbase/resources/dbbase_resource.py
 """"
 This module implements a starting point for model resources.
 
@@ -196,25 +196,36 @@ class DBBaseResource(Resource):
 
         """
         db = cls.model_class.db
-
-        doc = {
-            "model_class": cls.model_class._class(),
-            "url_prefix": cls.url_prefix,
-            "url": cls.create_url(),
-        }
-
-        doc["methods"] = {}
-
+        method_list = ["get", "post", "put", "patch", "delete"]
         if method is None:
+            doc = {
+                "model_class": cls.model_class._class(),
+                "url_prefix": cls.url_prefix,
+                "url": cls.create_url(),
+            }
+            doc["methods"] = {}
             # this is done to force order without OrderedDict
             for method in ["get", "post", "put", "patch", "delete"]:
                 if hasattr(cls, method):
                     doc["methods"][method] = cls._meta_method(method)
+            doc["table"] = db.doc_table(cls.model_class)
+
         else:
-            doc["method"][method] = cls._meta_method(method)
-
-        doc["table"] = db.doc_table(cls.model_class)
-
+            # just the method
+            #if method not in method_list:
+                #methods = str(cls.model_class.methods).lower()
+                #raise ValueError(
+                    #f'Support methods for this resource are: {methods}')
+            if hasattr(cls, method):
+                doc = {
+                    "method": {
+                        method: cls._meta_method(method)
+                    }
+                }
+            else:
+                raise ValueError(
+                    f"Method '{method}' is not found for this resource"
+                )
         return doc
 
     @classmethod
@@ -421,8 +432,7 @@ class DBBaseResource(Resource):
 
         url_prefix = cls.url_prefix
 
-        url = path.join(url_prefix, url_name)
-        return f"{url}"
+        return path.join(url_prefix, url_name)
 
     def screen_data(self, data, skip_missing_data=False):
         """
