@@ -1,4 +1,4 @@
-# tests/test_sample_tweaks.py
+# tests/test_model_modifications.py
 """
 This module tests ways to use the sample resources beyond the
 basic REST functionality.

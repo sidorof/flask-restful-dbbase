@@ -97,8 +97,6 @@ class TestMetaModelResource(unittest.TestCase):
 
             res = client.get(f"/product/meta", headers=self.headers)
 
-            print(res.get_json())
-            input("ready")
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
@@ -551,8 +549,6 @@ class TestMetaModelResource(unittest.TestCase):
 
             self.assertEqual(res.status_code, 200)
 
-            print(res.get_json())
-            input("ready")
             self.assertDictEqual(
                 res.get_json(),
                 {
