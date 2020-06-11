@@ -4,14 +4,14 @@ from dbbase import DB
 import flask
 import flask_restful
 from flask_restful_dbbase import DBBase
-from flask_restful_dbbase.resources import ModelResource, MetaResource
+from flask_restful_dbbase.resources import ModelResource, CollectionModelResource, MetaResource
 
 
 def create_models(db):
     """create a sample models"""
 
     class Product(db.Model):
-        __tablename__ = "author"
+        __tablename__ = "product"
 
         id = db.Column(db.Integer, nullable=True, primary_key=True)
         name = db.Column(db.String(50), nullable=False)
@@ -49,21 +49,34 @@ class TestMetaModelResource(unittest.TestCase):
             class ProductResource(ModelResource):
                 model_class = cls.Product
 
+            class ProductCollection(CollectionModelResource):
+                model_class = cls.Product
+
             class ProductMetaResource(MetaResource):
                 resource_class = ProductResource
+
+            class ProductMetaCollection(MetaResource):
+                resource_class = ProductCollection
 
             cls.api.add_resource(
                 ProductResource, *ProductResource.get_urls()
             )
             cls.api.add_resource(
-                ProductMetaResource, ProductMetaResource.get_urls()
+                ProductMetaResource, *ProductMetaResource.get_urls()
             )
 
-            cls.needs_setup = False
+            cls.api.add_resource(
+                ProductMetaCollection,
+                *ProductMetaCollection.get_urls()
+            )
 
             cls.ProductResource = ProductResource
 
             cls.ProductMetaResource = ProductMetaResource
+
+            cls.ProductMetaCollection = ProductMetaCollection
+
+            cls.needs_setup = False
 
         headers = {"Content-Type": "application/json"}
         cls.set_db = set_db
@@ -76,18 +89,29 @@ class TestMetaModelResource(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.session.commit()
         cls.db.session.close()
-        cls.Product = None
-
         cls.db.drop_all()
         cls.db.Model.metadata.clear()
+        cls.Product = None
         cls.db = None
         del cls.db
 
     def test_default_class_variables(self):
 
         self.assertIsNone(MetaResource.resource_class)
-        self.assertIsNone(MetaResource.url_prefix)
-        self.assertEqual(MetaResource.url_name, "meta")
+        self.assertEqual(MetaResource.url_prefix, "/meta")
+        self.assertIsNone(MetaResource.url_name)
+
+    def test_get_urls(self):
+
+        self.assertListEqual(
+            self.ProductMetaResource.get_urls(),
+            ['/meta/product/single']
+        )
+
+        self.assertListEqual(
+            self.ProductMetaCollection.get_urls(),
+            ['/meta/product/collection']
+        )
 
     def test_get(self):
 
@@ -95,7 +119,7 @@ class TestMetaModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.get(f"/product/meta", headers=self.headers)
+            res = client.get(f"/meta/product/single", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -544,7 +568,7 @@ class TestMetaModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.get(
-                f"/product/meta?method=get", headers=self.headers
+                f"/meta/product/single?method=get", headers=self.headers
             )
 
             self.assertEqual(res.status_code, 200)
@@ -626,7 +650,7 @@ class TestMetaModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.get(
-                f"/product/meta?method=bad", headers=self.headers
+                f"/meta/product/single?method=bad", headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)

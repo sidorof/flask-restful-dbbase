@@ -8,7 +8,9 @@ Assumes a get method.
 """
 from os import path
 from flask import request
-from flask_restful_dbbase.resources import Resource
+from . import (
+    Resource, CollectionModelResource, ModelResource
+)
 
 
 class MetaResource(Resource):
@@ -47,8 +49,9 @@ class MetaResource(Resource):
 
     """
     resource_class = None
-    url_prefix = None
-    url_name = 'meta'
+    url_prefix = '/meta'
+    url_name = None
+
 
     def get(self):
 
@@ -67,9 +70,41 @@ class MetaResource(Resource):
 
     @classmethod
     def get_urls(cls):
+        """ get_urls
 
-        if cls.url_prefix is None:
-            url = path.join(cls.resource_class.create_url(), cls.url_name)
+        This function returns a url for the resource. To keep consistency
+        with the get_urls functions in other resources, it returns the
+        url in a list, even though there would never be more than one.
+
+        The approach enables a code consistent approach when using the
+        api.add_resource function.
+
+        Example:
+
+        api.add_resource(BookResource, *BookResource.get_urls())
+        api.add_resource(BookCollection, *BookCollection.get_urls())
+        api.add_resource(BookMetaResource, *BookMetaResource.get_urls())
+        api.add_resource(BookMetaCollection, *BookMetaCollection.get_urls())
+
+
+        """
+        if cls.url_name is None:
+            resource_url = cls.resource_class.create_url()
+            if resource_url.startswith('/'):
+                resource_url = resource_url[1:]
+            if issubclass(cls.resource_class, CollectionModelResource):
+                url = path.join(
+                    cls.url_prefix,
+                    resource_url,
+                    'collection'
+                )
+            else:
+                url = path.join(
+                    cls.url_prefix,
+                    resource_url,
+                    'single'
+                )
         else:
             url = path.join(url_prefix, cls.url_name)
-        return url
+
+        return [url]
