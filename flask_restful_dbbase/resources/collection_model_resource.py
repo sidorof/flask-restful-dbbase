@@ -17,20 +17,6 @@ class CollectionModelResource(DBBaseResource):
 
     This model class implements the base class.
 
-    model_class: a dbbase.Model
-    url_prefix: the portion of the path leading up to the resource
-        For example: /api/v2
-
-    url_path: the url_path defaults to a lower case version of the
-        the model_class name if left as None, but can have an
-        explicit name if necessary.
-
-    serial_fields: if left as None, it uses the serial list from
-        the model class. However, it can be a list of field names
-        or
-
-    max_page_size = None
-
     """
 
     process_get_input = None
@@ -51,6 +37,7 @@ class CollectionModelResource(DBBaseResource):
         return [cls.create_url()]
 
     def get(self):
+
         name = self.model_class._class()
         url = request.path
         if request.values:
@@ -62,6 +49,11 @@ class CollectionModelResource(DBBaseResource):
         else:
             data = request.args
 
+        query = self.model_class.query
+
+        if self.process_get_input is not None:
+            query = self.process_get_input(query, data)
+
         data = self.model_class.deserialize(data)
         # extract job params first -- filtered out below
         order_by = data.get("order_by", self.order_by)
@@ -70,20 +62,15 @@ class CollectionModelResource(DBBaseResource):
         page = data.get("page", None)
         debug = data.get("debug", None)
 
-        if debug == 'False':
+        if debug == "False":
             debug = False
 
         if page_size is not None:
             if self.max_page_size is not None:
-                page_size = min(
-                    int(page_size), self.max_page_size)
+                page_size = min(int(page_size), self.max_page_size)
+
         # for later
-        # query = request.values.get('query', None)
-
-        qry = self.model_class.query
-
-        if self.process_get_input is not None:
-            qry = self.process_get_input(qry, data)
+        # qquery = request.values.get('query', None)
 
         query_data = self.model_class.deserialize(data)
 
@@ -98,29 +85,29 @@ class CollectionModelResource(DBBaseResource):
         )
 
         for key, value in query_data.items():
-            qry = qry.filter(getattr(self.model_class, key) == value)
+            query = query.filter(getattr(self.model_class, key) == value)
 
         if order_by:
             if isinstance(order_by, list):
                 for order in order_by:
                     order = xlate(order, camel_case=False)
-                    qry = qry.order_by(getattr(self.model_class, order))
+                    query = query.order_by(getattr(self.model_class, order))
             else:
-                qry = qry.order_by(getattr(self.model_class, order_by))
+                query = query.order_by(getattr(self.model_class, order_by))
 
         if offset is not None:
-            qry = qry.offset(offset)
+            query = query.offset(offset)
 
         if page_size is not None:
             if offset is not None:
-                qry = qry.limit(page_size)
+                query = query.limit(page_size)
             else:
-                qry = qry.limit(page_size)
+                query = query.limit(page_size)
 
         if debug:
-            return {"query": str(qry)}, 200
+            return {"query": str(query)}, 200
 
-        qry = qry.all()
+        query = query.all()
         sfields, sfield_relations = self._get_serializations("get")
 
         try:
@@ -131,7 +118,7 @@ class CollectionModelResource(DBBaseResource):
                             serial_fields=sfields,
                             serial_field_relations=sfield_relations,
                         )
-                        for item in qry
+                        for item in query
                     ],
                 },
                 200,

@@ -46,12 +46,12 @@ class ModelResource(DBBaseResource):
         # the correct key test - raises error if improper url
         key_name, key = self._check_key(kwargs)
 
-        qry = self.model_class.query
+        query = self.model_class.query
         if self.process_get_input is not None:
-            qry = self.process_get_input(qry, kwargs)
+            query = self.process_get_input(query, kwargs)
 
         try:
-            item = qry.filter(
+            item = query.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
         except Exception as err:
@@ -90,12 +90,12 @@ class ModelResource(DBBaseResource):
         else:
             data = request.args
 
-        if self.process_post_input is not None:
-            try:
+        try:
+            if self.process_post_input is not None:
                 data = self.process_post_input(data, kwargs)
-            except Exception as err:
-                # NOTE uncertain about how much logging to do here
-                return {"message": err.args[0]}, 400
+        except Exception as err:
+            # NOTE uncertain about how much logging to do here
+            return {"message": err.args[0]}, 400
 
         status, data = self.screen_data(self.model_class.deserialize(data))
         if status is False:
