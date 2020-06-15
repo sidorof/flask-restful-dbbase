@@ -139,9 +139,10 @@ class TestModelProcResource(unittest.TestCase):
                 def process_get_input(self, qry, kwargs):
                     # assumes pretend decorator
                     # user_id = get_jwt_identity()
+
                     user_id = 1
                     qry = qry.filter_by(owner_id=user_id)
-                    return qry
+                    return True, qry
 
                 def process_post_input(self, data, kwargs):
                     # assumes pretend decorator
@@ -151,9 +152,13 @@ class TestModelProcResource(unittest.TestCase):
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
                     if data.get("ownerId") == user_id:
-                        return data
+                        return True, data
 
-                    raise ValueError("The user id does not match the owner id")
+                    msg = "The user id does not match the owner id"
+                    return (
+                        False,
+                        ({"message": msg}, 400)
+                    )
 
                 def process_put_input(self, qry, data, kwargs):
                     # assumes pretend decorator
@@ -163,9 +168,13 @@ class TestModelProcResource(unittest.TestCase):
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
                     if data.get("ownerId") == user_id:
-                        return qry, data
+                        return True, (qry, data)
 
-                    raise ValueError("The user id does not match the owner id")
+                    msg = "The user id does not match the owner id"
+                    return (
+                        False,
+                        ({"message": msg}, 400)
+                    )
 
                 def process_patch_input(self, qry, data, kwargs):
                     # assumes pretend decorator
@@ -175,16 +184,19 @@ class TestModelProcResource(unittest.TestCase):
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
                     if data.get("ownerId") == user_id:
-                        return qry, data
+                        return True, (qry, data)
 
-                    raise ValueError("The user id does not match the owner id")
+                    return (
+                        False,
+                        ({"message": "The user id does not match the owner id"}, 400)
+                    )
 
                 def process_delete_input(self, qry, kwargs):
                     # assumes pretend decorator
                     # user_id = get_jwt_identity()
                     user_id = 1
                     qry = qry.filter_by(owner_id=user_id)
-                    return qry
+                    return True, qry
 
             cls.api.add_resource(
                 OtherSampleResource, *OtherSampleResource.get_urls()
@@ -322,7 +334,7 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {"message": "The user id does not match the owner id"},
+                {"message": "The user id does not match the owner id"}
             )
             self.assertEqual(res.content_type, "application/json")
 

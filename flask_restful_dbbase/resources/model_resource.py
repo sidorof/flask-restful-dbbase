@@ -40,7 +40,7 @@ class ModelResource(DBBaseResource):
     def get(self, **kwargs):
         """ Get """
         url = request.path
-        FUNC_NAME = 'get'
+        FUNC_NAME = "get"
         name = self.model_class._class()
 
         # the correct key test - raises error if improper url
@@ -48,8 +48,18 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_get_input is not None:
-            query = self.process_get_input(query, kwargs)
+            status, result = self.process_get_input(query, kwargs)
+            if status is False:
+                # exit the scene, data should be a
+                # tuple of message and status
+                if isinstance(result, tuple):
+                    return result
+                else:
+                    func = self.process_get_input.__name__
+                    msg =  f"malformed error in {func}: {result}"
+                    return { "message": msg}, 500
 
+            query = result
         try:
             item = query.filter(
                 getattr(self.model_class, key_name) == key
@@ -77,7 +87,7 @@ class ModelResource(DBBaseResource):
 
     def post(self, *args, **kwargs):
         """ Post """
-        FUNC_NAME = 'post'
+        FUNC_NAME = "post"
         url = request.path
         status_code = 201
 
@@ -90,12 +100,20 @@ class ModelResource(DBBaseResource):
         else:
             data = request.args
 
-        try:
-            if self.process_post_input is not None:
-                data = self.process_post_input(data, kwargs)
-        except Exception as err:
-            # NOTE uncertain about how much logging to do here
-            return {"message": err.args[0]}, 400
+        if self.process_post_input is not None:
+            status, result = self.process_post_input(data, kwargs)
+
+            if status is False:
+                # exit the scene, result should be a
+                # tuple of message and status
+                if isinstance(result, tuple):
+                    return result
+                else:
+                    func = self.process_post_input.__name__
+                    msg =  f"malformed error in {func}: {result}"
+                    return { "message": msg}, 500
+
+            data = result
 
         status, data = self.screen_data(self.model_class.deserialize(data))
         if status is False:
@@ -167,7 +185,7 @@ class ModelResource(DBBaseResource):
 
         """
         url = request.path
-        FUNC_NAME = 'put'
+        FUNC_NAME = "put"
         status_code = 200
         try:
             key_name, key = self._check_key(kwargs)
@@ -186,17 +204,24 @@ class ModelResource(DBBaseResource):
         else:
             data = request.args
 
-        qry = self.model_class.query
+        query = self.model_class.query
         if self.process_put_input is not None:
-            try:
-                qry, data = self.process_put_input(qry, data, kwargs)
-            except Exception as err:
-                msg = err.args[0]
-                logger.error(f"{url} method {FUNC_NAME}: {msg}")
-                return {"message": msg}, 400
+            status, result = self.process_put_input(query, data, kwargs)
+
+            if status is False:
+                # exit the scene, data should be a
+                # tuple of message and status
+                if isinstance(result, tuple):
+                    return result
+                else:
+                    func = self.process_put_input.__name__
+                    msg =  f"malformed error in {func}: {result}"
+                    return { "message": msg}, 500
+
+            query, data = result
 
         try:
-            item = qry.filter(
+            item = query.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
         except Exception as err:
@@ -266,7 +291,7 @@ class ModelResource(DBBaseResource):
 
         """
         url = request.path
-        FUNC_NAME = 'patch'
+        FUNC_NAME = "patch"
         status_code = 200
         name = self.model_class._class()
 
@@ -287,14 +312,24 @@ class ModelResource(DBBaseResource):
         else:
             data = request.args
 
-        qry = self.model_class.query
+        query = self.model_class.query
         if self.process_patch_input is not None:
-            try:
-                qry, data = self.process_patch_input(qry, data, kwargs)
-            except Exception as err:
-                return {"message": err.args[0]}, 400
+            status, result = self.process_patch_input(query, data, kwargs)
+
+            if status is False:
+                # exit the scene, data should be a
+                # tuple of message and status
+                if isinstance(result, tuple):
+                    return result
+                else:
+                    func = self.process_patch_input.__name__
+                    msg =  f"malformed error in {func}: {result}"
+                    return { "message": msg}, 500
+
+            query, data = result
+
         try:
-            item = qry.filter(
+            item = query.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
         except Exception as err:
@@ -365,7 +400,7 @@ class ModelResource(DBBaseResource):
         """ Delete
         """
         url = request.path
-        FUNC_NAME = 'delete'
+        FUNC_NAME = "delete"
         status_code = 200
         name = self.model_class._class()
 
@@ -375,12 +410,24 @@ class ModelResource(DBBaseResource):
             logger.error(err.args[0])
             return {"message": err.args[0]}, 400
 
-        qry = self.model_class.query
+        query = self.model_class.query
         if self.process_delete_input is not None:
-            qry = self.process_delete_input(qry, kwargs)
+            status, result = self.process_delete_input(query, kwargs)
+
+            if status is False:
+                # exit the scene, data should be a
+                # tuple of message and status
+                if isinstance(result, tuple):
+                    return result
+                else:
+                    func = self.process_delete_input.__name__
+                    msg =  f"malformed error in {func}: {result}"
+                    return { "message": msg}, 500
+
+            query = result
 
         try:
-            item = qry.filter(
+            item = query.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
         except Exception as err:
