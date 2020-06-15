@@ -1,6 +1,6 @@
 ## Introduction
 
-This package extends Flask-RESTful by implementing datacentric Resources using *[DBBase](https://sidorof.github.io/dbbase/)* for enabling the use of SQLAlchemy.
+This package extends Flask-RESTful by implementing datacentric Resources using [DBBase](https://sidorof.github.io/dbbase/) for enabling the use of SQLAlchemy.
 
 DBBase is used because it enables the same coding of database models to be used within Flask or without, such as from message queues.
 
@@ -16,4 +16,3 @@ And, if the issue encountered does not fit this package's approach, the original
 
 The design of Flask-RESTful-DBBase creates Flask-RESTful style Resources, but are derived directly from the SQLAlchemy model classes.
 
-## This version is not yet usable. More testing and coding continues.
