@@ -90,9 +90,14 @@ class ModelResource(DBBaseResource):
         FUNC_NAME = "post"
         url = request.path
         status_code = 201
-
         if request.is_json:
-            data = request.json
+            try:
+                data = request.json
+            except Exception as err:
+                print(err)
+                msg = err
+                return_msg = f"A JSON format problem:{msg}: {request.data}"
+                return {"message": return_msg}, 400
         elif request.values:
             data = request.values
         elif request.data:
@@ -196,7 +201,13 @@ class ModelResource(DBBaseResource):
             return {"message": msg}, 400
 
         if request.is_json:
-            data = request.json
+            try:
+                data = request.json
+            except Exception as err:
+                print(err)
+                msg = err
+                return_msg = f"A JSON format problem:{msg}: {request.data}"
+                return {"message": return_msg}, 400
         elif request.values:
             data = request.values
         elif request.data:
@@ -304,7 +315,13 @@ class ModelResource(DBBaseResource):
             return {"message": msg}, 400
 
         if request.is_json:
-            data = request.json
+            try:
+                data = request.json
+            except Exception as err:
+                print(err)
+                msg = err
+                return_msg = f"A JSON format problem:{msg}: {request.data}"
+                return {"message": return_msg}, 400
         elif request.values:
             data = request.values
         elif request.data:
