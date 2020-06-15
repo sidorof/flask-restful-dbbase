@@ -19,11 +19,11 @@ class MetaResource(Resource):
     This class enables documentation for a model resource.
 
     Class variables:
-        resource_class: This is the model resource that you wish to documnent.
-        url_prefix: Like with the ModelResource class, this prefix can be used
-            to create a url for the documentation.
-        url_name: This is the final part of a url for creating a url.
-            It defaults to a name of 'meta'.
+    resource_class: This is the model resource that you wish to documnent.
+    url_prefix: Like with the ModelResource class, this prefix can be used
+        to create a url for the documentation.
+    url_name: This is the final part of a url for creating a url.
+        It defaults to a name of 'meta'.
 
     Both the url_prefix and url_name come into play only upon initial
     configuration.
