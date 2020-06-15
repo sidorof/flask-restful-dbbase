@@ -88,9 +88,9 @@ class DBBaseResource(Resource):
 
     """
 
-    # done this way as cleaner way when expressing meta info
     model_class = None
     url_prefix = "/"
+
     url_name = None
 
     # output params
@@ -457,12 +457,6 @@ class DBBaseResource(Resource):
         successful test. Unsuccessful tests add the problem to an error
         list to be returned at the end. That way, there is a relatively
         complete list of the problems encountered.
-
-        Standard format for list of errors:
-
-        {"type_of_error": [fields]}
-            or
-        {"type_of_error": [field: {nature of the error},]}
 
         """
         # filtering first
