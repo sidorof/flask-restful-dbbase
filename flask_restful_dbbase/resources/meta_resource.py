@@ -4,8 +4,8 @@ This module implements resource with a purpose of documenting
 a model resource.
 
 Assumes a get method.
-
 """
+
 from os import path
 from flask import request
 from . import (
@@ -29,23 +29,23 @@ class MetaResource(Resource):
     configuration.
 
     Example:
-        Create a class Book and BookResource with the class.
-        api.add_resource(BookResource, *BookResource.get_urls())
+    Create a class Book and BookResource with the class.
+    api.add_resource(BookResource, *BookResource.get_urls())
 
-        Would yield paths:
-            /book
-            /book/<int:id>
+    Would yield paths:
+        /book
+        /book/<int:id>
 
-        api.add_resource(BookMetaResource, BookMetaResource.get_urls())
+    api.add_resource(BookMetaResource, BookMetaResource.get_urls())
 
-        Would yield a path:
-            /book/meta
+    Would yield a path:
+        /book/meta
 
     The traditional form of adding a resource can be used as well.
 
     Example:
-        api.add_resource(BookResource, '/books', /books/<int:id>)
-        api.add_resource(BookMetaResource, '/documentation/books')
+    api.add_resource(BookResource, '/books', /books/<int:id>)
+    api.add_resource(BookMetaResource, '/documentation/books')
 
     """
     resource_class = None
