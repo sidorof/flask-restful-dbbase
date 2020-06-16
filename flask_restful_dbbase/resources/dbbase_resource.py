@@ -229,6 +229,14 @@ class DBBaseResource(Resource):
         return doc
 
     @classmethod
+    def is_collection(cls):
+        """
+        This function returns True if identified as a collection resource.
+        """
+        # uses max_page_size as a marker
+        return hasattr(cls, 'max_page_size')
+
+    @classmethod
     def _meta_method(cls, method):
         """
         This function builds the dict meta data object for a specific method.
@@ -242,21 +250,28 @@ class DBBaseResource(Resource):
 
         if method in ["get", "put", "patch", "delete"]:
             # NOTE: need to identify a collection resource here
-            method_dict["url"] = cls.get_urls()[1]
+            if cls.is_collection:
+                method_dict["url"] = cls.get_urls()[0]
+            else:
+                method_dict["url"] = cls.get_urls()[1]
 
         method_dict["requirements"] = cls._meta_method_decorators(method)
-
         if method in ["get", "delete"]:
-            key = cls.get_key()
-            if isinstance(key, list):
-                method_dict["input"] = [
-                    dict(key, db.doc_column(cls.model_class, key_part))
-                    for key_part in key
-                ]
+            if cls.is_collection():
+                method_dict["query_string"] = cls.model_class.filter_columns(
+                    column_props=["!readOnly"], to_camel_case=True,
+                )
             else:
-                method_dict["input"] = {
-                    key: db.doc_column(cls.model_class, key)
-                }
+                key = cls.get_key()
+                if isinstance(key, list):
+                    method_dict["input"] = [
+                        dict(key, db.doc_column(cls.model_class, key_part))
+                        for key_part in key
+                    ]
+                else:
+                    method_dict["input"] = {
+                        key: db.doc_column(cls.model_class, key)
+                    }
 
         else:
             # select all columns that are not read only
@@ -265,7 +280,6 @@ class DBBaseResource(Resource):
             )
 
         method_dict["responses"] = cls._meta_method_response(method)
-
         return method_dict
 
     @classmethod
@@ -421,7 +435,6 @@ class DBBaseResource(Resource):
 
         NOTE: figure out flag for use table/classname
         """
-
         cls._check_config_error()
         if cls.url_name is None:
             # attempt to derive it
