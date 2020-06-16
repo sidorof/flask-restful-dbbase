@@ -52,7 +52,6 @@ class MetaResource(Resource):
     url_prefix = '/meta'
     url_name = None
 
-
     def get(self):
 
         method = request.values.get('method', None)
