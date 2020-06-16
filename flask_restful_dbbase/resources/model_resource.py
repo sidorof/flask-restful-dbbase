@@ -94,7 +94,6 @@ class ModelResource(DBBaseResource):
             try:
                 data = request.json
             except Exception as err:
-                print(err)
                 msg = err
                 return_msg = f"A JSON format problem:{msg}: {request.data}"
                 return {"message": return_msg}, 400
