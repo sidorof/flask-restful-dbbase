@@ -18,42 +18,36 @@ class MetaResource(Resource):
 
     This class enables documentation for a model resource.
 
-    Class variables:
+    **Class variables**:
+
     resource_class: This is the model resource that you wish to documnent.
+
     url_prefix: Like with the ModelResource class, this prefix can be used
-        to create a url for the documentation.
+    to create a url for the documentation.
+
     url_name: This is the final part of a url for creating a url.
-        It defaults to a name of 'meta'.
+    It defaults to a name of 'meta'.
 
     Both the url_prefix and url_name come into play only upon initial
     configuration.
-
-    Example:
-    Create a class Book and BookResource with the class.
-    api.add_resource(BookResource, *BookResource.get_urls())
-
-    Would yield paths:
-        /book
-        /book/<int:id>
-
-    api.add_resource(BookMetaResource, BookMetaResource.get_urls())
-
-    Would yield a path:
-        /book/meta
-
-    The traditional form of adding a resource can be used as well.
-
-    Example:
-    api.add_resource(BookResource, '/books', /books/<int:id>)
-    api.add_resource(BookMetaResource, '/documentation/books')
-
     """
     resource_class = None
+    """ This is the resource class to be documented """
     url_prefix = '/meta'
+    """ This is the default prefix to be used for the URL."""
     url_name = None
+    """  This name can be used to make the default URL for the meta resource. """
 
     def get(self):
+        """
+        This function is the request.GET method for the meta resource URL.
 
+        Args:
+            method: (str) : can specify only a specific method of the resource to be documented, such as get or put.
+
+        Returns:
+            meta: (json) : The documentation
+        """
         method = request.values.get('method', None)
 
         if method is not None:
@@ -71,7 +65,7 @@ class MetaResource(Resource):
     def get_urls(cls):
         """ get_urls
 
-        This function returns a url for the resource. To keep consistency
+        This function returns a default url for the resource. To keep consistency
         with the get_urls functions in other resources, it returns the
         url in a list, even though there would never be more than one.
 
@@ -85,7 +79,14 @@ class MetaResource(Resource):
         api.add_resource(BookMetaResource, *BookMetaResource.get_urls())
         api.add_resource(BookMetaCollection, *BookMetaCollection.get_urls())
 
+        Default URLS:
+        /book
+        /book/<int:id>
+        /meta/book/single
+        /meta/book/collection
 
+        Bear in mind that the `get_urls` function is only for
+        convenience when adding the resource the api.
         """
         if cls.url_name is None:
             resource_url = cls.resource_class.create_url()
