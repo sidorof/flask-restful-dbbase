@@ -8,9 +8,7 @@ Assumes a get method.
 
 from os import path
 from flask import request
-from . import (
-    Resource, CollectionModelResource, ModelResource
-)
+from . import Resource, CollectionModelResource, ModelResource
 
 
 class MetaResource(Resource):
@@ -31,9 +29,10 @@ class MetaResource(Resource):
     Both the url_prefix and url_name come into play only upon initial
     configuration.
     """
+
     resource_class = None
     """ This is the resource class to be documented """
-    url_prefix = '/meta'
+    url_prefix = "/meta"
     """ This is the default prefix to be used for the URL."""
     url_name = None
     """  This name can be used to make the default URL for the meta resource. """
@@ -48,7 +47,7 @@ class MetaResource(Resource):
         Returns:
             meta: (json) : The documentation
         """
-        method = request.values.get('method', None)
+        method = request.values.get("method", None)
 
         if method is not None:
             method = method.lower()
@@ -59,7 +58,6 @@ class MetaResource(Resource):
             msg = err.args[0]
 
             return {"message": msg}, 400
-
 
     @classmethod
     def get_urls(cls):
@@ -90,20 +88,12 @@ class MetaResource(Resource):
         """
         if cls.url_name is None:
             resource_url = cls.resource_class.create_url()
-            if resource_url.startswith('/'):
+            if resource_url.startswith("/"):
                 resource_url = resource_url[1:]
             if issubclass(cls.resource_class, CollectionModelResource):
-                url = path.join(
-                    cls.url_prefix,
-                    resource_url,
-                    'collection'
-                )
+                url = path.join(cls.url_prefix, resource_url, "collection")
             else:
-                url = path.join(
-                    cls.url_prefix,
-                    resource_url,
-                    'single'
-                )
+                url = path.join(cls.url_prefix, resource_url, "single")
         else:
             url = path.join(url_prefix, cls.url_name)
 

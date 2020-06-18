@@ -212,16 +212,12 @@ class DBBaseResource(Resource):
 
         else:
             # just the method
-            #if method not in method_list:
-                #methods = str(cls.model_class.methods).lower()
-                #raise ValueError(
-                    #f'Support methods for this resource are: {methods}')
+            # if method not in method_list:
+            # methods = str(cls.model_class.methods).lower()
+            # raise ValueError(
+            # f'Support methods for this resource are: {methods}')
             if hasattr(cls, method):
-                doc = {
-                    "method": {
-                        method: cls._meta_method(method)
-                    }
-                }
+                doc = {"method": {method: cls._meta_method(method)}}
             else:
                 raise ValueError(
                     f"Method '{method}' is not found for this resource"
@@ -234,7 +230,7 @@ class DBBaseResource(Resource):
         This function returns True if identified as a collection resource.
         """
         # uses max_page_size as a marker
-        return hasattr(cls, 'max_page_size')
+        return hasattr(cls, "max_page_size")
 
     @classmethod
     def _meta_method(cls, method):

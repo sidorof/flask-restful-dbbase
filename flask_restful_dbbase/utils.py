@@ -2,7 +2,7 @@
 """
 This module implements some utilities.
 """
-#from .exceptions import ExistingRecord
+# from .exceptions import ExistingRecord
 
 
 def check_existing_id(id_name, data, model_class):
@@ -45,12 +45,10 @@ def check_mismatch_ids(id, data):
         id (int) : the id that is the passed in parameter.
         data (dict) : a dict that potentially holds an id as well.
     """
-    data_id = data.get('id')
+    data_id = data.get("id")
     if data_id is not None:
         if id != int(data_id):
-            msg = f'The url id, {id}, does not match the data id {data_id}.'
+            msg = f"The url id, {id}, does not match the data id {data_id}."
             return True, {"message": msg}, 409
 
     return False, None, None
-
-

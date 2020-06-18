@@ -61,8 +61,8 @@ class ModelResource(DBBaseResource):
                     return result
                 else:
                     func = self.process_get_input.__name__
-                    msg =  f"malformed error in {func}: {result}"
-                    return { "message": msg}, 500
+                    msg = f"malformed error in {func}: {result}"
+                    return {"message": msg}, 500
 
             query = result
         try:
@@ -119,8 +119,8 @@ class ModelResource(DBBaseResource):
                     return result
                 else:
                     func = self.process_post_input.__name__
-                    msg =  f"malformed error in {func}: {result}"
-                    return { "message": msg}, 500
+                    msg = f"malformed error in {func}: {result}"
+                    return {"message": msg}, 500
 
             data = result
 
@@ -229,8 +229,8 @@ class ModelResource(DBBaseResource):
                     return result
                 else:
                     func = self.process_put_input.__name__
-                    msg =  f"malformed error in {func}: {result}"
-                    return { "message": msg}, 500
+                    msg = f"malformed error in {func}: {result}"
+                    return {"message": msg}, 500
 
             query, data = result
 
@@ -342,8 +342,8 @@ class ModelResource(DBBaseResource):
                     return result
                 else:
                     func = self.process_patch_input.__name__
-                    msg =  f"malformed error in {func}: {result}"
-                    return { "message": msg}, 500
+                    msg = f"malformed error in {func}: {result}"
+                    return {"message": msg}, 500
 
             query, data = result
 
@@ -440,8 +440,8 @@ class ModelResource(DBBaseResource):
                     return result
                 else:
                     func = self.process_delete_input.__name__
-                    msg =  f"malformed error in {func}: {result}"
-                    return { "message": msg}, 500
+                    msg = f"malformed error in {func}: {result}"
+                    return {"message": msg}, 500
 
             query = result
 
