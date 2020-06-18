@@ -1,4 +1,9 @@
 # Changelog
+## (0.1.5) -
+## Changed
+* Corrected the project location with hyphens instead of underlines
+* Corrected typo in the setup description
+
 
 ## (0.1.1) -
 ### Added
