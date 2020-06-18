@@ -1,0 +1,1185 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>flask_sqlalchemy &#8212; Flask-RESTful-DBBase 0.1.4 documentation</title>
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.1.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for flask_sqlalchemy</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+
+<span class="kn">import</span> <span class="nn">sqlalchemy</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">_app_ctx_stack</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">flask.signals</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">event</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">orm</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.engine.url</span> <span class="kn">import</span> <span class="n">make_url</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">DeclarativeMeta</span><span class="p">,</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm.exc</span> <span class="kn">import</span> <span class="n">UnmappedClassError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm.session</span> <span class="kn">import</span> <span class="n">Session</span> <span class="k">as</span> <span class="n">SessionBase</span>
+
+<span class="kn">from</span> <span class="nn">flask_sqlalchemy.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">._compat</span> <span class="kn">import</span> <span class="n">itervalues</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">xrange</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">DefaultMeta</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.4.3&quot;</span>
+
+<span class="c1"># the best timer function for the platform</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="n">_timer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_timer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">_timer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span>
+
+<span class="n">_signals</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">()</span>
+<span class="n">models_committed</span> <span class="o">=</span> <span class="n">_signals</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="s1">&#39;models-committed&#39;</span><span class="p">)</span>
+<span class="n">before_models_committed</span> <span class="o">=</span> <span class="n">_signals</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="s1">&#39;before-models-committed&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_make_table</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_make_table</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">):</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">db</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;bind_key&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="k">return</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_make_table</span>
+
+
+<span class="k">def</span> <span class="nf">_set_default_query_class</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;query_class&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;query_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
+
+
+<span class="k">def</span> <span class="nf">_wrap_with_default_query_class</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">newfn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_set_default_query_class</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;backref&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">backref</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;backref&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backref</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">backref</span> <span class="o">=</span> <span class="p">(</span><span class="n">backref</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">_set_default_query_class</span><span class="p">(</span><span class="n">backref</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">newfn</span>
+
+
+<span class="k">def</span> <span class="nf">_include_sqlalchemy</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">sqlalchemy</span><span class="p">,</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">orm</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">__all__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
+    <span class="c1"># Note: obj.Table does not attempt to be a SQLAlchemy Table class.</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Table</span> <span class="o">=</span> <span class="n">_make_table</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">relationship</span> <span class="o">=</span> <span class="n">_wrap_with_default_query_class</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">relationship</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">relation</span> <span class="o">=</span> <span class="n">_wrap_with_default_query_class</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">relation</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">dynamic_loader</span> <span class="o">=</span> <span class="n">_wrap_with_default_query_class</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">dynamic_loader</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="n">event</span>
+
+
+<span class="k">class</span> <span class="nc">_DebugQueryTuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+    <span class="n">statement</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;query statement=&quot;</span><span class="si">%s</span><span class="s1">&quot; parameters=</span><span class="si">%r</span><span class="s1"> duration=</span><span class="si">%.03f</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statement</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">duration</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_calling_context</span><span class="p">(</span><span class="n">app_path</span><span class="p">):</span>
+    <span class="n">frm</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">frm</span><span class="o">.</span><span class="n">f_back</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">f_globals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__name__&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="p">(</span><span class="n">name</span> <span class="o">==</span> <span class="n">app_path</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">app_path</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">)):</span>
+            <span class="n">funcname</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">frm</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span>
+                <span class="n">frm</span><span class="o">.</span><span class="n">f_lineno</span><span class="p">,</span>
+                <span class="n">funcname</span>
+            <span class="p">)</span>
+        <span class="n">frm</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">f_back</span>
+    <span class="k">return</span> <span class="s1">&#39;&lt;unknown&gt;&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">SignallingSession</span><span class="p">(</span><span class="n">SessionBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The signalling session is the default session that Flask-SQLAlchemy</span>
+<span class="sd">    uses.  It extends the default session system with bind selection and</span>
+<span class="sd">    modification tracking.</span>
+
+<span class="sd">    If you want to use a different session you can override the</span>
+<span class="sd">    :meth:`SQLAlchemy.create_session` function.</span>
+
+<span class="sd">    .. versionadded:: 2.0</span>
+
+<span class="sd">    .. versionadded:: 2.1</span>
+<span class="sd">        The `binds` option was added, which allows a session to be joined</span>
+<span class="sd">        to an external transaction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">autoflush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="c1">#: The application that this session belongs to.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_app</span><span class="p">()</span>
+        <span class="n">track_modifications</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">]</span>
+        <span class="n">bind</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;bind&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">db</span><span class="o">.</span><span class="n">engine</span>
+        <span class="n">binds</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;binds&#39;</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">get_binds</span><span class="p">(</span><span class="n">app</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">track_modifications</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">track_modifications</span><span class="p">:</span>
+            <span class="n">_SessionSignalEvents</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">SessionBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="n">autocommit</span><span class="p">,</span> <span class="n">autoflush</span><span class="o">=</span><span class="n">autoflush</span><span class="p">,</span>
+            <span class="n">bind</span><span class="o">=</span><span class="n">bind</span><span class="p">,</span> <span class="n">binds</span><span class="o">=</span><span class="n">binds</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clause</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the engine or connection for a given model or</span>
+<span class="sd">        table, using the ``__bind_key__`` if it is set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># mapper is None if someone tries to just get a connection</span>
+        <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># SA &gt;= 1.3</span>
+                <span class="n">persist_selectable</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">persist_selectable</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="c1"># SA &lt; 1.3</span>
+                <span class="n">persist_selectable</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">mapped_table</span>
+
+            <span class="n">info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">persist_selectable</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">bind_key</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bind_key&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bind_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">get_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="n">bind_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SessionBase</span><span class="o">.</span><span class="n">get_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">clause</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_SessionSignalEvents</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;_model_changes&#39;</span><span class="p">):</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">_model_changes</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;before_flush&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">record_ops</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;before_commit&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">record_ops</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;before_commit&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">before_commit</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;after_commit&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">after_commit</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;after_rollback&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">after_rollback</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;_model_changes&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">session</span><span class="o">.</span><span class="n">_model_changes</span>
+
+        <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;before_flush&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">record_ops</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;before_commit&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">record_ops</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;before_commit&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">before_commit</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;after_commit&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">after_commit</span><span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;after_rollback&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">after_rollback</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">record_ops</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">flush_context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instances</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">_model_changes</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">targets</span><span class="p">,</span> <span class="n">operation</span> <span class="ow">in</span> <span class="p">((</span><span class="n">session</span><span class="o">.</span><span class="n">new</span><span class="p">,</span> <span class="s1">&#39;insert&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">dirty</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">deleted</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">inspect</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">identity_key</span> <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">has_identity</span> <span class="k">else</span> <span class="nb">id</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">before_commit</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">_model_changes</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">before_models_committed</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">changes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">after_commit</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">_model_changes</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">models_committed</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">changes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">after_rollback</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">_model_changes</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">d</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_EngineDebuggingSignalEvents</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets up handlers for two events that let us track the execution time of</span>
+<span class="sd">    queries.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">import_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_package</span> <span class="o">=</span> <span class="n">import_name</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="s1">&#39;before_cursor_execute&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_cursor_execute</span>
+        <span class="p">)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="s1">&#39;after_cursor_execute&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_cursor_execute</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">before_cursor_execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">executemany</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">current_app</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">_query_start_time</span> <span class="o">=</span> <span class="n">_timer</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">after_cursor_execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">executemany</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">current_app</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">queries</span> <span class="o">=</span> <span class="n">_app_ctx_stack</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">sqlalchemy_queries</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">queries</span> <span class="o">=</span> <span class="n">_app_ctx_stack</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">sqlalchemy_queries</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_DebugQueryTuple</span><span class="p">((</span>
+                <span class="n">statement</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">_query_start_time</span><span class="p">,</span> <span class="n">_timer</span><span class="p">(),</span>
+                <span class="n">_calling_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app_package</span><span class="p">)</span>
+            <span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">get_debug_queries</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;In debug mode Flask-SQLAlchemy will log all the SQL queries sent</span>
+<span class="sd">    to the database.  This information is available until the end of request</span>
+<span class="sd">    which makes it possible to easily ensure that the SQL generated is the</span>
+<span class="sd">    one expected on errors or in unittesting.  If you don&#39;t want to enable</span>
+<span class="sd">    the DEBUG mode for your unittests you can also enable the query</span>
+<span class="sd">    recording by setting the ``&#39;SQLALCHEMY_RECORD_QUERIES&#39;`` config variable</span>
+<span class="sd">    to `True`.  This is automatically enabled if Flask is in testing mode.</span>
+
+<span class="sd">    The value returned will be a list of named tuples with the following</span>
+<span class="sd">    attributes:</span>
+
+<span class="sd">    `statement`</span>
+<span class="sd">        The SQL statement issued</span>
+
+<span class="sd">    `parameters`</span>
+<span class="sd">        The parameters for the SQL statement</span>
+
+<span class="sd">    `start_time` / `end_time`</span>
+<span class="sd">        Time the query started / the results arrived.  Please keep in mind</span>
+<span class="sd">        that the timer function used depends on your platform. These</span>
+<span class="sd">        values are only useful for sorting or comparing.  They do not</span>
+<span class="sd">        necessarily represent an absolute timestamp.</span>
+
+<span class="sd">    `duration`</span>
+<span class="sd">        Time the query took in seconds</span>
+
+<span class="sd">    `context`</span>
+<span class="sd">        A string giving a rough estimation of where in your application</span>
+<span class="sd">        query was issued.  The exact format is undefined so don&#39;t try</span>
+<span class="sd">        to reconstruct filename or function name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_app_ctx_stack</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="s1">&#39;sqlalchemy_queries&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+
+<span class="k">class</span> <span class="nc">Pagination</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Internal helper class returned by :meth:`BaseQuery.paginate`.  You</span>
+<span class="sd">    can also construct it from any other SQLAlchemy query object if you are</span>
+<span class="sd">    working with other libraries.  Additionally it is possible to pass `None`</span>
+<span class="sd">    as query object in which case the :meth:`prev` and :meth:`next` will</span>
+<span class="sd">    no longer work.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">per_page</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="c1">#: the unlimited query object that was used to create this</span>
+        <span class="c1">#: pagination object.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+        <span class="c1">#: the current page number (1 indexed)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">=</span> <span class="n">page</span>
+        <span class="c1">#: the number of items to be displayed on a page.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">per_page</span> <span class="o">=</span> <span class="n">per_page</span>
+        <span class="c1">#: the total number of items matching the query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="n">total</span>
+        <span class="c1">#: the items for the current page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">items</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The total number of pages&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_page</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pages</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pages</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">per_page</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">pages</span>
+
+    <span class="k">def</span> <span class="nf">prev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a :class:`Pagination` object for the previous page.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;a query object is required &#39;</span> \
+                                       <span class="s1">&#39;for this method to work&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_page</span><span class="p">,</span> <span class="n">error_out</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prev_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of the previous page.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_prev</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_prev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True if a previous page exists&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_out</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a :class:`Pagination` object for the next page.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;a query object is required &#39;</span> \
+                                       <span class="s1">&#39;for this method to work&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_page</span><span class="p">,</span> <span class="n">error_out</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True if a next page exists.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pages</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">next_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of the next page&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_next</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">iter_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left_edge</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">left_current</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                   <span class="n">right_current</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">right_edge</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterates over the page numbers in the pagination.  The four</span>
+<span class="sd">        parameters control the thresholds how many numbers should be produced</span>
+<span class="sd">        from the sides.  Skipped page numbers are represented as `None`.</span>
+<span class="sd">        This is how you could render such a pagination in the templates:</span>
+
+<span class="sd">        .. sourcecode:: html+jinja</span>
+
+<span class="sd">            {% macro render_pagination(pagination, endpoint) %}</span>
+<span class="sd">              &lt;div class=pagination&gt;</span>
+<span class="sd">              {%- for page in pagination.iter_pages() %}</span>
+<span class="sd">                {% if page %}</span>
+<span class="sd">                  {% if page != pagination.page %}</span>
+<span class="sd">                    &lt;a href=&quot;{{ url_for(endpoint, page=page) }}&quot;&gt;{{ page }}&lt;/a&gt;</span>
+<span class="sd">                  {% else %}</span>
+<span class="sd">                    &lt;strong&gt;{{ page }}&lt;/strong&gt;</span>
+<span class="sd">                  {% endif %}</span>
+<span class="sd">                {% else %}</span>
+<span class="sd">                  &lt;span class=ellipsis&gt;…&lt;/span&gt;</span>
+<span class="sd">                {% endif %}</span>
+<span class="sd">              {%- endfor %}</span>
+<span class="sd">              &lt;/div&gt;</span>
+<span class="sd">            {% endmacro %}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pages</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="n">left_edge</span> <span class="ow">or</span> \
+               <span class="p">(</span><span class="n">num</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">-</span> <span class="n">left_current</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span>
+                <span class="n">num</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">+</span> <span class="n">right_current</span><span class="p">)</span> <span class="ow">or</span> \
+               <span class="n">num</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pages</span> <span class="o">-</span> <span class="n">right_edge</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">last</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">num</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="kc">None</span>
+                <span class="k">yield</span> <span class="n">num</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="n">num</span>
+
+
+<span class="k">class</span> <span class="nc">BaseQuery</span><span class="p">(</span><span class="n">orm</span><span class="o">.</span><span class="n">Query</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;SQLAlchemy :class:`~sqlalchemy.orm.query.Query` subclass with convenience methods for querying in a web application.</span>
+
+<span class="sd">    This is the default :attr:`~Model.query` object used for models, and exposed as :attr:`~SQLAlchemy.Query`.</span>
+<span class="sd">    Override the query class for an individual model by subclassing this and setting :attr:`~Model.query_class`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_or_404</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ident</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like :meth:`get` but aborts with 404 if not found instead of returning ``None``.&quot;&quot;&quot;</span>
+
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ident</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span>
+
+    <span class="k">def</span> <span class="nf">first_or_404</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like :meth:`first` but aborts with 404 if not found instead of returning ``None``.&quot;&quot;&quot;</span>
+
+        <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span>
+
+    <span class="k">def</span> <span class="nf">paginate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">per_page</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_out</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_per_page</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns ``per_page`` items from page ``page``.</span>
+
+<span class="sd">        If ``page`` or ``per_page`` are ``None``, they will be retrieved from</span>
+<span class="sd">        the request query. If ``max_per_page`` is specified, ``per_page`` will</span>
+<span class="sd">        be limited to that value. If there is no request or they aren&#39;t in the</span>
+<span class="sd">        query, they default to 1 and 20 respectively.</span>
+
+<span class="sd">        When ``error_out`` is ``True`` (default), the following rules will</span>
+<span class="sd">        cause a 404 response:</span>
+
+<span class="sd">        * No items are found and ``page`` is not 1.</span>
+<span class="sd">        * ``page`` is less than 1, or ``per_page`` is negative.</span>
+<span class="sd">        * ``page`` or ``per_page`` are not ints.</span>
+
+<span class="sd">        When ``error_out`` is ``False``, ``page`` and ``per_page`` default to</span>
+<span class="sd">        1 and 20 respectively.</span>
+
+<span class="sd">        Returns a :class:`Pagination` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">page</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">error_out</span><span class="p">:</span>
+                        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+
+                    <span class="n">page</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">per_page</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">per_page</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;per_page&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">error_out</span><span class="p">:</span>
+                        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+
+                    <span class="n">per_page</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">page</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">per_page</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">per_page</span> <span class="o">=</span> <span class="mi">20</span>
+
+        <span class="k">if</span> <span class="n">max_per_page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">per_page</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">per_page</span><span class="p">,</span> <span class="n">max_per_page</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">page</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">error_out</span><span class="p">:</span>
+                <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">page</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">per_page</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">error_out</span><span class="p">:</span>
+                <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">per_page</span> <span class="o">=</span> <span class="mi">20</span>
+
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">per_page</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span><span class="p">((</span><span class="n">page</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">per_page</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span> <span class="ow">and</span> <span class="n">page</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">error_out</span><span class="p">:</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+
+        <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">Pagination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">per_page</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_QueryProperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sa</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sa</span> <span class="o">=</span> <span class="n">sa</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mapper</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">class_mapper</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mapper</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="n">query_class</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sa</span><span class="o">.</span><span class="n">session</span><span class="p">())</span>
+        <span class="k">except</span> <span class="n">UnmappedClassError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_record_queries</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">rq</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_RECORD_QUERIES&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">rq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rq</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;TESTING&#39;</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">_EngineConnector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sa</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sa</span> <span class="o">=</span> <span class="n">sa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected_for</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bind</span> <span class="o">=</span> <span class="n">bind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span>
+        <span class="n">binds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_BINDS&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">()</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind</span> <span class="ow">in</span> <span class="n">binds</span><span class="p">,</span> \
+            <span class="s1">&#39;Bind </span><span class="si">%r</span><span class="s1"> is not specified.  Set it in the SQLALCHEMY_BINDS &#39;</span> \
+            <span class="s1">&#39;configuration variable&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind</span>
+        <span class="k">return</span> <span class="n">binds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_bind</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">uri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_uri</span><span class="p">()</span>
+            <span class="n">echo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_ECHO&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected_for</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span>
+
+            <span class="n">sa_url</span> <span class="o">=</span> <span class="n">make_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_options</span><span class="p">(</span><span class="n">sa_url</span><span class="p">,</span> <span class="n">echo</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sa</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">sa_url</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">_record_queries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="p">):</span>
+                <span class="n">_EngineDebuggingSignalEvents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="o">.</span><span class="n">import_name</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connected_for</span> <span class="o">=</span> <span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">rv</span>
+
+    <span class="k">def</span> <span class="nf">get_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sa_url</span><span class="p">,</span> <span class="n">echo</span><span class="p">):</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sa</span><span class="o">.</span><span class="n">apply_pool_defaults</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sa</span><span class="o">.</span><span class="n">apply_driver_hacks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="p">,</span> <span class="n">sa_url</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">echo</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s1">&#39;echo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">echo</span>
+
+        <span class="c1"># Give the config options set by a developer explicitly priority</span>
+        <span class="c1"># over decisions FSA makes.</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_ENGINE_OPTIONS&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Give options set in SQLAlchemy.__init__() ultimate priority</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sa</span><span class="o">.</span><span class="n">_engine_options</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">options</span>
+
+
+<span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the state for the application&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="s1">&#39;sqlalchemy&#39;</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">extensions</span><span class="p">,</span> \
+        <span class="s1">&#39;The sqlalchemy extension was not registered to the current &#39;</span> \
+        <span class="s1">&#39;application.  Please make sure to call init_app() first.&#39;</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">extensions</span><span class="p">[</span><span class="s1">&#39;sqlalchemy&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">_SQLAlchemyState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remembers configuration for the (db, app) tuple.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectors</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">class</span> <span class="nc">SQLAlchemy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class is used to control the SQLAlchemy integration to one</span>
+<span class="sd">    or more Flask applications.  Depending on how you initialize the</span>
+<span class="sd">    object it is usable right away or will attach as needed to a</span>
+<span class="sd">    Flask application.</span>
+
+<span class="sd">    There are two usage modes which work very similarly.  One is binding</span>
+<span class="sd">    the instance to a very specific Flask application::</span>
+
+<span class="sd">        app = Flask(__name__)</span>
+<span class="sd">        db = SQLAlchemy(app)</span>
+
+<span class="sd">    The second possibility is to create the object once and configure the</span>
+<span class="sd">    application later to support it::</span>
+
+<span class="sd">        db = SQLAlchemy()</span>
+
+<span class="sd">        def create_app():</span>
+<span class="sd">            app = Flask(__name__)</span>
+<span class="sd">            db.init_app(app)</span>
+<span class="sd">            return app</span>
+
+<span class="sd">    The difference between the two is that in the first case methods like</span>
+<span class="sd">    :meth:`create_all` and :meth:`drop_all` will work all the time but in</span>
+<span class="sd">    the second case a :meth:`flask.Flask.app_context` has to exist.</span>
+
+<span class="sd">    By default Flask-SQLAlchemy will apply some backend-specific settings</span>
+<span class="sd">    to improve your experience with them.</span>
+
+<span class="sd">    As of SQLAlchemy 0.6 SQLAlchemy</span>
+<span class="sd">    will probe the library for native unicode support.  If it detects</span>
+<span class="sd">    unicode it will let the library handle that, otherwise do that itself.</span>
+<span class="sd">    Sometimes this detection can fail in which case you might want to set</span>
+<span class="sd">    ``use_native_unicode`` (or the ``SQLALCHEMY_NATIVE_UNICODE`` configuration</span>
+<span class="sd">    key) to ``False``.  Note that the configuration key overrides the</span>
+<span class="sd">    value you pass to the constructor.  Direct support for ``use_native_unicode``</span>
+<span class="sd">    and SQLALCHEMY_NATIVE_UNICODE are deprecated as of v2.4 and will be removed</span>
+<span class="sd">    in v3.0.  ``engine_options`` and ``SQLALCHEMY_ENGINE_OPTIONS`` may be used</span>
+<span class="sd">    instead.</span>
+
+<span class="sd">    This class also provides access to all the SQLAlchemy functions and classes</span>
+<span class="sd">    from the :mod:`sqlalchemy` and :mod:`sqlalchemy.orm` modules.  So you can</span>
+<span class="sd">    declare models like this::</span>
+
+<span class="sd">        class User(db.Model):</span>
+<span class="sd">            username = db.Column(db.String(80), unique=True)</span>
+<span class="sd">            pw_hash = db.Column(db.String(80))</span>
+
+<span class="sd">    You can still use :mod:`sqlalchemy` and :mod:`sqlalchemy.orm` directly, but</span>
+<span class="sd">    note that Flask-SQLAlchemy customizations are available only through an</span>
+<span class="sd">    instance of this :class:`SQLAlchemy` class.  Query classes default to</span>
+<span class="sd">    :class:`BaseQuery` for `db.Query`, `db.Model.query_class`, and the default</span>
+<span class="sd">    query_class for `db.relationship` and `db.backref`.  If you use these</span>
+<span class="sd">    interfaces through :mod:`sqlalchemy` and :mod:`sqlalchemy.orm` directly,</span>
+<span class="sd">    the default query class will be that of :mod:`sqlalchemy`.</span>
+
+<span class="sd">    .. admonition:: Check types carefully</span>
+
+<span class="sd">       Don&#39;t perform type or `isinstance` checks against `db.Table`, which</span>
+<span class="sd">       emulates `Table` behavior but is not a class. `db.Table` exposes the</span>
+<span class="sd">       `Table` interface, but is a function which allows omission of metadata.</span>
+
+<span class="sd">    The ``session_options`` parameter, if provided, is a dict of parameters</span>
+<span class="sd">    to be passed to the session constructor.  See :class:`~sqlalchemy.orm.session.Session`</span>
+<span class="sd">    for the standard options.</span>
+
+<span class="sd">    The ``engine_options`` parameter, if provided, is a dict of parameters</span>
+<span class="sd">    to be passed to create engine.  See :func:`~sqlalchemy.create_engine`</span>
+<span class="sd">    for the standard options.  The values given here will be merged with and</span>
+<span class="sd">    override anything set in the ``&#39;SQLALCHEMY_ENGINE_OPTIONS&#39;`` config</span>
+<span class="sd">    variable or othewise set by this library.</span>
+
+<span class="sd">    .. versionadded:: 0.10</span>
+<span class="sd">       The `session_options` parameter was added.</span>
+
+<span class="sd">    .. versionadded:: 0.16</span>
+<span class="sd">       `scopefunc` is now accepted on `session_options`. It allows specifying</span>
+<span class="sd">        a custom function which will define the SQLAlchemy session&#39;s scoping.</span>
+
+<span class="sd">    .. versionadded:: 2.1</span>
+<span class="sd">       The `metadata` parameter was added. This allows for setting custom</span>
+<span class="sd">       naming conventions among other, non-trivial things.</span>
+
+<span class="sd">       The `query_class` parameter was added, to allow customisation</span>
+<span class="sd">       of the query class, in place of the default of :class:`BaseQuery`.</span>
+
+<span class="sd">       The `model_class` parameter was added, which allows a custom model</span>
+<span class="sd">       class to be used in place of :class:`Model`.</span>
+
+<span class="sd">    .. versionchanged:: 2.1</span>
+<span class="sd">       Utilise the same query class across `session`, `Model.query` and `Query`.</span>
+
+<span class="sd">    .. versionadded:: 2.4</span>
+<span class="sd">       The `engine_options` parameter was added.</span>
+
+<span class="sd">    .. versionchanged:: 2.4</span>
+<span class="sd">       The `use_native_unicode` parameter was deprecated.</span>
+
+<span class="sd">    .. versionchanged:: 2.4.3</span>
+<span class="sd">        ``COMMIT_ON_TEARDOWN`` is deprecated and will be removed in</span>
+<span class="sd">        version 3.1. Call ``db.session.commit()`` directly instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: Default query class used by :attr:`Model.query` and other queries.</span>
+    <span class="c1">#: Customize this by passing ``query_class`` to :func:`SQLAlchemy`.</span>
+    <span class="c1">#: Defaults to :class:`BaseQuery`.</span>
+    <span class="n">Query</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_native_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">session_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">query_class</span><span class="o">=</span><span class="n">BaseQuery</span><span class="p">,</span> <span class="n">model_class</span><span class="o">=</span><span class="n">Model</span><span class="p">,</span>
+                 <span class="n">engine_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_native_unicode</span> <span class="o">=</span> <span class="n">use_native_unicode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Query</span> <span class="o">=</span> <span class="n">query_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_scoped_session</span><span class="p">(</span><span class="n">session_options</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_declarative_base</span><span class="p">(</span><span class="n">model_class</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine_options</span> <span class="o">=</span> <span class="n">engine_options</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">_include_sqlalchemy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The metadata associated with ``db.Model``.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">metadata</span>
+
+    <span class="k">def</span> <span class="nf">create_scoped_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a :class:`~sqlalchemy.orm.scoping.scoped_session`</span>
+<span class="sd">        on the factory from :meth:`create_session`.</span>
+
+<span class="sd">        An extra key ``&#39;scopefunc&#39;`` can be set on the ``options`` dict to</span>
+<span class="sd">        specify a custom scope function.  If it&#39;s not provided, Flask&#39;s app</span>
+<span class="sd">        context stack identity is used. This will ensure that sessions are</span>
+<span class="sd">        created and removed with the request/response cycle, and should be fine</span>
+<span class="sd">        in most cases.</span>
+
+<span class="sd">        :param options: dict of keyword arguments passed to session class  in</span>
+<span class="sd">            ``create_session``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">scopefunc</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;scopefunc&#39;</span><span class="p">,</span> <span class="n">_app_ctx_stack</span><span class="o">.</span><span class="n">__ident_func__</span><span class="p">)</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;query_cls&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Query</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">orm</span><span class="o">.</span><span class="n">scoped_session</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span><span class="n">options</span><span class="p">),</span> <span class="n">scopefunc</span><span class="o">=</span><span class="n">scopefunc</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the session factory used by :meth:`create_scoped_session`.</span>
+
+<span class="sd">        The factory **must** return an object that SQLAlchemy recognizes as a session,</span>
+<span class="sd">        or registering session events may raise an exception.</span>
+
+<span class="sd">        Valid factories include a :class:`~sqlalchemy.orm.session.Session`</span>
+<span class="sd">        class or a :class:`~sqlalchemy.orm.session.sessionmaker`.</span>
+
+<span class="sd">        The default implementation creates a ``sessionmaker`` for :class:`SignallingSession`.</span>
+
+<span class="sd">        :param options: dict of keyword arguments passed to session class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">orm</span><span class="o">.</span><span class="n">sessionmaker</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="n">SignallingSession</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">make_declarative_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates the declarative base that all models will inherit from.</span>
+
+<span class="sd">        :param model: base model class (or a tuple of base classes) to pass</span>
+<span class="sd">            to :func:`~sqlalchemy.ext.declarative.declarative_base`. Or a class</span>
+<span class="sd">            returned from ``declarative_base``, in which case a new base class</span>
+<span class="sd">            is not created.</span>
+<span class="sd">        :param metadata: :class:`~sqlalchemy.MetaData` instance to use, or</span>
+<span class="sd">            none to use SQLAlchemy&#39;s default.</span>
+
+<span class="sd">        .. versionchanged 2.3.0::</span>
+<span class="sd">            ``model`` can be an existing declarative base in order to support</span>
+<span class="sd">            complex customization such as changing the metaclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">DeclarativeMeta</span><span class="p">):</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">metaclass</span><span class="o">=</span><span class="n">DefaultMeta</span>
+            <span class="p">)</span>
+
+        <span class="c1"># if user passed in a declarative base and a metaclass for some reason,</span>
+        <span class="c1"># make sure the base uses the metaclass</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">model</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;query_class&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">query_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Query</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">_QueryProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This callback can be used to initialize an application for the</span>
+<span class="sd">        use with this database setup.  Never use a database in the context</span>
+<span class="sd">        of an application not initialized that way or connections will</span>
+<span class="sd">        leak.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span> <span class="ow">and</span>
+            <span class="s1">&#39;SQLALCHEMY_BINDS&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span>
+        <span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. &#39;</span>
+                <span class="s1">&#39;Defaulting SQLALCHEMY_DATABASE_URI to &quot;sqlite:///:memory:&quot;.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_BINDS&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_NATIVE_UNICODE&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_ECHO&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_RECORD_QUERIES&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_POOL_SIZE&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_POOL_TIMEOUT&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_POOL_RECYCLE&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_MAX_OVERFLOW&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_COMMIT_ON_TEARDOWN&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">track_modifications</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+            <span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_ENGINE_OPTIONS&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="k">if</span> <span class="n">track_modifications</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">FSADeprecationWarning</span><span class="p">(</span>
+                <span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and &#39;</span>
+                <span class="s1">&#39;will be disabled by default in the future.  Set it to True &#39;</span>
+                <span class="s1">&#39;or False to suppress this warning.&#39;</span>
+            <span class="p">))</span>
+
+        <span class="c1"># Deprecation warnings for config keys that should be replaced by SQLALCHEMY_ENGINE_OPTIONS.</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">engine_config_warning</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_POOL_SIZE&#39;</span><span class="p">,</span> <span class="s1">&#39;pool_size&#39;</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">engine_config_warning</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_POOL_TIMEOUT&#39;</span><span class="p">,</span> <span class="s1">&#39;pool_timeout&#39;</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">engine_config_warning</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_POOL_RECYCLE&#39;</span><span class="p">,</span> <span class="s1">&#39;pool_recycle&#39;</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">engine_config_warning</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;3.0&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_MAX_OVERFLOW&#39;</span><span class="p">,</span> <span class="s1">&#39;max_overflow&#39;</span><span class="p">)</span>
+
+        <span class="n">app</span><span class="o">.</span><span class="n">extensions</span><span class="p">[</span><span class="s1">&#39;sqlalchemy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_SQLAlchemyState</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="nd">@app</span><span class="o">.</span><span class="n">teardown_appcontext</span>
+        <span class="k">def</span> <span class="nf">shutdown_session</span><span class="p">(</span><span class="n">response_or_exc</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_COMMIT_ON_TEARDOWN&#39;</span><span class="p">]:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;&#39;COMMIT_ON_TEARDOWN&#39; is deprecated and will be&quot;</span>
+                    <span class="s2">&quot; removed in version 3.1. Call&quot;</span>
+                    <span class="s2">&quot; &#39;db.session.commit()&#39;` directly instead.&quot;</span><span class="p">,</span>
+                    <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">response_or_exc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">response_or_exc</span>
+
+    <span class="k">def</span> <span class="nf">apply_pool_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_setdefault</span><span class="p">(</span><span class="n">optionkey</span><span class="p">,</span> <span class="n">configkey</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">configkey</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">options</span><span class="p">[</span><span class="n">optionkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">_setdefault</span><span class="p">(</span><span class="s1">&#39;pool_size&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_POOL_SIZE&#39;</span><span class="p">)</span>
+        <span class="n">_setdefault</span><span class="p">(</span><span class="s1">&#39;pool_timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_POOL_TIMEOUT&#39;</span><span class="p">)</span>
+        <span class="n">_setdefault</span><span class="p">(</span><span class="s1">&#39;pool_recycle&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_POOL_RECYCLE&#39;</span><span class="p">)</span>
+        <span class="n">_setdefault</span><span class="p">(</span><span class="s1">&#39;max_overflow&#39;</span><span class="p">,</span> <span class="s1">&#39;SQLALCHEMY_MAX_OVERFLOW&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">apply_driver_hacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">sa_url</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is called before engine creation and used to inject</span>
+<span class="sd">        driver specific hacks into the options.  The `options` parameter is</span>
+<span class="sd">        a dictionary of keyword arguments that will then be used to call</span>
+<span class="sd">        the :func:`sqlalchemy.create_engine` function.</span>
+
+<span class="sd">        The default implementation provides some saner defaults for things</span>
+<span class="sd">        like pool sizes for MySQL and sqlite.  Also it injects the setting of</span>
+<span class="sd">        `SQLALCHEMY_NATIVE_UNICODE`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sa_url</span><span class="o">.</span><span class="n">drivername</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mysql&#39;</span><span class="p">):</span>
+            <span class="n">sa_url</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;charset&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sa_url</span><span class="o">.</span><span class="n">drivername</span> <span class="o">!=</span> <span class="s1">&#39;mysql+gaerdbms&#39;</span><span class="p">:</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;pool_size&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;pool_recycle&#39;</span><span class="p">,</span> <span class="mi">7200</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sa_url</span><span class="o">.</span><span class="n">drivername</span> <span class="o">==</span> <span class="s1">&#39;sqlite&#39;</span><span class="p">:</span>
+            <span class="n">pool_size</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pool_size&#39;</span><span class="p">)</span>
+            <span class="n">detected_in_memory</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">sa_url</span><span class="o">.</span><span class="n">database</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;:memory:&#39;</span><span class="p">):</span>
+                <span class="n">detected_in_memory</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="kn">from</span> <span class="nn">sqlalchemy.pool</span> <span class="kn">import</span> <span class="n">StaticPool</span>
+                <span class="n">options</span><span class="p">[</span><span class="s1">&#39;poolclass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">StaticPool</span>
+                <span class="k">if</span> <span class="s1">&#39;connect_args&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+                    <span class="n">options</span><span class="p">[</span><span class="s1">&#39;connect_args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">options</span><span class="p">[</span><span class="s1">&#39;connect_args&#39;</span><span class="p">][</span><span class="s1">&#39;check_same_thread&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="c1"># we go to memory and the pool size was explicitly set</span>
+                <span class="c1"># to 0 which is fail.  Let the user know that</span>
+                <span class="k">if</span> <span class="n">pool_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;SQLite in memory database with an &#39;</span>
+                                       <span class="s1">&#39;empty queue not possible due to data &#39;</span>
+                                       <span class="s1">&#39;loss.&#39;</span><span class="p">)</span>
+            <span class="c1"># if pool size is None or explicitly set to 0 we assume the</span>
+            <span class="c1"># user did not want a queue for this sqlite connection and</span>
+            <span class="c1"># hook in the null pool.</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">pool_size</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">sqlalchemy.pool</span> <span class="kn">import</span> <span class="n">NullPool</span>
+                <span class="n">options</span><span class="p">[</span><span class="s1">&#39;poolclass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NullPool</span>
+
+            <span class="c1"># if it&#39;s not an in memory database we make the path absolute.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">detected_in_memory</span><span class="p">:</span>
+                <span class="n">sa_url</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">sa_url</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
+
+        <span class="n">unu</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_NATIVE_UNICODE&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">unu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">unu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_native_unicode</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unu</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s1">&#39;use_native_unicode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_NATIVE_UNICODE&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;The &#39;SQLALCHEMY_NATIVE_UNICODE&#39; config option is deprecated and will be removed in&quot;</span>
+                <span class="s2">&quot; v3.0.  Use &#39;SQLALCHEMY_ENGINE_OPTIONS&#39; instead.&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_native_unicode</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;use_native_unicode&#39; is deprecated and will be removed in v3.0.&quot;</span>
+                <span class="s2">&quot;  Use the &#39;engine_options&#39; parameter instead.&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gives access to the engine.  If the database configuration is bound</span>
+<span class="sd">        to a specific application (initialized with an application) this will</span>
+<span class="sd">        always return a database connection.  If however the current application</span>
+<span class="sd">        is used this might raise a :exc:`RuntimeError` if no application is</span>
+<span class="sd">        active at the moment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">make_connector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates the connector for a given state and bind.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_EngineConnector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_app</span><span class="p">(</span><span class="n">app</span><span class="p">),</span> <span class="n">bind</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a specific engine.&quot;&quot;&quot;</span>
+
+        <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">get_state</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine_lock</span><span class="p">:</span>
+            <span class="n">connector</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">connectors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bind</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">connector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">connector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_connector</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">)</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">connectors</span><span class="p">[</span><span class="n">bind</span><span class="p">]</span> <span class="o">=</span> <span class="n">connector</span>
+
+            <span class="k">return</span> <span class="n">connector</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">create_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sa_url</span><span class="p">,</span> <span class="n">engine_opts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Override this method to have final say over how the SQLAlchemy engine</span>
+<span class="sd">            is created.</span>
+
+<span class="sd">            In most cases, you will want to use ``&#39;SQLALCHEMY_ENGINE_OPTIONS&#39;``</span>
+<span class="sd">            config variable or set ``engine_options`` for :func:`SQLAlchemy`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">sa_url</span><span class="p">,</span> <span class="o">**</span><span class="n">engine_opts</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference_app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper method that implements the logic to look up an</span>
+<span class="sd">        application.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">reference_app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reference_app</span>
+
+        <span class="k">if</span> <span class="n">current_app</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">current_app</span><span class="o">.</span><span class="n">_get_current_object</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s1">&#39;No application found. Either work inside a view function or push&#39;</span>
+            <span class="s1">&#39; an application context. See&#39;</span>
+            <span class="s1">&#39; http://flask-sqlalchemy.pocoo.org/contexts/.&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_tables_for_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list of all tables relevant for a bind.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">itervalues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">tables</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bind_key&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">bind</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">get_binds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dictionary with a table-&gt;engine mapping.</span>
+
+<span class="sd">        This is suitable for use of sessionmaker(binds=db.get_binds(app)).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="n">binds</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_BINDS&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">())</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">bind</span> <span class="ow">in</span> <span class="n">binds</span><span class="p">:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_engine</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">)</span>
+            <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tables_for_bind</span><span class="p">(</span><span class="n">bind</span><span class="p">)</span>
+            <span class="n">retval</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">table</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+    <span class="k">def</span> <span class="nf">_execute_for_all_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">skip_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bind</span> <span class="o">==</span> <span class="s1">&#39;__all__&#39;</span><span class="p">:</span>
+            <span class="n">binds</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SQLALCHEMY_BINDS&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">())</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bind</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">bind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">binds</span> <span class="o">=</span> <span class="p">[</span><span class="n">bind</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">binds</span> <span class="o">=</span> <span class="n">bind</span>
+
+        <span class="k">for</span> <span class="n">bind</span> <span class="ow">in</span> <span class="n">binds</span><span class="p">:</span>
+            <span class="n">extra</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_tables</span><span class="p">:</span>
+                <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tables_for_bind</span><span class="p">(</span><span class="n">bind</span><span class="p">)</span>
+                <span class="n">extra</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Model</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+            <span class="n">op</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_engine</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">),</span> <span class="o">**</span><span class="n">extra</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="s1">&#39;__all__&#39;</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates all tables.</span>
+
+<span class="sd">        .. versionchanged:: 0.12</span>
+<span class="sd">           Parameters were added</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_for_all_tables</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">,</span> <span class="s1">&#39;create_all&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">drop_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="s1">&#39;__all__&#39;</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Drops all tables.</span>
+
+<span class="sd">        .. versionchanged:: 0.12</span>
+<span class="sd">           Parameters were added</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_for_all_tables</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">,</span> <span class="s1">&#39;drop_all&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reflect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="s1">&#39;__all__&#39;</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reflects tables from the database.</span>
+
+<span class="sd">        .. versionchanged:: 0.12</span>
+<span class="sd">           Parameters were added</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_for_all_tables</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">bind</span><span class="p">,</span> <span class="s1">&#39;reflect&#39;</span><span class="p">,</span> <span class="n">skip_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> engine=</span><span class="si">%r</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">url</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="ow">or</span> <span class="n">current_app</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_BoundDeclarativeMeta</span><span class="p">(</span><span class="n">DefaultMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">FSADeprecationWarning</span><span class="p">(</span>
+            <span class="s1">&#39;&quot;_BoundDeclarativeMeta&quot; has been renamed to &quot;DefaultMeta&quot;. The&#39;</span>
+            <span class="s1">&#39; old name will be removed in 3.0.&#39;</span>
+        <span class="p">),</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">_BoundDeclarativeMeta</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">FSADeprecationWarning</span><span class="p">(</span><span class="ne">DeprecationWarning</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">,</span> <span class="n">FSADeprecationWarning</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="../index.html">
+  <img class="logo" src="../_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

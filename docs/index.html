@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Flask-RESTful-DBBase documentation &#8212; Flask-RESTful-DBBase 0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    <div class=indexwrapper>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Flask-RESTful-DBBase 0.1.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="flask-restful-dbbase-documentation">
+<h1>Flask-RESTful-DBBase documentation<a class="headerlink" href="#flask-restful-dbbase-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This package provides datacentric RESTful resources within the Flask environment.</p>
+<p>The work that goes into carefully defining the data structures in the database can be reused in all the layers out to the front-end application. Flask-RESTful-DBBase evaluates the model definitions and expresses this understanding in resources in the API via introspection. It is used for several functions:</p>
+<ul class="simple">
+<li><p>Data validation and conversion</p></li>
+<li><p>Presentation of the return data, which can be tailored according to your audience</p></li>
+<li><p>A method of communcation of the capabilities and requirements of your API through the use of meta resources</p></li>
+<li><p>An awareness that special cases and considerations exist that require modifications beyond just the basics. There are functions for each kind of method that can hit the processing at important points for validation, dataconversion, and message passing.</p></li>
+<li><p>It can take advantage of Flask-RESTful method decorators and has functions that can use the information provided by such decorators.</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#requirements">Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#a-first-look">A First Look</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#initialize-the-app-and-models">Initialize the App and Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#create-resources">Create Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#use-the-api">Use the API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#meta-information">Meta Information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#simple-owner-app">Simple Owner App</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#owner-based-tables">Owner Based Tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#initiate-the-app-and-models">Initiate the App and Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#create-the-owner-based-resources">Create the Owner-Based Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#mock-authentication">Mock Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#owner-resources">Owner Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#order-and-job-resources">Order and Job Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user_guide.html#id1">Use the API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#owner-based-tables">Owner Based Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#initiate-the-app-and-models">Initiate the App and Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#create-the-owner-based-resources">Create the Owner-Based Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#mock-authentication">Mock Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#owner-resources">Owner Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#order-and-job-resources">Order and Job Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#use-the-api">Use the API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#post-without-authentication">Post without authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#post-an-order-wrong-login">Post An Order, Wrong Login</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#post-an-order-that-is-correct">Post An Order That Is Correct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#get-the-order-collection-no-authorization">Get the Order Collection, No Authorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#get-the-order-collection-wrong-user">Get the Order Collection, Wrong User</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#get-the-order-collection-right-user">Get the Order Collection, Right User</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#order-meta-resource-information">Order Meta Resource Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#order-meta-collection-information">Order Meta Collection Information</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model-resource-modifications.html#process-input-functions">Process Input Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-resource-modifications.html#input-variables">Input Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-resource-modifications.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model-resource-modifications.html#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#simple-app">Simple-App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#owner-app-version-1">Owner-App Version 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#owner-app-version-2">Owner-App Version 2</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">(0.1.1) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#added">Added</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">(0.1.0) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Added</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>About</h3>
+<p>
+  Flask-RESTful-DBBase extends Flask-RESTful for use with datacentric resources.</p>
+
+  <a href="http://github.com/sidorof/dbbase">DBBase</a>, a package using SQLAlchemy, provides serialization / deserialization services derived automatically from the database models.
+
+
+</p>
+<h3><a href="#">Table Of Contents</a></h3>
+    <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+<h3>Useful Links</h3>
+<ul>
+  <li><a href="https://flask.palletsprojects.com">The Flask Website</a></li>
+  <li><a href="http://pypi.python.org/pypi/Flask-RESTful-DBBase">Flask-RESTful-DBBase @ PyPI</a></li>
+  <li><a href="http://github.com/sidorof/flask-restful-dbbase">Flask-RESTful-DBBase @ github</a></li>
+  <li><a href="http://github.com/sidorof/dbbase">DBBase @ github</a></li>
+  <li><a href="http://github.com/sidorof/flask-restful-dbbase/issues">Issue Tracker</a></li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    </div>
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

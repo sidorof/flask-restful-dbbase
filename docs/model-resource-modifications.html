@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Resource Modifications &#8212; Flask-RESTful-DBBase 0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Simple Owner App" href="app-owner-v1.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="app-owner-v1.html" title="Simple Owner App"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="model-resource-modifications">
+<h1>Model Resource Modifications<a class="headerlink" href="#model-resource-modifications" title="Permalink to this headline">¶</a></h1>
+<p>Model resources can cover a fair amount of ground for a datacentric
+API, but when the vanilla version will not fit, there are remedies
+as a fall-back solution rather than simply writing your own.</p>
+<p>Model resources are preset to take functions that can insert your
+necessary logic into the right point in the processing cycle.</p>
+<p>There are three insertion points. The details change, depending upon the HTTP method, but there are more similarities than differences.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#process-input-functions">Process Input Functions</a>: Modify the input data, and continue processing or close it out early.</p></li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></dt><dd><ul>
+<li><p>Before Commit: Just prior to a commit, either a function or class can be inserted. This gives the possibility of a rollback of the session or diversion to other process.</p></li>
+<li><p>After Commit: After a commit, either a function or class can be inserted. This can then be a trigger process or complete substitution of another class for the return trip.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="process-input-functions">
+<h2>Process Input Functions<a class="headerlink" href="#process-input-functions" title="Permalink to this headline">¶</a></h2>
+<p>Process input functions take the form of a function that can
+process the input data for the HTTP methods.</p>
+<p>The format name for these functions is <cite>process_{method}_input</cite>.</p>
+<p>Since HTTP methods have different requirements for input data,
+the inputs vary according to the method. And, since these
+functions are inserted into an on-going process, there are certain
+requirements.</p>
+<div class="section" id="input-variables">
+<h3>Input Variables<a class="headerlink" href="#input-variables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><cite>kwargs</cite>: as passed into the method</p></li>
+<li><p><cite>data</cite>: the data gleaned from the request in a dictionary form: This is the data prior to deserializations, so the variable names would be in camel case still.</p></li>
+<li><p><cite>query</cite>: the SQLAlchemy query that can be modified: This the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy’s session.query(Model), for example <cite>session.query(Book)</cite>. So an additional filter as may be necessary would be done by <cite>query = query.filter_by(my_var=’test’)</cite>. And finally, this is an unexecuted query that the normal program will execute afterwards.</p></li>
+</ul>
+</div>
+<div class="section" id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h3>
+<p>Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form <cite>(status, result)</cite> where status is either <cite>True</cite> to contine or <cite>False</cite> to exit early. So, if a tuple is not returned an error will be returned.</p>
+<p>Use the following formats as a guide.</p>
+<div class="section" id="process-get-input">
+<h4>process_get_input<a class="headerlink" href="#process-get-input" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="c1"># if success</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+    <span class="c1"># if exit</span>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;an explanation&quot;</span><span class="p">},</span> <span class="n">status_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="process-post-input">
+<h4>process_post_input<a class="headerlink" href="#process-post-input" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="c1"># if success</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+    <span class="c1"># if exit</span>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;an explanation&quot;</span><span class="p">},</span> <span class="n">status_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="process-put-input">
+<h4>process_put_input<a class="headerlink" href="#process-put-input" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="c1"># if success</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+
+    <span class="c1"># if exit</span>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;an explanation&quot;</span><span class="p">},</span> <span class="n">status_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="process-patch-input">
+<h4>process_patch_input<a class="headerlink" href="#process-patch-input" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_patch_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="c1"># if success</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+
+    <span class="c1"># if exit</span>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;an explanation&quot;</span><span class="p">},</span> <span class="n">status_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="process-delete-input">
+<h4>process_delete_input<a class="headerlink" href="#process-delete-input" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_delete_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="c1"># if success</span>
+    <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+    <span class="c1"># if exit</span>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;an explanation&quot;</span><span class="p">},</span> <span class="n">status_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="adjustments-before-or-after-commits">
+<h2>Adjustments Before or After Commits<a class="headerlink" href="#adjustments-before-or-after-commits" title="Permalink to this headline">¶</a></h2>
+<p>Being able to jump in prior to a commit or just after can be very helpful. Possible areas:</p>
+<ul class="simple">
+<li><p>Triggering another process to run instead of saving, or run directly after saving.</p></li>
+<li><p>A record could be marked as inactive rather than deleted.</p></li>
+<li><p>A separate job could be created and sent to a queue, the job object returned in place of the original record.</p></li>
+</ul>
+<p>The process inputs all had separate names and the input and return variables varied with the HTTP method, while this family of functions are more similiar.</p>
+<p>To make the interface a little cleaner a ModelResource before / after commit is organized as a dict. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MachineLearningModelResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">MachineLearningModel</span>
+
+    <span class="n">after_commit</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">submit_job</span>
+        <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="n">submit_job1</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>So your <cite>submit_job</cite> function would be called on POST or PUT, otherwise not.</p>
+<p>The format of the before / after functions is similar to the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_before_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function could be before or after, the params are the</span>
+<span class="sd">    same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        item: (obj): This is the data model record</span>
+<span class="sd">        status_code: (int) : This will be the default response</span>
+<span class="sd">        status code for this method. If it turns out that a</span>
+<span class="sd">        different status code makes more sense, it can be</span>
+<span class="sd">        changed on the return.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        item: (obj) : The object that will be returned. Note that</span>
+<span class="sd">        it does not have to be the same object that entered. As</span>
+<span class="sd">        long as it is DBBase model, the serialization will use the</span>
+<span class="sd">        serialization meant the current object.</span>
+
+<span class="sd">        status_code: (int) : This would be just passthrough of the</span>
+<span class="sd">        default status code, but it could be changed to a 202, for</span>
+<span class="sd">        example if it is starting a job.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="k">return</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Resource Modifications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#process-input-functions">Process Input Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#input-variables">Input Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#returns">Returns</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#process-get-input">process_get_input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-post-input">process_post_input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-put-input">process_put_input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-patch-input">process_patch_input</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-delete-input">process_delete_input</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="app-owner-v1.html" title="previous chapter">Simple Owner App</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model-resource-modifications.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

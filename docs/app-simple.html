@@ -1,0 +1,726 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>A First Look &#8212; Flask-RESTful-DBBase 0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="a-first-look">
+<h1>A First Look<a class="headerlink" href="#a-first-look" title="Permalink to this headline">¶</a></h1>
+<p>We will create a small app that shows some of the capabilities.</p>
+<p>First, we import and configure the database. Within the Flask environment, DBBase provides a thin wrapper around Flask-SQLAlchemy but with a different Model class.</p>
+<p>The data-aware resources are then imported. Once that is done a couple database models are created that we will use for our example.</p>
+<p>Flask-RESTful Resource subclasses implement this functionality.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.ModelResource.html#flask_restful_dbbase.resources.ModelResource" title="flask_restful_dbbase.resources.ModelResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelResource</span></code></a> – This class implements the standard methods associated with interacting with a single record, namely GET, POST, PUT, PATCH, and DELETE.</p></li>
+<li><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.CollectionModelResource.html#flask_restful_dbbase.resources.CollectionModelResource" title="flask_restful_dbbase.resources.CollectionModelResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionModelResource</span></code></a> – This class implements a GET for collections. The other methods, being less common for collections, have been left off to avoid activating an unwanted (surprise) capability.</p></li>
+<li><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource" title="flask_restful_dbbase.resources.MetaResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaResource</span></code></a> – This class implements a GET that documents the capabilities of a resource class.</p></li>
+</ul>
+<div class="section" id="initialize-the-app-and-models">
+<h2>Initialize the App and Models<a class="headerlink" href="#initialize-the-app-and-models" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase</span> <span class="kn">import</span> <span class="n">DBBase</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///:memory:&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_TRACK_MODIFICATIONS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">DBBase</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.resources</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CollectionModelResource</span><span class="p">,</span>
+    <span class="n">ModelResource</span><span class="p">,</span>
+    <span class="n">MetaResource</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;author&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">full_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">first_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">last_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">books</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Book&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="s2">&quot;joined&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;book&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">isbn</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pub_year</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">author_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;author.id&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Next some sample records are created so that we have something to look at.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="p">(</span>
+    <span class="n">first_name</span><span class="o">=</span><span class="s2">&quot;Geoffrey&quot;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s2">&quot;Cooper&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span>
+    <span class="n">isbn</span><span class="o">=</span><span class="s2">&quot;0-87893-214-3&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;The Cell: A Molecular Approach, 3rd edition&quot;</span><span class="p">,</span>
+    <span class="n">pub_year</span><span class="o">=</span><span class="mi">2004</span><span class="p">,</span>
+    <span class="n">author_id</span><span class="o">=</span><span class="n">author</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span>
+    <span class="n">isbn</span><span class="o">=</span><span class="s2">&quot;978-0878932191&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;The Cell: A Molecular Approach, 4th edition&quot;</span><span class="p">,</span>
+    <span class="n">pub_year</span><span class="o">=</span><span class="mi">2006</span><span class="p">,</span>
+    <span class="n">author_id</span><span class="o">=</span><span class="n">author</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span>
+    <span class="n">isbn</span><span class="o">=</span><span class="s2">&quot;978-1605352909&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;The Cell: A Molecular Approach, 7th edition&quot;</span><span class="p">,</span>
+    <span class="n">pub_year</span><span class="o">=</span><span class="mi">2015</span><span class="p">,</span>
+    <span class="n">author_id</span><span class="o">=</span><span class="n">author</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span>
+    <span class="n">isbn</span><span class="o">=</span><span class="s2">&quot;978-1605357072&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;The Cell: A Molecular Approach, 9th edition&quot;</span><span class="p">,</span>
+    <span class="n">pub_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span>
+    <span class="n">author_id</span><span class="o">=</span><span class="n">author</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s2">&quot;Serope&quot;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s2">&quot;Kalpakjian&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span>
+    <span class="n">isbn</span><span class="o">=</span><span class="s2">&quot;978-0133128741&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Manufacturing Engineering &amp; Technology (7th Edition)&quot;</span><span class="p">,</span>
+    <span class="n">pub_year</span><span class="o">=</span><span class="mi">2013</span><span class="p">,</span>
+    <span class="n">author_id</span><span class="o">=</span><span class="n">author</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="n">author</span> <span class="o">=</span> <span class="n">Author</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s2">&quot;Steven&quot;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s2">&quot;Skiena&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-resources">
+<h2>Create Resources<a class="headerlink" href="#create-resources" title="Permalink to this headline">¶</a></h2>
+<p>Now we can create some resources that will use these models.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BookCollection</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Book</span>
+    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;books&quot;</span>
+
+<span class="k">class</span> <span class="nc">BookResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Book</span>
+    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;books&quot;</span>
+
+<span class="k">class</span> <span class="nc">AuthorCollection</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Author</span>
+    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;authors&quot;</span>
+
+<span class="k">class</span> <span class="nc">AuthorResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Author</span>
+    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;authors&quot;</span>
+</pre></div>
+</div>
+<p>So what will this do? Once added to the API, the methods GET, POST, PUT, PATCH, and DELETE will be available at the default URLs of:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">books</span>              <span class="o">&lt;--</span> <span class="n">the</span> <span class="n">collection</span> <span class="n">resource</span> <span class="n">URL</span>
+<span class="o">/</span><span class="n">books</span>              <span class="o">&lt;--</span> <span class="n">the</span> <span class="n">URL</span> <span class="k">for</span> <span class="n">post</span>
+<span class="o">/</span><span class="n">books</span><span class="o">/&lt;</span><span class="nb">int</span><span class="p">:</span><span class="nb">id</span><span class="o">&gt;</span>     <span class="o">&lt;--</span> <span class="n">the</span> <span class="n">URL</span> <span class="k">for</span> <span class="n">get</span><span class="o">/</span><span class="n">put</span><span class="o">/</span><span class="n">patch</span><span class="o">/</span><span class="n">delete</span>
+
+<span class="o">/</span><span class="n">authors</span>            <span class="o">&lt;--</span> <span class="n">the</span> <span class="n">collection</span> <span class="n">resource</span> <span class="n">URL</span>
+<span class="o">/</span><span class="n">authors</span>            <span class="o">&lt;--</span> <span class="n">the</span> <span class="n">URL</span> <span class="k">for</span> <span class="n">post</span>
+<span class="o">/</span><span class="n">authors</span><span class="o">/&lt;</span><span class="nb">int</span><span class="p">:</span><span class="nb">id</span><span class="o">&gt;</span>   <span class="o">&lt;--</span> <span class="n">the</span> <span class="n">URL</span> <span class="k">for</span> <span class="n">get</span><span class="o">/</span><span class="n">put</span><span class="o">/</span><span class="n">patch</span><span class="o">/</span><span class="n">delete</span>
+</pre></div>
+</div>
+<p>Another resource type, the <a class="reference internal" href="_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource" title="flask_restful_dbbase.resources.MetaResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaResource</span></code></a>, can provide detailed information about your API and the requirements and capabilities by URL.</p>
+<p>Such meta resources are created by informing the meta resource of the resource class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BookMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">BookCollection</span>
+
+<span class="k">class</span> <span class="nc">BookMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">BookResource</span>
+
+<span class="k">class</span> <span class="nc">AuthorMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">AuthorCollection</span>
+
+<span class="k">class</span> <span class="nc">AuthorMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">AuthorResource</span>
+</pre></div>
+</div>
+<p>Once added to the API,  The following URLs will become available.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">meta</span><span class="o">/</span><span class="n">authors</span><span class="o">/</span><span class="n">single</span>
+<span class="o">/</span><span class="n">meta</span><span class="o">/</span><span class="n">authors</span><span class="o">/</span><span class="n">collection</span>
+<span class="o">/</span><span class="n">meta</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="n">single</span>
+<span class="o">/</span><span class="n">meta</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="n">collection</span>
+</pre></div>
+</div>
+<p>Finally, the resources are added to the api. You can see below that the URLs are generated by the resources themselves. These functions are for convenience, the URLs ca also be added in the usual way with Flask-RESTful as well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">AuthorCollection</span><span class="p">,</span> <span class="o">*</span><span class="n">AuthorCollection</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">AuthorResource</span><span class="p">,</span> <span class="o">*</span><span class="n">AuthorResource</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">AuthorMetaCollection</span><span class="p">,</span> <span class="o">*</span><span class="n">AuthorMetaCollection</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">AuthorMeta</span><span class="p">,</span> <span class="o">*</span><span class="n">AuthorMeta</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">BookCollection</span><span class="p">,</span> <span class="o">*</span><span class="n">BookCollection</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">BookResource</span><span class="p">,</span> <span class="o">*</span><span class="n">BookResource</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">BookMetaCollection</span><span class="p">,</span> <span class="o">*</span><span class="n">BookMetaCollection</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">BookMeta</span><span class="p">,</span> <span class="o">*</span><span class="n">BookMeta</span><span class="o">.</span><span class="n">get_URLs</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-the-api">
+<h2>Use the API<a class="headerlink" href="#use-the-api" title="Permalink to this headline">¶</a></h2>
+<p>As a first step, let us get a book.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">book</span><span class="o">/</span><span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="s2">&quot;0-87893-214-3&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;The Cell: A Molecular Approach, 3rd edition&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;authorId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;fullName&quot;</span><span class="p">:</span> <span class="s2">&quot;Geoffrey Cooper&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Geoffrey&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;lastName&quot;</span><span class="p">:</span> <span class="s2">&quot;Cooper&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;pubYear&quot;</span><span class="p">:</span> <span class="mi">2004</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the column names have been converted to camel case. Also, because a relationship has been specified in the table, the author has been included by default. As to what shows or does not, that is under your control through configuration.</p>
+<p>Now we will post some data. But first, let’s do it wrong.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl http://localhost:5000/books <span class="se">\</span>
+    -d <span class="nv">author_id</span><span class="o">=</span><span class="m">1</span> <span class="se">\</span>
+    -d <span class="nv">title</span><span class="o">=</span><span class="s2">&quot;this is a test woah, this is really a long title, woah, this is really a long title, woah, this is really a long title, woah, this is really a long title, woah, this is really a long title &quot;</span>
+</pre></div>
+</div>
+<p>Here we get back an error message. Data validation compares the data received versus what can posted to the database. An attempt is made to provide meaningful errors so that an appropriate action can be taken. In this case the publication year is missing and the title is too long.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;missing_columns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pub_year&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;The data exceeds the maximum length 100&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now we post a book that does not have errors:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl http://localhost:5000/books <span class="se">\</span>
+    -d <span class="nv">author_id</span><span class="o">=</span><span class="m">3</span> <span class="se">\</span>
+    -d <span class="nv">title</span><span class="o">=</span><span class="s2">&quot;The Algorithm Design Manual&quot;</span> <span class="se">\</span>
+    -d <span class="nv">pubYear</span><span class="o">=</span><span class="m">1997</span> <span class="se">\</span>
+    -d <span class="nv">isbn</span><span class="o">=</span><span class="s2">&quot;0-387-94860-0&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="nt">&quot;authorId&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="nt">&quot;fullName&quot;</span><span class="p">:</span> <span class="s2">&quot;Steven Skiena&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;lastName&quot;</span><span class="p">:</span> <span class="s2">&quot;Skiena&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Steven&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="s2">&quot;0-387-94860-0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pubYear&quot;</span><span class="p">:</span> <span class="mi">1997</span><span class="p">,</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;The Algorithm Design Manual&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="meta-information">
+<h2>Meta Information<a class="headerlink" href="#meta-information" title="Permalink to this headline">¶</a></h2>
+<p>Finally, we can document our API using meta information.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -g http://localhost:5000/meta/books/single
+</pre></div>
+</div>
+<p>The following output details the entire book resource. Incidently, we could have also specified <cite>curl -g http://localhost:5000/meta/books/single?get</cite> to see only the GET method requirements.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;model_class&quot;</span><span class="p">:</span> <span class="s2">&quot;Book&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;url_prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/books&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;get&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/books/&lt;int:id&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Author&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;pub_year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;pubYear&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;authorId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Author&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;pub_year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;put&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/books/&lt;int:id&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;pubYear&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;authorId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Author&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;pub_year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;patch&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/books/&lt;int:id&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;pubYear&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;authorId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Author&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;pub_year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;delete&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/books/&lt;int:id&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;table&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;Book&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;isbn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;pub_year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;author_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Author&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;xml&quot;</span><span class="p">:</span> <span class="s2">&quot;Book&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>With the use of method decorators for authenticated users, a fair number of database tables can be presented via an API with just this vanilla approach.</p>
+<p>In the next section we will look at a few tweaks and modifications that can handle more complicated issues.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/app-simple.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

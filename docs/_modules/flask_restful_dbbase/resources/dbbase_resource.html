@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.4 documentation</title>
+    <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for flask_restful_dbbase.resources.dbbase_resource</h1><div class="highlight"><pre>
+<span></span><span class="c1"># flask_restful_dbbase/resources/dbbase_resource.py</span>
+<span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">This module implements a starting point for model resources.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">dbbase.utils</span> <span class="kn">import</span> <span class="n">xlate</span>
+
+
+<div class="viewcode-block" id="DBBaseResource"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.html#flask_restful_dbbase.resources.DBBaseResource">[docs]</a><span class="k">class</span> <span class="nc">DBBaseResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DBBaseResource Class</span>
+
+<span class="sd">    This model class implements the base class.</span>
+
+<span class="sd">    model_class: a dbbase.Model</span>
+<span class="sd">    url_prefix: the portion of the path leading up to the resource,</span>
+<span class="sd">    for example: /api/v2</span>
+
+<span class="sd">    url_name: the url_name defaults to a lower case version of the</span>
+<span class="sd">    the model_class name if left as None, but can have an explicit</span>
+<span class="sd">    name if necessary.</span>
+
+<span class="sd">    serial_fields: if left as None, it uses the serial list from</span>
+<span class="sd">    the model class. Left as None, it will default to the</span>
+<span class="sd">    underlying model.</span>
+
+<span class="sd">    serial_field_relations: can customize how relationship variables</span>
+<span class="sd">    are presented in output.</span>
+
+<span class="sd">    before_commit/after_commit: These variables are designed to extend</span>
+<span class="sd">    the capabilities of the methods be enabling a function or</span>
+<span class="sd">    class to modify the data just prior to commit, or after. By</span>
+<span class="sd">    using these, it is possible to send data to message queues,</span>
+<span class="sd">    adjust the data, or otherwise change the data.</span>
+
+<span class="sd">    There are expectations of about the functions/classes.</span>
+
+<span class="sd">    Format for a before/after function:</span>
+
+<span class="sd">    `def myfunc(resource_self, item, status_code):`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        resource_self: (obj) : This is the self of the resource.</span>
+<span class="sd">            This provides access to the resource itself.</span>
+<span class="sd">        item: (obj) : This is SQLAlchemy record.</span>
+<span class="sd">        status_code (int) : If due to the processing that status_code</span>
+<span class="sd">            should change, you can change it here. Otherwise, simply</span>
+<span class="sd">            return it.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        item: (obj) : The modified record</span>
+<span class="sd">        status_code (int) : The possibly altered response status_code</span>
+
+<span class="sd">    Example of a Class:</span>
+<span class="sd">    A class can be used to hold additional data.</span>
+<span class="sd">    This example shows how a resource can receive a POSTed object, but</span>
+<span class="sd">    return the job created as a result instead.</span>
+
+<span class="sd">    A class requires that a `run` function be implemented with the</span>
+<span class="sd">    input variables as shown below.</span>
+
+<span class="sd">    class JobCreator(object):</span>
+<span class="sd">        def __init__(self, class_name):</span>
+<span class="sd">            self.Job = class_name</span>
+
+<span class="sd">        def run(self, resource_self, item, status_code):</span>
+<span class="sd">            # obj_self gives access resource characteristics</span>
+<span class="sd">            # but not used in this case</span>
+<span class="sd">            data = item.to_dict(to_camel_case=False)</span>
+<span class="sd">            job = self.Job()</span>
+<span class="sd">            job = self.Job(</span>
+<span class="sd">                owner_id=data[&#39;owner_id&#39;],</span>
+<span class="sd">                model_id=data[&#39;id&#39;],</span>
+<span class="sd">                job_type_id=0,</span>
+<span class="sd">                status_id=0</span>
+<span class="sd">            ).save()</span>
+<span class="sd">            if resource_self.serial_fields is None:</span>
+<span class="sd">                resource_self.serial_fields = {}</span>
+<span class="sd">            resource_self.serial_fields[&#39;post&#39;] = \</span>
+<span class="sd">                self.Job.get_serial_fields()</span>
+
+<span class="sd">            # job submitted here -&gt;</span>
+
+<span class="sd">            status_code = 202</span>
+<span class="sd">            return job, status_code</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_class</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+
+    <span class="n">url_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># output params</span>
+    <span class="n">serial_fields</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">default_sort</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">requires_parameter</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">before_commit</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">after_commit</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="DBBaseResource.get_key"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_key.html#flask_restful_dbbase.resources.DBBaseResource.get_key">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; get_key</span>
+
+<span class="sd">        This function returns column names marked as primary_key.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            formatted: (bool) : will return in form &lt;int:id&gt;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            key (str | list) : In the case of multiple primary keys</span>
+<span class="sd">                a list of keys is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">formatted</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s2">&quot;primary_key&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">format_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">key</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;primary_key&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">keys</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DBBaseResource.get_obj_params"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_obj_params.html#flask_restful_dbbase.resources.DBBaseResource.get_obj_params">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_obj_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;get_obj_params</span>
+
+<span class="sd">        This is a convenience function for getting documentation</span>
+<span class="sd">        parameters from the model class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict) : The object properties of the model class</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">)[</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
+        <span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DBBaseResource.format_key"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.format_key.html#flask_restful_dbbase.resources.DBBaseResource.format_key">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">format_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key_type</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;int:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;string:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
+
+<div class="viewcode-block" id="DBBaseResource.get_urls"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_urls.html#flask_restful_dbbase.resources.DBBaseResource.get_urls">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_urls</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;get_urls</span>
+
+<span class="sd">        This function returns something similar to</span>
+<span class="sd">        [</span>
+<span class="sd">            {url_prefix}/{this_url},</span>
+<span class="sd">            {url_prefix}/{this_url}/&lt;int:id&gt;</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A model class must be defined&quot;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_url</span><span class="p">()</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">url_with_id</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">url</span><span class="p">,</span> <span class="n">keys</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">url</span><span class="p">,</span> <span class="n">url_with_id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DBBaseResource.get_meta"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_meta.html#flask_restful_dbbase.resources.DBBaseResource.get_meta">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns the settings for the resource.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method: (str : None) : choices are get/post/put/patch/delete.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            meta_data (dict) : A dict with the resource characteristics.</span>
+<span class="sd">            If a method is preferred, the focus will be narrowed to that</span>
+<span class="sd">            method.</span>
+
+<span class="sd">        The intent of this function is to show relevant information for someone</span>
+<span class="sd">        interacting with an API.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span>
+        <span class="n">method_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;model_class&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">(),</span>
+                <span class="s2">&quot;url_prefix&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span>
+                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_url</span><span class="p">(),</span>
+            <span class="p">}</span>
+            <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;methods&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># this is done to force order without OrderedDict</span>
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+                    <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;methods&quot;</span><span class="p">][</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;table&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># just the method</span>
+            <span class="c1">#if method not in method_list:</span>
+                <span class="c1">#methods = str(cls.model_class.methods).lower()</span>
+                <span class="c1">#raise ValueError(</span>
+                    <span class="c1">#f&#39;Support methods for this resource are: {methods}&#39;)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="n">method</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Method &#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&#39; is not found for this resource&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span></div>
+
+<div class="viewcode-block" id="DBBaseResource.is_collection"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.is_collection.html#flask_restful_dbbase.resources.DBBaseResource.is_collection">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">is_collection</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns True if identified as a collection resource.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># uses max_page_size as a marker</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;max_page_size&#39;</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_meta_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function builds the dict meta data object for a specific method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method: (str) : The method to be documented.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span>
+
+        <span class="n">method_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">]:</span>
+            <span class="c1"># NOTE: need to identify a collection resource here</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_collection</span><span class="p">():</span>
+                <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_urls</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_urls</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">method_dict</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+
+        <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;requirements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method_decorators</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_collection</span><span class="p">():</span>
+                <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;query_string&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+                    <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;!readOnly&quot;</span><span class="p">],</span> <span class="n">to_camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_part</span><span class="p">))</span>
+                        <span class="k">for</span> <span class="n">key_part</span> <span class="ow">in</span> <span class="n">key</span>
+                    <span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">key</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="p">}</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># select all columns that are not read only</span>
+            <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+                <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;!readOnly&quot;</span><span class="p">],</span> <span class="n">to_camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method_response</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">method_dict</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_meta_method_decorators</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="c1"># method decorators go in as requirements</span>
+
+        <span class="n">requirements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">method_decorators</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">requirements</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">method_decorators</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">method_decorators</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">method_decorators</span><span class="p">:</span>
+                <span class="n">requirements</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">method_decorators</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+                <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">requirements</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_meta_method_response</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; _meta_method_response</span>
+
+<span class="sd">        The real way to do this:</span>
+
+<span class="sd">        NOTE: Develop a resolved list of serial fields and serial field</span>
+<span class="sd">        relations. Then pass both a doc function and use the</span>
+<span class="sd">        serialization routines to follow relationships to the source.</span>
+<span class="sd">        This would capture the detail associated with the relationships</span>
+<span class="sd">        as well. Part of the issue is that related serializations work</span>
+<span class="sd">        well with instantiated data, because the related classes are</span>
+<span class="sd">        available when using to_dict(). However, the related classes</span>
+<span class="sd">        within a class method might need to plumb metadata(?) to get</span>
+<span class="sd">        all the pieces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span>
+
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">[:]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">:</span>
+                <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">[</span><span class="n">method</span><span class="p">][:]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">outputs</span><span class="p">:</span>
+            <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">get_serial_fields</span><span class="p">()</span>
+
+        <span class="c1"># this does not matter now, but will later</span>
+        <span class="c1"># if isinstance(cls.serial_field_relations, list):</span>
+        <span class="c1">#     outputs[&quot;field relations&quot;] = cls.serial_field_relations[:]</span>
+        <span class="c1"># elif isinstance(cls.serial_field_relations, dict):</span>
+        <span class="c1">#     if method in cls.serial_field_relations:</span>
+        <span class="c1">#         outputs[&quot;field relations&quot;] = cls.serial_field_relations[</span>
+        <span class="c1">#             method</span>
+        <span class="c1">#         ][:]</span>
+        <span class="c1">#</span>
+        <span class="c1"># if &quot;field relations&quot; not in outputs:</span>
+        <span class="c1">#     if cls.model_class.SERIAL_FIELD_RELATIONS is not None:</span>
+        <span class="c1">#         outputs[</span>
+        <span class="c1">#             &quot;field relations&quot;</span>
+        <span class="c1">#         ] = cls.model_class.SERIAL_FIELD_RELATIONS</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">&quot;delete&quot;</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">serial_fields</span><span class="o">=</span><span class="n">serial_fields</span><span class="p">)[</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
+            <span class="p">]</span>
+            <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+
+            <span class="c1"># here is where the default sort would go for collections</span>
+
+        <span class="k">return</span> <span class="n">outputs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_check_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># these are the kwargs passed in</span>
+        <span class="c1"># kwargs without ** is intentional</span>
+        <span class="n">key_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">key_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No key for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> given. &quot;</span>
+                <span class="s2">&quot;This is a configuration problem in the url for &quot;</span>
+                <span class="s2">&quot;this kind of method.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_serial_fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;_get_serial_fields</span>
+
+<span class="sd">        see class description for use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serial_fields</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">:</span>
+                <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span>
+
+        <span class="c1"># if serial_fields is None:</span>
+        <span class="c1">#    serial_fields = cls.model_class.get_serial_fields()</span>
+
+        <span class="k">return</span> <span class="n">serial_fields</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_serial_field_relations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;_get_serial_field_relations</span>
+
+<span class="sd">        see class description for use</span>
+<span class="sd">        These are handled differently than serial lists because they are</span>
+<span class="sd">        not subject to the filtering through stop list on the model class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">serial_field_relations</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_field_relations</span><span class="p">:</span>
+                <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_field_relations</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_field_relations</span>
+
+        <span class="k">if</span> <span class="n">serial_field_relations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">SERIAL_FIELD_RELATIONS</span>
+
+        <span class="k">return</span> <span class="n">serial_field_relations</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_serializations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_fields</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_field_relations</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_check_config_error</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;_check_config_error</span>
+
+<span class="sd">        This function returns a message, response code</span>
+<span class="sd">        if the model_class has not been configured.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Configuration error: missing model_class.&quot;</span><span class="p">},</span>
+                <span class="mi">500</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="DBBaseResource.create_url"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.create_url.html#flask_restful_dbbase.resources.DBBaseResource.create_url">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_url</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; create_url</span>
+
+<span class="sd">        Url can come from:</span>
+<span class="sd">        * url_name resource variable</span>
+
+<span class="sd">        but if None</span>
+<span class="sd">        * snake_case version of class name</span>
+
+<span class="sd">        NOTE: figure out flag for use table/classname</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_check_config_error</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># attempt to derive it</span>
+            <span class="n">url_name</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">(),</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">url_name</span> <span class="o">=</span> <span class="n">url_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">url_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span>
+
+        <span class="n">url_prefix</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span>
+
+        <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url_prefix</span><span class="p">,</span> <span class="n">url_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DBBaseResource.screen_data"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.screen_data.html#flask_restful_dbbase.resources.DBBaseResource.screen_data">[docs]</a>    <span class="k">def</span> <span class="nf">screen_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assumes data is deserialized</span>
+
+<span class="sd">        This function screens data from a few parameters, missing data,</span>
+<span class="sd">        unneeded fields in data, excessive string lengths, improper numbers.</span>
+
+<span class="sd">        Note that this function does not exhaustively determine the</span>
+<span class="sd">        problem. It ends on first failure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: (dict) : incoming data</span>
+<span class="sd">            obj_params: (dict) : table parameters</span>
+<span class="sd">            skip_missing_data : (bool) : Flag to check for all for record</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            status: (bool) : True, Successful screening</span>
+<span class="sd">            msg : (None : dict) : description of the problem</span>
+
+<span class="sd">        Each test for bad data outputs a status of True, None for each</span>
+<span class="sd">        successful test. Unsuccessful tests add the problem to an error</span>
+<span class="sd">        list to be returned at the end. That way, there is a relatively</span>
+<span class="sd">        complete list of the problems encountered.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># filtering first</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_unnecessary_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_missing_data</span><span class="p">:</span>
+            <span class="c1"># check required first</span>
+            <span class="n">missing_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_required</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">missing_columns</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">missing_columns</span><span class="p">)</span>
+        <span class="c1"># check lengths of text</span>
+        <span class="n">tmp_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_max_text_lengths</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tmp_errors</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp_errors</span><span class="p">)</span>
+
+        <span class="c1"># check for numerics -- skipping check integer size for now</span>
+        <span class="n">tmp_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_numeric_casting</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tmp_errors</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp_errors</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">errors</span>
+
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">data</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_check_numeric_casting</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; _check_numeric_casting</span>
+
+<span class="sd">        This function just makes a quick to see if a numeric field</span>
+<span class="sd">        data, if in string form, can be converted to a number.</span>
+
+<span class="sd">        No check is made on integer or float sizes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">column_types</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="n">only_props</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">column_types</span><span class="p">[</span><span class="n">field</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">column_types</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;integer&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+                            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="p">{</span><span class="n">field</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not a number&quot;</span><span class="p">}</span>
+                            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">errors</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_check_max_text_lengths</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; _check_max_text_lengths</span>
+
+<span class="sd">        This function compares a maximum length, if available with</span>
+<span class="sd">        the data value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;maxLength&quot;</span><span class="p">],</span> <span class="n">only_props</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">column</span><span class="p">,</span> <span class="n">col_length</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="n">col_length</span><span class="p">[</span><span class="s2">&quot;maxLength&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="n">max_len</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="n">column</span><span class="p">:</span> <span class="s2">&quot;The data exceeds the maximum length &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">max_len</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">errors</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_remove_unnecessary_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; _remove_unnecessary_data</span>
+
+<span class="sd">        This function removes any fields that are unnecessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">column_types</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;!readOnly&quot;</span><span class="p">],</span> <span class="n">only_props</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">column_types</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_missing_required</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; _missing_required</span>
+
+<span class="sd">        This function reports required fields that are missing data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># NOTE: filtering needs improvement, includes relationships</span>
+        <span class="c1">#       this is due to no nullable in relationship</span>
+        <span class="n">requireds</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
+            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;!nullable&quot;</span><span class="p">],</span> <span class="n">only_props</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">missing_columns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">requireds</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;nullable&quot;</span> <span class="ow">in</span> <span class="n">requireds</span><span class="p">[</span><span class="n">column</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">missing_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing_columns</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;missing_columns&quot;</span><span class="p">:</span> <span class="n">missing_columns</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="../../../index.html">
+  <img class="logo" src="../../../_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../flask_restful_dbbase.html">flask_restful_dbbase</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

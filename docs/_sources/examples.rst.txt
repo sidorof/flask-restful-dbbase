@@ -1,0 +1,22 @@
+Examples
+========
+
+Example files are included that provide working examples of descriptions in the User Guide. They are found in the **examples** directory on Github at https://github.com/sidorof/Flask-RESTful-DBBase/examples.
+
+
+Simple-App
+----------
+
+.. include:: ../../examples/simple_app.py
+    :literal:
+
+Owner-App Version 1
+-------------------
+
+.. include:: ../../examples/owner_app_v1.py
+    :literal:
+
+
+Owner-App Version 2
+-------------------
+
