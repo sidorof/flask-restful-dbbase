@@ -35,8 +35,7 @@ class User(db.Model):
 
     is_staff = db.Column(db.Boolean, default=False, nullable=False)
     is_active = db.Column(db.Boolean, default=False, nullable=False)
-    is_account_current = db.Column(
-        db.Boolean, default=False, nullable=False)
+    is_account_current = db.Column(db.Boolean, default=False, nullable=False)
 
     date_joined = db.Column(db.Date, default=date.today, nullable=False)
     last_login = db.Column(db.DateTime, nullable=True)
@@ -47,8 +46,7 @@ class Order(db.Model):
     __tablename__ = "order"
 
     id = db.Column(db.Integer, nullable=True, primary_key=True)
-    owner_id = db.Column(
-        db.Integer, db.ForeignKey("user.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     description = db.Column(db.String, nullable=False)
     ordered_at = db.Column(db.DateTime, default=datetime.now)
     status_id = db.Column(db.SmallInteger, default=0, nullable=True)
@@ -59,10 +57,8 @@ class Job(db.Model):
     __tablename__ = "job"
 
     id = db.Column(db.Integer, nullable=True, primary_key=True)
-    owner_id = db.Column(
-        db.Integer, db.ForeignKey("user.id"), nullable=False)
-    order_id = db.Column(
-        db.Integer, db.ForeignKey("order.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id"), nullable=False)
     started_at = db.Column(
         db.DateTime, server_default=db.func.now(), nullable=False
     )
@@ -152,8 +148,10 @@ class OwnerResource(ModelResource):
             if int(owner_id) == user_id:
                 return True, data
 
-        return False, ({"message": "The user id does not match the owner id"}, 400)
-
+        return (
+            False,
+            ({"message": "The user id does not match the owner id"}, 400),
+        )
 
     def process_put_input(self, qry, data, kwargs):
         """
@@ -169,7 +167,10 @@ class OwnerResource(ModelResource):
             if int(owner_id) == user_id:
                 return True, data
 
-        return False, ({"message": "The user id does not match the owner id"}, 400)
+        return (
+            False,
+            ({"message": "The user id does not match the owner id"}, 400),
+        )
 
     def process_patch_input(self, qry, data, kwargs):
         """
@@ -185,7 +186,10 @@ class OwnerResource(ModelResource):
             if int(owner_id) == user_id:
                 return True, data
 
-        return False, ({"message": "The user id does not match the owner id"}, 400)
+        return (
+            False,
+            ({"message": "The user id does not match the owner id"}, 400),
+        )
 
     def process_delete_input(self, qry, kwargs):
         """
@@ -223,6 +227,7 @@ class OrderResource(OwnerResource):
 
 class OrderMetaCollection(MetaResource):
     resource_class = OrderCollection
+
 
 class OrderMeta(MetaResource):
     resource_class = OrderResource

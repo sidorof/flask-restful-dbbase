@@ -451,7 +451,7 @@ class ModelResource(DBBaseResource):
             ).first()
         except Exception as err:
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method "
+            return_msg = "Internal Server Error: method "
             f"{FUNC_NAME}: {url}: {msg}"
             logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": return_msg}, 500

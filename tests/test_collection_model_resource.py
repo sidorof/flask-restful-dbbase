@@ -5,8 +5,6 @@ This module tests collections.
 import unittest
 from random import randint
 import logging
-import json
-from datetime import datetime
 
 import flask
 import flask_restful
@@ -112,7 +110,7 @@ class TestCollectionModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/sample", headers=self.headers)
+            res = client.get("/sample", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(res.get_json()[self.Sample._class()]), 100)
@@ -129,7 +127,7 @@ class TestCollectionModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.get(
-                f"/sample",
+                "/sample",
                 query_string={
                     "ownerId": 1,
                     "orderby": "statusID",
@@ -148,7 +146,7 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
             res = client.get(
-                f"/sample",
+                "/sample",
                 query_string={
                     "ownerId": 1,
                     "orderby": "statusID",
@@ -168,7 +166,7 @@ class TestCollectionModelResource(unittest.TestCase):
             # test max page size, default sort
             # NOTE: compare explicit queries
             res = client.get(
-                f"/sample1",
+                "/sample1",
                 query_string={"ownerId": 1, "pageSize": 10, "debug": False},
                 headers=self.headers,
             )
@@ -184,7 +182,7 @@ class TestCollectionModelResource(unittest.TestCase):
             # offset
             # NOTE: compare explicit queries
             res = client.get(
-                f"/sample1",
+                "/sample1",
                 query_string={
                     "ownerId": 1,
                     "pageSize": 10,

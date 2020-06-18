@@ -318,7 +318,7 @@ def test__check_config_error():
         pass
 
     assert UserResource._check_config_error() == (
-        {"message": f"Configuration error: missing model_class."},
+        {"message": "Configuration error: missing model_class."},
         500,
     )
 

@@ -180,14 +180,10 @@ class TestModelProcResource(unittest.TestCase):
                     if data.get("ownerId") == user_id:
                         return True, (qry, data)
 
+                    msg = "The user id does not match the owner id"
                     return (
                         False,
-                        (
-                            {
-                                "message": "The user id does not match the owner id"
-                            },
-                            400,
-                        ),
+                        ({"message": msg}, 400,),
                     )
 
                 def process_delete_input(self, qry, kwargs):
@@ -279,7 +275,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/sample", data=json.dumps(sample), headers=self.headers
+                "/sample", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -295,7 +291,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/sample", data=json.dumps(sample), headers=self.headers
+                "/sample", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 201)
 
@@ -328,7 +324,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/sample/1", data=json.dumps(sample), headers=self.headers
+                "/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -344,7 +340,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/sample/1", data=json.dumps(sample), headers=self.headers
+                "/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -379,7 +375,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.patch(
-                f"/sample/1", data=json.dumps(sample), headers=self.headers
+                "/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -395,7 +391,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.patch(
-                f"/sample/1", data=json.dumps(sample), headers=self.headers
+                "/sample/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -428,7 +424,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(f"/sample/100", headers=self.headers)
+            res = client.delete("/sample/100", headers=self.headers)
 
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
@@ -441,7 +437,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(f"/other-sample/1", headers=self.headers)
+            res = client.delete("/other-sample/1", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -583,7 +579,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/ml-model", data=json.dumps(new_model), headers=self.headers
+                "/ml-model", data=json.dumps(new_model), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 202)
@@ -612,7 +608,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-before", data=json.dumps({}), headers=self.headers
+                "/small-before", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -667,7 +663,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-before", data=json.dumps({}), headers=self.headers
+                "/small-before", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -717,7 +713,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-after", data=json.dumps({}), headers=self.headers
+                "/small-after", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -758,7 +754,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-after", data=json.dumps({}), headers=self.headers
+                "/small-after", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 

@@ -186,7 +186,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                "/book", data=json.dumps(book), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -213,7 +213,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                "/book", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -246,7 +246,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                "/book", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 409)
             self.assertDictEqual(
@@ -268,7 +268,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                "/book", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 201)
             self.assertDictEqual(
@@ -300,7 +300,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book", data=json.dumps({}), headers=self.headers
+                "/book", data=json.dumps({}), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -315,7 +315,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         with self.app.test_client() as client:
-            res = client.patch(f"/book", headers=self.headers)
+            res = client.patch("/book", headers=self.headers)
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -328,7 +328,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         with self.app.test_client() as client:
-            res = client.delete(f"/book", headers=self.headers)
+            res = client.delete("/book", headers=self.headers)
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -353,7 +353,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book/1", data=json.dumps(book), headers=self.headers
+                "/book/1", data=json.dumps(book), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -381,7 +381,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book/1", data=json.dumps(book), headers=self.headers
+                "/book/1", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -448,7 +448,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.patch(
-                f"/book/1", data=json.dumps(book), headers=self.headers
+                "/book/1", data=json.dumps(book), headers=self.headers
             )
 
             self.assertDictEqual(
@@ -944,7 +944,7 @@ class TestModelBadDatabase(unittest.TestCase):
 
         with self.app.test_client() as client:
             self.db.drop_all()
-            res = client.get(f"/throw-away/1", headers=self.headers)
+            res = client.get("/throw-away/1", headers=self.headers)
 
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(

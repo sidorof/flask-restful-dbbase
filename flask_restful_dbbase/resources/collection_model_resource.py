@@ -37,9 +37,8 @@ class CollectionModelResource(DBBaseResource):
         return [cls.create_url()]
 
     def get(self):
-
-        name = self.model_class._class()
         url = request.path
+        FUNC_NAME = 'get'
         if request.values:
             data = request.values
         elif request.data:
@@ -59,7 +58,6 @@ class CollectionModelResource(DBBaseResource):
         order_by = data.get("order_by", self.order_by)
         page_size = data.get("page_size", None)
         offset = data.get("offset", None)
-        page = data.get("page", None)
         debug = data.get("debug", None)
 
         if debug == "False":

@@ -205,7 +205,7 @@ class DBBaseResource(Resource):
             }
             doc["methods"] = {}
             # this is done to force order without OrderedDict
-            for method in ["get", "post", "put", "patch", "delete"]:
+            for method in method_list:
                 if hasattr(cls, method):
                     doc["methods"][method] = cls._meta_method(method)
             doc["table"] = db.doc_table(cls.model_class)
@@ -415,7 +415,7 @@ class DBBaseResource(Resource):
         """
         if cls.model_class is None:
             return (
-                {"message": f"Configuration error: missing model_class."},
+                {"message": "Configuration error: missing model_class."},
                 500,
             )
 

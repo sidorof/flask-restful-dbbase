@@ -1,7 +1,4 @@
 # flask_restful_dbbase/__init__.py
-import os
-from sqlalchemy import Table
-
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
 
 from dbbase import DB
