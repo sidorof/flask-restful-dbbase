@@ -16,75 +16,75 @@ class DBBaseResource(Resource):
     This model class implements the base class.
 
     model_class: a dbbase.Model
-    url_prefix: the portion of the path leading up to the resource
-        For example: /api/v2
+    url_prefix: the portion of the path leading up to the resource,
+    for example: /api/v2
 
     url_name: the url_name defaults to a lower case version of the
-        the model_class name if left as None, but can have an
-        explicit name if necessary.
+    the model_class name if left as None, but can have an explicit
+    name if necessary.
 
     serial_fields: if left as None, it uses the serial list from
-        the model class. Left as None, it will default to the
-        underlying model.
+    the model class. Left as None, it will default to the
+    underlying model.
 
     serial_field_relations: can customize how relationship variables
-        are presented in output.
+    are presented in output.
 
     before_commit/after_commit: These variables are designed to extend
-        the capabilities of the methods be enabling a function or
-        class to modify the data just prior to commit, or after. By
-        using these, it is possible to send data to message queues,
-        adjust the data, or otherwise change the data.
+    the capabilities of the methods be enabling a function or
+    class to modify the data just prior to commit, or after. By
+    using these, it is possible to send data to message queues,
+    adjust the data, or otherwise change the data.
 
-        There are expectations of about the functions/classes.
+    There are expectations of about the functions/classes.
 
-        Format for a before/after function:
+    Format for a before/after function:
 
-        `def myfunc(resource_self, item, status_code):`
+    `def myfunc(resource_self, item, status_code):`
 
-        Args:
-            resource_self: (obj) : This is the self of the resource.
-                This provides access to the resource itself.
-            item: (obj) : This is SQLAlchemy record.
-            status_code (int) : If due to the processing that status_code
-                should change, you can change it here. Otherwise, simply
-                return it.
-        Returns:
-            item: (obj) : The modified record
-            status_code (int) : The possibly altered response status_code
+    Args:
+        resource_self: (obj) : This is the self of the resource.
+            This provides access to the resource itself.
+        item: (obj) : This is SQLAlchemy record.
+        status_code (int) : If due to the processing that status_code
+            should change, you can change it here. Otherwise, simply
+            return it.
+    Returns:
+        item: (obj) : The modified record
+        status_code (int) : The possibly altered response status_code
 
-        Example of a Class:
-        A class can be used to hold additional data.
-        This example shows how a resource can receive a POSTed object, but
-        return the job created as a result instead.
+    Example of a Class:
+    A class can be used to hold additional data.
+    This example shows how a resource can receive a POSTed object, but
+    return the job created as a result instead.
 
-        A class requires that a `run` function be implemented with the
-        input variables as shown below.
+    A class requires that a `run` function be implemented with the
+    input variables as shown below.
 
-        class JobCreator(object):
-            def __init__(self, class_name):
-                self.Job = class_name
+    class JobCreator(object):
+        def __init__(self, class_name):
+            self.Job = class_name
 
-            def run(self, resource_self, item, status_code):
-                # obj_self gives access resource characteristics
-                # but not used in this case
-                data = item.to_dict(to_camel_case=False)
-                job = self.Job()
-                job = self.Job(
-                    owner_id=data['owner_id'],
-                    model_id=data['id'],
-                    job_type_id=0,
-                    status_id=0
-                ).save()
-                if resource_self.serial_fields is None:
-                    resource_self.serial_fields = {}
-                resource_self.serial_fields['post'] = \
-                    self.Job.get_serial_fields()
+        def run(self, resource_self, item, status_code):
+            # obj_self gives access resource characteristics
+            # but not used in this case
+            data = item.to_dict(to_camel_case=False)
+            job = self.Job()
+            job = self.Job(
+                owner_id=data['owner_id'],
+                model_id=data['id'],
+                job_type_id=0,
+                status_id=0
+            ).save()
+            if resource_self.serial_fields is None:
+                resource_self.serial_fields = {}
+            resource_self.serial_fields['post'] = \
+                self.Job.get_serial_fields()
 
-                # job submitted here ->
+            # job submitted here ->
 
-                status_code = 202
-                return job, status_code
+            status_code = 202
+            return job, status_code
 
     """
 
@@ -250,7 +250,7 @@ class DBBaseResource(Resource):
 
         if method in ["get", "put", "patch", "delete"]:
             # NOTE: need to identify a collection resource here
-            if cls.is_collection:
+            if cls.is_collection():
                 method_dict["url"] = cls.get_urls()[0]
             else:
                 method_dict["url"] = cls.get_urls()[1]

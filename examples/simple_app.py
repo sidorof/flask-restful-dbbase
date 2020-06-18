@@ -1,6 +1,6 @@
 # examples/simple_app.py
 """
-This app is a simple version of usage of Flask-RESTful-DBBase.
+This app is a simple version showing usage of Flask-RESTful-DBBase.
 
 Using the defaults and characteristics of the model tables,
 resources can use those models to implement an API that has
@@ -27,6 +27,11 @@ will be found in the documentation and other examples.
 from flask import Flask
 from flask_restful import Api
 from flask_restful_dbbase import DBBase
+from flask_restful_dbbase.resources import (
+    CollectionModelResource,
+    ModelResource,
+    MetaResource,
+)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
@@ -34,12 +39,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 api = Api(app)
 db = DBBase(app)
-
-from flask_restful_dbbase.resources import (
-    CollectionModelResource,
-    ModelResource,
-    MetaResource
-)
 
 
 class Author(db.Model):
@@ -69,8 +68,7 @@ class Book(db.Model):
 
 db.create_all()
 
-author = Author(
-    first_name="Geoffrey", last_name="Cooper").save()
+author = Author(first_name="Geoffrey", last_name="Cooper").save()
 
 book = Book(
     isbn="0-87893-214-3",
@@ -108,49 +106,59 @@ book = Book(
     author_id=author.id,
 ).save()
 
+author = Author(first_name="Steven", last_name="Skiena").save()
+
 
 # api.create_resources(models=[Book, Author])`
 class BookCollection(CollectionModelResource):
     model_class = Book
     url_name = "books"
 
+
 class BookResource(ModelResource):
     model_class = Book
     url_name = "books"
 
+
 class BookMetaCollection(MetaResource):
     resource_class = BookCollection
 
+
 class BookMeta(MetaResource):
     resource_class = BookResource
+
 
 class AuthorCollection(CollectionModelResource):
     model_class = Author
     url_name = "authors"
 
+
 class AuthorResource(ModelResource):
     model_class = Author
     url_name = "authors"
 
+
 class AuthorMetaCollection(MetaResource):
     resource_class = AuthorCollection
+
 
 class AuthorMeta(MetaResource):
     resource_class = AuthorResource
 
+
 print()
-print('urls created:')
-print('-------------')
-print('\n'.join(AuthorCollection.get_urls()))
-print('\n'.join(AuthorResource.get_urls()))
+print("urls created:")
+print("-------------")
+print("\n".join(AuthorCollection.get_urls()))
+print("\n".join(AuthorResource.get_urls()))
 print()
-print('\n'.join(BookCollection.get_urls()))
-print('\n'.join(BookResource.get_urls()))
+print("\n".join(BookCollection.get_urls()))
+print("\n".join(BookResource.get_urls()))
 print()
-print('\n'.join(AuthorMeta.get_urls()))
-print('\n'.join(AuthorMetaCollection.get_urls()))
-print('\n'.join(BookMeta.get_urls()))
-print('\n'.join(BookMetaCollection.get_urls()))
+print("\n".join(AuthorMeta.get_urls()))
+print("\n".join(AuthorMetaCollection.get_urls()))
+print("\n".join(BookMeta.get_urls()))
+print("\n".join(BookMetaCollection.get_urls()))
 print()
 
 api.add_resource(AuthorCollection, *AuthorCollection.get_urls())
@@ -162,7 +170,6 @@ api.add_resource(BookCollection, *BookCollection.get_urls())
 api.add_resource(BookResource, *BookResource.get_urls())
 api.add_resource(BookMetaCollection, *BookMetaCollection.get_urls())
 api.add_resource(BookMeta, *BookMeta.get_urls())
-
 
 
 if __name__ == "__main__":

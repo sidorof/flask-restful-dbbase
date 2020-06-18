@@ -17,7 +17,11 @@ class ModelResource(DBBaseResource):
 
     This model class implements the base class.
 
+    **Class variables**:
+
     model_class: a dbbase.Model
+
+
     url_prefix: the portion of the path leading up to the resource
         For example: /api/v2
 
@@ -28,6 +32,7 @@ class ModelResource(DBBaseResource):
     serial_fields: if left as None, it uses the serial list from
         the model class. However, it can be a list of field names
         or
+
 
     """
 
@@ -85,7 +90,7 @@ class ModelResource(DBBaseResource):
         logger.debug(msg)
         return {"message": msg}, 404
 
-    def post(self, *args, **kwargs):
+    def post(self):
         """ Post """
         FUNC_NAME = "post"
         url = request.path
@@ -105,7 +110,7 @@ class ModelResource(DBBaseResource):
             data = request.args
 
         if self.process_post_input is not None:
-            status, result = self.process_post_input(data, kwargs)
+            status, result = self.process_post_input(data)
 
             if status is False:
                 # exit the scene, result should be a
@@ -203,7 +208,6 @@ class ModelResource(DBBaseResource):
             try:
                 data = request.json
             except Exception as err:
-                print(err)
                 msg = err
                 return_msg = f"A JSON format problem:{msg}: {request.data}"
                 return {"message": return_msg}, 400
@@ -317,7 +321,6 @@ class ModelResource(DBBaseResource):
             try:
                 data = request.json
             except Exception as err:
-                print(err)
                 msg = err
                 return_msg = f"A JSON format problem:{msg}: {request.data}"
                 return {"message": return_msg}, 400

@@ -127,6 +127,10 @@ class TestModelResource(unittest.TestCase):
         cls.db = None
         del cls.db
 
+    def test_is_collection(self):
+
+        self.assertFalse(self.BookResource.is_collection())
+
     def test_get_404(self):
 
         wrong_id = 10

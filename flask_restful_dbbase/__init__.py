@@ -10,7 +10,6 @@ from dbbase.column_types import WriteOnlyColumn
 
 from . resources import DBBaseResource, ModelResource, CollectionModelResource
 from ._version import __version__
-from . queries import parse_query
 
 
 class DBBase(SQLAlchemy):

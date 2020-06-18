@@ -1,4 +1,5 @@
 cd ../ && \
+	rm -rf ../docs/* && \
 	rm -rf build && \
 	rm -rf dist && \
 	rm -rf flask_restful_dbbase.egg-info 	&& \

@@ -144,7 +144,7 @@ class TestModelProcResource(unittest.TestCase):
                     qry = qry.filter_by(owner_id=user_id)
                     return True, qry
 
-                def process_post_input(self, data, kwargs):
+                def process_post_input(self, data):
                     # assumes pretend decorator
                     # user_id = get_jwt_identity()
                     user_id = 1

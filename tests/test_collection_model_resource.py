@@ -103,6 +103,13 @@ class TestCollectionModelResource(unittest.TestCase):
         cls.db = None
         del cls.db
 
+    def test_is_collection(self):
+
+        class SampleCollection(CollectionModelResource):
+            model_class = self.Sample
+
+        self.assertTrue(SampleCollection.is_collection())
+
     def test_get_no_params(self):
         """ test_get_no_params
 
