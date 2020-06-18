@@ -10,4 +10,6 @@ cd ../ && \
 	rm -rf build/* && \
 	make html && \
 	make github
+	touch ../docs/.nojekyll
+
 

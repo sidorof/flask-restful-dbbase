@@ -4,15 +4,15 @@
 # License: MIT
 from setuptools import setup, find_packages
 
-PACKAGE_NAME = 'flask_restful_dbbase'
+PACKAGE_NAME = 'Flask-RESTful-DBBase'
 DESCRIPTION = (
-    "A package that extends Flask-RESTful resources to"
+    "A package that extends Flask-RESTful resources to "
     "make creating resources for database use easier and faster."
 )
 with open('README.md') as fobj:
     LONG_DESCRIPTION = fobj.read()
 
-PROJECT_URL = "https://sidorof.github.io/flask_restful_dbbase/"
+PROJECT_URL = "https://sidorof.github.io/flask-restful-dbbase/"
 LICENSE = "MIT"
 AUTHOR = "Donald Smiley"
 AUTHOR_EMAIL = "dsmiley@sidorof.com"
