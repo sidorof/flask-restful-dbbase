@@ -1,4 +1,4 @@
-.. code-block:: python
+.. code-block:: python 
 
     from functools import wraps
     from datetime import date, datetime
@@ -10,13 +10,13 @@
         ModelResource,
         MetaResource,
     )
-
+    
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
+    
     api = Api(app)
     db = DBBase(app)
-
-
+    
+    
 ..

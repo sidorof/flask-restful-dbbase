@@ -155,21 +155,3 @@ Order Meta Collection Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. include:: owner_app_v1_06.rst
 
-
-
-
-
-Get actions:
-
-- The resource already knows the key field(s) and will use it querying the database.
-- The fields returned are converted to camel case and can be customized for specifying which fields are to be returned.
-
-Post actions:
-
-- JSON data will be converted from camel case to snake case
-- Any irrelevant fields will screened out.
-- The data will be evaluated for mishaps such as strings that are too long for the database field, invalid numbers, and missing required fields. If there is a problem an error message will relay the issue back to the front end.
-- The dat
-
-
-For example, to post data, it will be first converted from camel case to snake case. The data fields

@@ -37,7 +37,7 @@ Input Variables
 * `query`: the SQLAlchemy query that can be modified: This the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy's session.query(Model), for example `session.query(Book)`. So an additional filter as may be necessary would be done by `query = query.filter_by(my_var='test')`. And finally, this is an unexecuted query that the normal program will execute afterwards.
 
 Returns
-+++++++++++++++
++++++++
 Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form `(status, result)` where status is either `True` to contine or `False` to exit early. So, if a tuple is not returned an error will be returned.
 
 Use the following formats as a guide.
@@ -59,7 +59,7 @@ process_get_input
 ..
 
 process_post_input
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 .. code-block:: python
 
     def process_post_input(self, query):
@@ -93,7 +93,7 @@ process_put_input
 
 
 process_patch_input
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 .. code-block:: python
 
     def process_patch_input(self, query, data, kwargs):
@@ -110,7 +110,7 @@ process_patch_input
 
 
 process_delete_input
-^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
 .. code-block:: python
 
     def process_delete_input(self, query, kwargs):
@@ -188,12 +188,5 @@ The format of the before / after functions is similar to the following:
 
 ..
 
-
-Before Commit
-^^^^^^^^^^^^^
-
-
-After Commit
-^^^^^^^^^^^^
 
 
