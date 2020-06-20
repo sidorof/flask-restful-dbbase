@@ -4,7 +4,11 @@ from dbbase import DB
 import flask
 import flask_restful
 from flask_restful_dbbase import DBBase
-from flask_restful_dbbase.resources import ModelResource, CollectionModelResource, MetaResource
+from flask_restful_dbbase.resources import (
+    ModelResource,
+    CollectionModelResource,
+    MetaResource,
+)
 
 
 def create_models(db):
@@ -19,9 +23,7 @@ def create_models(db):
         vendor_id = db.Column(db.Integer, nullable=False)
         vendor_part_number = db.Column(db.String, nullable=False)
         last_ordered = db.Column(db.DateTime, nullable=True)
-        active = db.Column(
-            db.SmallInteger, default=False, nullable=True
-        )
+        active = db.Column(db.SmallInteger, default=False, nullable=True)
 
     db.create_all()
 
@@ -58,16 +60,13 @@ class TestMetaModelResource(unittest.TestCase):
             class ProductMetaCollection(MetaResource):
                 resource_class = ProductCollection
 
-            cls.api.add_resource(
-                ProductResource, *ProductResource.get_urls()
-            )
+            cls.api.add_resource(ProductResource, *ProductResource.get_urls())
             cls.api.add_resource(
                 ProductMetaResource, *ProductMetaResource.get_urls()
             )
 
             cls.api.add_resource(
-                ProductMetaCollection,
-                *ProductMetaCollection.get_urls()
+                ProductMetaCollection, *ProductMetaCollection.get_urls()
             )
 
             cls.ProductResource = ProductResource
@@ -104,13 +103,11 @@ class TestMetaModelResource(unittest.TestCase):
     def test_get_urls(self):
 
         self.assertListEqual(
-            self.ProductMetaResource.get_urls(),
-            ['/meta/product/single']
+            self.ProductMetaResource.get_urls(), ["/meta/product/single"]
         )
 
         self.assertListEqual(
-            self.ProductMetaCollection.get_urls(),
-            ['/meta/product/collection']
+            self.ProductMetaCollection.get_urls(), ["/meta/product/collection"]
         )
 
     def test_get(self):
@@ -657,7 +654,5 @@ class TestMetaModelResource(unittest.TestCase):
 
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "Method 'bad' is not found for this resource"
-                },
+                {"message": "Method 'bad' is not found for this resource"},
             )

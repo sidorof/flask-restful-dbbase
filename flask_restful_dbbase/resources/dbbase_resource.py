@@ -212,16 +212,12 @@ class DBBaseResource(Resource):
 
         else:
             # just the method
-            #if method not in method_list:
-                #methods = str(cls.model_class.methods).lower()
-                #raise ValueError(
-                    #f'Support methods for this resource are: {methods}')
+            # if method not in method_list:
+            # methods = str(cls.model_class.methods).lower()
+            # raise ValueError(
+            # f'Support methods for this resource are: {methods}')
             if hasattr(cls, method):
-                doc = {
-                    "method": {
-                        method: cls._meta_method(method)
-                    }
-                }
+                doc = {"method": {method: cls._meta_method(method)}}
             else:
                 raise ValueError(
                     f"Method '{method}' is not found for this resource"
@@ -234,7 +230,7 @@ class DBBaseResource(Resource):
         This function returns True if identified as a collection resource.
         """
         # uses max_page_size as a marker
-        return hasattr(cls, 'max_page_size')
+        return hasattr(cls, "max_page_size")
 
     @classmethod
     def _meta_method(cls, method):
@@ -265,7 +261,14 @@ class DBBaseResource(Resource):
                 key = cls.get_key()
                 if isinstance(key, list):
                     method_dict["input"] = [
-                        dict(key, db.doc_column(cls.model_class, key_part))
+                        dict(
+                            [
+                                [
+                                    key_part,
+                                    db.doc_column(cls.model_class, key_part),
+                                ]
+                            ]
+                        )
                         for key_part in key
                     ]
                 else:
@@ -326,27 +329,29 @@ class DBBaseResource(Resource):
             serial_fields = cls.model_class.get_serial_fields()
 
         # this does not matter now, but will later
-        # if isinstance(cls.serial_field_relations, list):
-        #     outputs["field relations"] = cls.serial_field_relations[:]
-        # elif isinstance(cls.serial_field_relations, dict):
-        #     if method in cls.serial_field_relations:
-        #         outputs["field relations"] = cls.serial_field_relations[
-        #             method
-        #         ][:]
-        #
-        # if "field relations" not in outputs:
-        #     if cls.model_class.SERIAL_FIELD_RELATIONS is not None:
-        #         outputs[
-        #             "field relations"
-        #         ] = cls.model_class.SERIAL_FIELD_RELATIONS
+        if isinstance(cls.serial_field_relations, list):
+            outputs["field relations"] = cls.serial_field_relations[:]
+        elif isinstance(cls.serial_field_relations, dict):
+            if method in cls.serial_field_relations:
+                outputs["field relations"] = cls.serial_field_relations[
+                    method
+                ][:]
+
+        if "field relations" not in outputs:
+            if cls.model_class.SERIAL_FIELD_RELATIONS is not None:
+                outputs[
+                    "field relations"
+                ] = cls.model_class.SERIAL_FIELD_RELATIONS
 
         if method != "delete":
-            doc = db.doc_table(cls.model_class, serial_fields=serial_fields)[
+            doc = db.doc_table(cls.model_class, serial_fields=cls._get_serial_fields(method),
+            serial_field_relations=cls._get_serial_field_relations(method)
+            )[
                 cls.model_class._class()
             ]
             outputs["fields"] = doc["properties"]
 
-            # here is where the default sort would go for collections
+            # NOTE: here is where the default sort would go for collections
 
         return outputs
 

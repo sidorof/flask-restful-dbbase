@@ -75,14 +75,10 @@ class TestCollectionModelResource(unittest.TestCase):
             class Sample1CollectionResource(CollectionModelResource):
                 model_class = cls.Sample
                 process_get_input = None
-                order_by = 'status_id'
+                order_by = "status_id"
                 max_page_size = 5
 
-
-            cls.api.add_resource(
-                Sample1CollectionResource,
-                '/sample1'
-            )
+            cls.api.add_resource(Sample1CollectionResource, "/sample1")
             cls.needs_setup = False
 
         headers = {"Content-Type": "application/json"}
@@ -104,7 +100,6 @@ class TestCollectionModelResource(unittest.TestCase):
         del cls.db
 
     def test_is_collection(self):
-
         class SampleCollection(CollectionModelResource):
             model_class = self.Sample
 
@@ -148,8 +143,7 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]),
-                len(qry),
+                len(res.get_json()[Sample._class()]), len(qry),
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -159,42 +153,32 @@ class TestCollectionModelResource(unittest.TestCase):
                     "ownerId": 1,
                     "orderby": "statusID",
                     "pageSize": 10,
-                    "debug": False
+                    "debug": False,
                 },
                 headers=self.headers,
             )
             Sample = self.Sample
-            qry = Sample.query.filter(
-                Sample.owner_id == 1
-            ).limit(10).all()
+            qry = Sample.query.filter(Sample.owner_id == 1).limit(10).all()
 
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]),
-                len(qry),
+                len(res.get_json()[Sample._class()]), len(qry),
             )
             # test max page size, default sort
             # NOTE: compare explicit queries
             res = client.get(
                 f"/sample1",
-                query_string={
-                    "ownerId": 1,
-                    "pageSize": 10,
-                    "debug": False
-                },
+                query_string={"ownerId": 1, "pageSize": 10, "debug": False},
                 headers=self.headers,
             )
             Sample = self.Sample
-            qry = Sample.query.filter(
-                Sample.owner_id == 1
-            ).limit(5).all()
+            qry = Sample.query.filter(Sample.owner_id == 1).limit(5).all()
 
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]),
-                len(qry),
+                len(res.get_json()[Sample._class()]), len(qry),
             )
 
             # offset
@@ -205,18 +189,20 @@ class TestCollectionModelResource(unittest.TestCase):
                     "ownerId": 1,
                     "pageSize": 10,
                     "offset": 10,
-                    "debug": False
+                    "debug": False,
                 },
                 headers=self.headers,
             )
             Sample = self.Sample
-            qry = Sample.query.filter(
-                Sample.owner_id == 1
-            ).offset(10).limit(5).all()
+            qry = (
+                Sample.query.filter(Sample.owner_id == 1)
+                .offset(10)
+                .limit(5)
+                .all()
+            )
 
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]),
-                len(qry),
+                len(res.get_json()[Sample._class()]), len(qry),
             )

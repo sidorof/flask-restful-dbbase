@@ -559,24 +559,23 @@ class TestModelResource(unittest.TestCase):
                         },
                         "responses": {
                             "fields": {
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                    },
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
                                 "id": {
                                     "type": "integer",
                                     "format": "int32",
                                     "primary_key": True,
                                     "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
                                     "info": {},
                                 },
                                 "pub_year": {
@@ -592,11 +591,34 @@ class TestModelResource(unittest.TestCase):
                                     "foreign_key": "author.id",
                                     "info": {},
                                 },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
+                                "author": {
+                                    "readOnly": True,
+                                    "relationship": {
+                                        "type": "single",
+                                        "entity": "Author",
+                                        "fields": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "primary_key": True,
+                                                "nullable": True,
+                                                "info": {},
+                                            },
+                                            "first_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "last_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "full_name": {"readOnly": True},
+                                        },
+                                    },
                                 },
                             }
                         },
@@ -639,24 +661,23 @@ class TestModelResource(unittest.TestCase):
                         },
                         "responses": {
                             "fields": {
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                    },
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
                                 "id": {
                                     "type": "integer",
                                     "format": "int32",
                                     "primary_key": True,
                                     "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
                                     "info": {},
                                 },
                                 "pub_year": {
@@ -672,11 +693,34 @@ class TestModelResource(unittest.TestCase):
                                     "foreign_key": "author.id",
                                     "info": {},
                                 },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
+                                "author": {
+                                    "readOnly": True,
+                                    "relationship": {
+                                        "type": "single",
+                                        "entity": "Author",
+                                        "fields": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "primary_key": True,
+                                                "nullable": True,
+                                                "info": {},
+                                            },
+                                            "first_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "last_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "full_name": {"readOnly": True},
+                                        },
+                                    },
                                 },
                             }
                         },
@@ -720,24 +764,23 @@ class TestModelResource(unittest.TestCase):
                         },
                         "responses": {
                             "fields": {
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                    },
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
                                 "id": {
                                     "type": "integer",
                                     "format": "int32",
                                     "primary_key": True,
                                     "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
                                     "info": {},
                                 },
                                 "pub_year": {
@@ -753,11 +796,34 @@ class TestModelResource(unittest.TestCase):
                                     "foreign_key": "author.id",
                                     "info": {},
                                 },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
+                                "author": {
+                                    "readOnly": True,
+                                    "relationship": {
+                                        "type": "single",
+                                        "entity": "Author",
+                                        "fields": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "primary_key": True,
+                                                "nullable": True,
+                                                "info": {},
+                                            },
+                                            "first_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "last_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "full_name": {"readOnly": True},
+                                        },
+                                    },
                                 },
                             }
                         },
@@ -801,24 +867,23 @@ class TestModelResource(unittest.TestCase):
                         },
                         "responses": {
                             "fields": {
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                    },
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
                                 "id": {
                                     "type": "integer",
                                     "format": "int32",
                                     "primary_key": True,
                                     "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
                                     "info": {},
                                 },
                                 "pub_year": {
@@ -834,11 +899,34 @@ class TestModelResource(unittest.TestCase):
                                     "foreign_key": "author.id",
                                     "info": {},
                                 },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
+                                "author": {
+                                    "readOnly": True,
+                                    "relationship": {
+                                        "type": "single",
+                                        "entity": "Author",
+                                        "fields": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "primary_key": True,
+                                                "nullable": True,
+                                                "info": {},
+                                            },
+                                            "first_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "last_name": {
+                                                "type": "string",
+                                                "maxLength": 50,
+                                                "nullable": False,
+                                                "info": {},
+                                            },
+                                            "full_name": {"readOnly": True},
+                                        },
+                                    },
                                 },
                             }
                         },
@@ -899,6 +987,28 @@ class TestModelResource(unittest.TestCase):
                                 "relationship": {
                                     "type": "single",
                                     "entity": "Author",
+                                    "fields": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "primary_key": True,
+                                            "nullable": True,
+                                            "info": {},
+                                        },
+                                        "first_name": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": False,
+                                            "info": {},
+                                        },
+                                        "last_name": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": False,
+                                            "info": {},
+                                        },
+                                        "full_name": {"readOnly": True},
+                                    },
                                 },
                             },
                         },
