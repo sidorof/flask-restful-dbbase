@@ -105,6 +105,6 @@ class MetaResource(Resource):
                     'single'
                 )
         else:
-            url = path.join(url_prefix, cls.url_name)
+            url = path.join(cls.url_prefix, cls.url_name)
 
         return [url]

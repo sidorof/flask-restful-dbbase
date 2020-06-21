@@ -38,25 +38,31 @@ class CollectionModelResource(DBBaseResource):
 
     def get(self):
 
+        FUNC_NAME = 'get'
         name = self.model_class._class()
         url = request.path
-        if request.values:
-            data = request.values
-        elif request.data:
-            data = request.data
-        elif request.query_string:
-            data = request.query_string
-        else:
-            data = request.args
+        data = request.args
+        # special - could be a list of fields
+        order_by = request.args.getlist("orderBy", self.order_by)
 
         query = self.model_class.query
-
         if self.process_get_input is not None:
-            query = self.process_get_input(query, data)
+            status, result = self.process_get_input(query, data)
+            if status is False:
+                # exit the scene, data should be a
+                # tuple of message and status
+                if isinstance(result, tuple):
+                    return result
+                else:
+                    func = self.process_get_input.__name__
+                    msg =  f"malformed error in {func}: {result}"
+                    return { "message": msg}, 500
+            query, data = result
 
         data = self.model_class.deserialize(data)
         # extract job params first -- filtered out below
-        order_by = data.get("order_by", self.order_by)
+
+        # params not data so not converted
         page_size = data.get("page_size", None)
         offset = data.get("offset", None)
         page = data.get("page", None)
@@ -88,12 +94,19 @@ class CollectionModelResource(DBBaseResource):
             query = query.filter(getattr(self.model_class, key) == value)
 
         if order_by:
-            if isinstance(order_by, list):
-                for order in order_by:
-                    order = xlate(order, camel_case=False)
-                    query = query.order_by(getattr(self.model_class, order))
-            else:
-                query = query.order_by(getattr(self.model_class, order_by))
+            msg = "{order} is not a column in {name}"
+            order_list = []
+            for order in order_by:
+                order = xlate(order, camel_case=False)
+                if hasattr(self.model_class, order):
+                    order_list.append(
+                        getattr(self.model_class, order))
+                else:
+                    return (
+                        {"message": msg.format(order=order, name=name)},
+                        400
+                    )
+            query = query.order_by(*order_list)
 
         if offset is not None:
             query = query.offset(offset)
@@ -103,7 +116,6 @@ class CollectionModelResource(DBBaseResource):
                 query = query.limit(page_size)
             else:
                 query = query.limit(page_size)
-
         if debug:
             return {"query": str(query)}, 200
 

@@ -136,7 +136,7 @@ class TestModelProcResource(unittest.TestCase):
                 ]
 
                 # some test process input functions
-                def process_get_input(self, qry, kwargs):
+                def process_get_input(self, qry, data, kwargs):
                     # assumes pretend decorator
                     # user_id = get_jwt_identity()
 
@@ -786,3 +786,67 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             )
 
             self.assertEqual(res.status_code, 418)
+
+    def test_process_get_input(self):
+
+        db = self.db
+
+        class Test1(db.Model):
+            __tablename__ = "test1"
+            id = db.Column(db.Integer, primary_key=True)
+            name = db.Column(db.String)
+
+        db.create_all()
+
+        test_id = 34
+        test1 = Test1(id=test_id, name="this is a test").save()
+
+        class Test1Resource(ModelResource):
+            model_class = Test1
+
+            def process_get_input(self, query, data, kwargs):
+                # no actual change to query
+                debug = data.get("debug")
+                if debug == "False":
+                    debug = False
+
+                if debug:
+                    return (True, query)
+                else:
+                    if debug is None:
+                        return (False, ({"message": "debug is None"}, 400))
+
+                    return False, "debug is False"
+
+        self.api.add_resource(Test1Resource, "/test1/<int:id>")
+
+        with self.app.test_client() as client:
+            # debug is False
+            res = client.get(
+                f"/test1/{test_id}", query_string={"debug": False}, headers=self.headers,
+            )
+            self.assertDictEqual(
+                res.get_json(),
+                {
+                    "message": "malformed error in process_get_input: debug is False"
+                },
+            )
+            self.assertEqual(res.status_code, 500)
+
+            # debug is None
+            res = client.get(f"/test1/{test_id}", headers=self.headers)
+
+            self.assertDictEqual(res.get_json(), {"message": "debug is None"})
+            self.assertEqual(res.status_code, 400)
+
+            test2 = Test1(name="this is test2").save()
+
+            # debug is True
+            res = client.get(
+                f"/test1/{test2.id}", query_string={"debug": True}, headers=self.headers,
+            )
+
+            self.assertDictEqual(
+                res.get_json(),
+                Test1.query.get(test2.id).to_dict(),
+            )

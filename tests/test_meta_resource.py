@@ -110,6 +110,14 @@ class TestMetaModelResource(unittest.TestCase):
             self.ProductMetaCollection.get_urls(), ["/meta/product/collection"]
         )
 
+        # with specified path
+        self.ProductMetaResource.url_prefix = "/api/v2"
+        self.ProductMetaResource.url_name = "different"
+
+        self.assertListEqual(
+            self.ProductMetaResource.get_urls(), ["/api/v2/different"]
+        )
+
     def test_get(self):
 
         with self.app.test_client() as client:

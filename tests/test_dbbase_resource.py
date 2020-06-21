@@ -210,6 +210,8 @@ def test_get_urls():
     class TestResource(DBBaseResource):
         pass
 
+    assert TestResource.model_class is None
+
     with pytest.raises(ValueError) as err:
         TestResource.get_urls()
     assert str(err.value) == "A model class must be defined"

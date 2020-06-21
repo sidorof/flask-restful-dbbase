@@ -51,12 +51,19 @@ class ModelResource(DBBaseResource):
         # the correct key test - raises error if improper url
         key_name, key = self._check_key(kwargs)
 
+        # for use only with self.process_get_input
+        data = request.args
+
         query = self.model_class.query
         if self.process_get_input is not None:
-            status, result = self.process_get_input(query, kwargs)
+            # 3 ways to end this
+            # success: result is an updated query
+            # failure:
+            #   exit with a tuple that is a
+            #       (message, status_code)
+            #   exit with message, 500 error
+            status, result = self.process_get_input(query, data, kwargs)
             if status is False:
-                # exit the scene, data should be a
-                # tuple of message and status
                 if isinstance(result, tuple):
                     return result
                 else:
@@ -69,6 +76,7 @@ class ModelResource(DBBaseResource):
             item = query.filter(
                 getattr(self.model_class, key_name) == key
             ).first()
+
         except Exception as err:
             msg = err.args[0]
             return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"

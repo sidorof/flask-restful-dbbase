@@ -320,29 +320,6 @@ class DBBaseResource(Resource):
 
         outputs = {}
 
-        if isinstance(cls.serial_fields, list):
-            serial_fields = cls.serial_fields[:]
-        elif isinstance(cls.serial_fields, dict):
-            if method in cls.serial_fields:
-                serial_fields = cls.serial_fields[method][:]
-        if not outputs:
-            serial_fields = cls.model_class.get_serial_fields()
-
-        # this does not matter now, but will later
-        if isinstance(cls.serial_field_relations, list):
-            outputs["field relations"] = cls.serial_field_relations[:]
-        elif isinstance(cls.serial_field_relations, dict):
-            if method in cls.serial_field_relations:
-                outputs["field relations"] = cls.serial_field_relations[
-                    method
-                ][:]
-
-        if "field relations" not in outputs:
-            if cls.model_class.SERIAL_FIELD_RELATIONS is not None:
-                outputs[
-                    "field relations"
-                ] = cls.model_class.SERIAL_FIELD_RELATIONS
-
         if method != "delete":
             doc = db.doc_table(cls.model_class, serial_fields=cls._get_serial_fields(method),
             serial_field_relations=cls._get_serial_field_relations(method)
