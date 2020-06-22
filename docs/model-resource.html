@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Resources &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Collection Resources" href="model-collection-resource.html" />
+    <link rel="prev" title="Simple Owner App" href="app-owner-v1.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="model-collection-resource.html" title="Model Collection Resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="app-owner-v1.html" title="Simple Owner App"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="model-resources">
+<h1>Model Resources<a class="headerlink" href="#model-resources" title="Permalink to this headline">¶</a></h1>
+<p>The design of the model resource configuration provides several areas to control the data provided via the request and the responses.</p>
+<div class="section" id="class-variables">
+<h2>Class Variables<a class="headerlink" href="#class-variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="set-up-variables">
+<h3>Set Up Variables<a class="headerlink" href="#set-up-variables" title="Permalink to this headline">¶</a></h3>
+<p>Two variables are used for automatic URL generation with the function <cite>get_urls()</cite>. It is a convenience function. The url_prefix defaults to root, but can be set to as needed. The url_name is the name the resource and together they make up the URL.</p>
+<p>It only comes in to play when adding resources.</p>
+<ul class="simple">
+<li><p><cite>url_prefix = ‘/’</cite></p></li>
+<li><p><cite>url_name = None</cite></p></li>
+</ul>
+<p>If the url_name is left as None, a URL can be created from the model class name. For example, if a model class is <cite>CustomerOrder</cite> and its primary key is <cite>id</cite>, using a pluralizer, the default URLs will be:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">customer</span><span class="o">-</span><span class="n">orders</span>
+<span class="o">/</span><span class="n">customer</span><span class="o">-</span><span class="n">orders</span><span class="o">/&lt;</span><span class="nb">int</span><span class="p">:</span><span class="nb">id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="serialization">
+<h3>Serialization<a class="headerlink" href="#serialization" title="Permalink to this headline">¶</a></h3>
+<p>There are several avenues for controlling the output from model resources. Because the model classes use SQLAlchemy models wrapped with DBBase that have serialization / deserialization as a core process you can:</p>
+<ul class="simple">
+<li><p>Configure the Model Class serialization: This method would mean that the primary usage of DBBase model classes would be the same within the Flask environment or without as well.</p></li>
+<li><p>Configure the model resource class. This can be done by HTTP method or for all methods.</p></li>
+</ul>
+</div>
+<div class="section" id="model-resource-serial-fields">
+<h3>Model Resource Serial Fields<a class="headerlink" href="#model-resource-serial-fields" title="Permalink to this headline">¶</a></h3>
+<p>Serial fields are the names of columns and other variables and functions as found in the Model classes. Serial field relations are the serial fields for related models as configured in relationships. For example, the author might be related via the book model.</p>
+<p>The default for <cite>serial_fields</cite> and <cite>serial_field_relations</cite> looks like the following.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">MyModel</span>
+
+    <span class="n">serial_fields</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>The default serial fields and serial field relations uses what is found from the model class.</p>
+<p>Here is an example where both the serial fields and serial field relations are specified. Note that <cite>serial_field_relations</cite> is a dict with keys for each relationship to be specified.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">MyModel</span>
+
+    <span class="n">serial_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">,</span> <span class="s2">&quot;field3&quot;</span><span class="p">]</span>
+    <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;RelatedModel1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">,</span> <span class="s2">&quot;field3&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;RelatedModel2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">,</span> <span class="s2">&quot;field3&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Here is an example where the serial fields and relations vary by method. At first, it might seem implausible that this would be ever necessary, but consider a model that is not complete unless it has been processed. The GET variables would return serial fields and relations for that model, but the POST, PUT, and PATCH methods would trigger a job. In that case, the serial fields and relations can be related to that job. Or, the default values for the Job model might be sufficient and that method could set as None. In this example, you would be using an <cite>after_commit</cite> process to create the job.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">MyModel</span>
+
+    <span class="n">serial_fields</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">,</span> <span class="s2">&quot;field3&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;job_name&quot;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;job_name&quot;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;patch&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span> <span class="s2">&quot;job_name&quot;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">],</span>
+
+    <span class="p">}</span>
+
+    <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;RelatedModel1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">,</span> <span class="s2">&quot;field3&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;RelatedModel2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">,</span> <span class="s2">&quot;field3&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="model-resource-modifications">
+<h2>Model Resource Modifications<a class="headerlink" href="#model-resource-modifications" title="Permalink to this headline">¶</a></h2>
+<p>Model resources can cover a fair amount of ground for a datacentric API, but when the vanilla version will not fit, there are remedies as a fall-back solution rather than simply writing your own.</p>
+<p>Model resources are preset to take functions that can insert your necessary logic into the right point in the processing cycle.</p>
+<p>There are three insertion points. The details change, depending upon the HTTP method, but there are more similarities than differences.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#process-input-functions">Process Input Functions</a>: Modify the input data or query and continue processing or close it out early.</p></li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></dt><dd><ul>
+<li><p>Before Commit: Just prior to a commit, either a function or class can be inserted. This gives the possibility of a rollback of the session or diversion to another process.</p></li>
+<li><p>After Commit: After a commit, either a function or class can be inserted. This can then be a trigger process or complete substitution of another class for the return trip.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="process-input-functions">
+<h3>Process Input Functions<a class="headerlink" href="#process-input-functions" title="Permalink to this headline">¶</a></h3>
+<p>Process input functions take the form of a function that can
+process the input data for the HTTP methods.</p>
+<p>The format name for these functions is <cite>process_{method}_input</cite>.</p>
+<p>Since HTTP methods have different requirements for input data, the inputs vary according to the method. And, since these functions are inserted into an on-going process, the arguments and returns for the functions are specific. However, the returns follow a common format of <cite>(status, result)</cite>. The status is a True / False indicating that you would like the method to continue with the possibly altered data. <cite>False</cite> indicates that the method should end. A failure must have a tuple of a text message and a response status code that will be made into a return result and returned to the front end.</p>
+<div class="section" id="input-variables">
+<h4>Input Variables<a class="headerlink" href="#input-variables" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p><cite>kwargs</cite>: as passed into the method</p></li>
+<li><p><cite>data</cite>: the data gleaned from the request in a dictionary form: This is the data prior to deserializations, so the variable names would be in camel case still.</p></li>
+<li><p><cite>query</cite>: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy’s session.query(Model), for example <cite>session.query(Book)</cite>. So an additional filter as may be necessary would be done by <cite>query = query.filter_by(my_var=’test’)</cite>. And finally, this is an unexecuted query that the normal program will execute afterwards.</p></li>
+</ul>
+</div>
+<div class="section" id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h4>
+<p>Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form <cite>(status, result)</cite> where status is either <cite>True</cite> to continue or <cite>False</cite> to exit early. So, if a tuple is not returned an error will be triggered about the process_input_function itself.</p>
+<p>Use the following formats as a guide.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 13%" />
+<col style="width: 11%" />
+<col style="width: 30%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td rowspan="2"><p>Method</p></td>
+<td colspan="4"><p>Args</p></td>
+<td colspan="2"><p>Returns a tuple</p></td>
+</tr>
+<tr class="row-even"><td><p>self</p></td>
+<td><p>query</p></td>
+<td><p>data</p></td>
+<td><p>kwargs</p></td>
+<td><p>status</p></td>
+<td><p>result</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>GET</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td><p>True</p></td>
+<td><p>(query, data)</p></td>
+</tr>
+<tr class="row-even"><td><p>False</p></td>
+<td><p>(message, status_code)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>POST</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"></td>
+<td><p>True</p></td>
+<td><p>data</p></td>
+</tr>
+<tr class="row-even"><td><p>False</p></td>
+<td><p>(message, status_code)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>PUT</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td><p>True</p></td>
+<td><p>(query, data)</p></td>
+</tr>
+<tr class="row-even"><td><p>False</p></td>
+<td><p>(message, status_code)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>PATCH</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td><p>True</p></td>
+<td><p>(query, data)</p></td>
+</tr>
+<tr class="row-even"><td><p>False</p></td>
+<td><p>(message, status_code)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>DELETE</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"></td>
+<td rowspan="2"></td>
+<td rowspan="2"><p>X</p></td>
+<td><p>True</p></td>
+<td><p>query</p></td>
+</tr>
+<tr class="row-even"><td><p>False</p></td>
+<td><p>(message, status_code)</p></td>
+</tr>
+</tbody>
+</table>
+<p>For example, suppose you want to add a process input function for POST.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">MyClass</span>
+
+    <span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+        <span class="c1"># your magic here</span>
+
+        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">result</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="adjustments-before-or-after-commits">
+<h3>Adjustments Before or After Commits<a class="headerlink" href="#adjustments-before-or-after-commits" title="Permalink to this headline">¶</a></h3>
+<p>Being able to jump in prior to a commit or just after can be very helpful. Possible areas:</p>
+<ul class="simple">
+<li><p>Triggering another process to run instead of saving, or run directly after saving.</p></li>
+<li><p>A record could be marked as inactive rather than deleted.</p></li>
+<li><p>A separate job could be created and sent to a queue, the job object returned in place of the original record.</p></li>
+</ul>
+<p>The process inputs all had separate names and the input and return variables varied with the HTTP method, while this family of functions are more similar.</p>
+<p>To make the interface a little cleaner a ModelResource before / after commit is organized as a dict. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MachineLearningModelResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">MachineLearningModel</span>
+
+    <span class="n">after_commit</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">submit_job</span>
+        <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="n">submit_job1</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>So your <cite>submit_job</cite> function would be called on POST or PUT, otherwise not.</p>
+<p>The format of the before / after functions is similar to the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_before_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function could be before or after, the params are the</span>
+<span class="sd">    same.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        item: (obj): This is the data model record</span>
+<span class="sd">        status_code: (int) : This will be the default response</span>
+<span class="sd">        status code for this method. If it turns out that a</span>
+<span class="sd">        different status code makes more sense, it can be</span>
+<span class="sd">        changed on the return.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        item: (obj) : The object that will be returned. Note that</span>
+<span class="sd">        it does not have to be the same object that entered. As</span>
+<span class="sd">        long as it is DBBase model, the serialization will use the</span>
+<span class="sd">        serialization meant the current object.</span>
+
+<span class="sd">        status_code: (int) : This would be just pass-through of the</span>
+<span class="sd">        default status code, but it could be changed to a 202, for</span>
+<span class="sd">        example if it is starting a job.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># your code runs</span>
+
+    <span class="k">return</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#class-variables">Class Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#set-up-variables">Set Up Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#serialization">Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-resource-serial-fields">Model Resource Serial Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model-resource-modifications">Model Resource Modifications</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#process-input-functions">Process Input Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#input-variables">Input Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="app-owner-v1.html" title="previous chapter">Simple Owner App</a></li>
+      <li>Next: <a href="model-collection-resource.html" title="next chapter">Model Collection Resources</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model-resource.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

@@ -1,10 +1,9 @@
 .. code-block:: bash 
     
     # get meta data for OrderResource
-    curl -H "Content-Type: application/json" \
-         -H "Authorization: User:1" \
-         http://localhost:5000/meta/orders/single
-    
+    curl http://localhost:5000/meta/orders/single \
+        -H "Content-Type: application/json" \
+        -H "Authorization: User:1"
     
 ..
 
@@ -16,7 +15,7 @@
         "url": "/orders",
         "methods": {
             "get": {
-                "url": "/orders",
+                "url": "/orders/<int:id>",
                 "requirements": [
                     "mock_jwt_required"
                 ],
@@ -31,6 +30,13 @@
                 },
                 "responses": {
                     "fields": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
                         "owner_id": {
                             "type": "integer",
                             "format": "int32",
@@ -38,11 +44,9 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "ordered_at": {
@@ -55,11 +59,6 @@
                                 "is_callable": true,
                                 "is_scalar": false
                             },
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
                             "info": {}
                         },
                         "status_id": {
@@ -130,6 +129,13 @@
                 },
                 "responses": {
                     "fields": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
                         "owner_id": {
                             "type": "integer",
                             "format": "int32",
@@ -137,11 +143,9 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "ordered_at": {
@@ -154,11 +158,6 @@
                                 "is_callable": true,
                                 "is_scalar": false
                             },
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
                             "info": {}
                         },
                         "status_id": {
@@ -178,7 +177,7 @@
                 }
             },
             "put": {
-                "url": "/orders",
+                "url": "/orders/<int:id>",
                 "requirements": [
                     "mock_jwt_required"
                 ],
@@ -230,6 +229,13 @@
                 },
                 "responses": {
                     "fields": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
                         "owner_id": {
                             "type": "integer",
                             "format": "int32",
@@ -237,11 +243,9 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "ordered_at": {
@@ -254,11 +258,6 @@
                                 "is_callable": true,
                                 "is_scalar": false
                             },
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
                             "info": {}
                         },
                         "status_id": {
@@ -278,7 +277,7 @@
                 }
             },
             "patch": {
-                "url": "/orders",
+                "url": "/orders/<int:id>",
                 "requirements": [
                     "mock_jwt_required"
                 ],
@@ -330,6 +329,13 @@
                 },
                 "responses": {
                     "fields": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
                         "owner_id": {
                             "type": "integer",
                             "format": "int32",
@@ -337,11 +343,9 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "ordered_at": {
@@ -354,11 +358,6 @@
                                 "is_callable": true,
                                 "is_scalar": false
                             },
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
                             "info": {}
                         },
                         "status_id": {
@@ -378,7 +377,7 @@
                 }
             },
             "delete": {
-                "url": "/orders",
+                "url": "/orders/<int:id>",
                 "requirements": [
                     "mock_jwt_required"
                 ],

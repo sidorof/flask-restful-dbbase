@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.5 documentation</title>
+    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -47,6 +47,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">inflect</span>
 
 <span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Resource</span>
 <span class="kn">from</span> <span class="nn">dbbase.utils</span> <span class="kn">import</span> <span class="n">xlate</span>
@@ -255,16 +256,12 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># just the method</span>
-            <span class="c1">#if method not in method_list:</span>
-                <span class="c1">#methods = str(cls.model_class.methods).lower()</span>
-                <span class="c1">#raise ValueError(</span>
-                    <span class="c1">#f&#39;Support methods for this resource are: {methods}&#39;)</span>
+            <span class="c1"># if method not in method_list:</span>
+            <span class="c1"># methods = str(cls.model_class.methods).lower()</span>
+            <span class="c1"># raise ValueError(</span>
+            <span class="c1"># f&#39;Support methods for this resource are: {methods}&#39;)</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
-                <span class="n">doc</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="n">method</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">method</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method</span><span class="p">(</span><span class="n">method</span><span class="p">)}}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Method &#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&#39; is not found for this resource&quot;</span>
@@ -277,7 +274,7 @@
 <span class="sd">        This function returns True if identified as a collection resource.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># uses max_page_size as a marker</span>
-        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;max_page_size&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;max_page_size&quot;</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_meta_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
@@ -308,7 +305,14 @@
                 <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="nb">dict</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_part</span><span class="p">))</span>
+                        <span class="nb">dict</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="p">[</span>
+                                    <span class="n">key_part</span><span class="p">,</span>
+                                    <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_part</span><span class="p">),</span>
+                                <span class="p">]</span>
+                            <span class="p">]</span>
+                        <span class="p">)</span>
                         <span class="k">for</span> <span class="n">key_part</span> <span class="ow">in</span> <span class="n">key</span>
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -360,36 +364,15 @@
 
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">[:]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">:</span>
-                <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">serial_fields</span><span class="p">[</span><span class="n">method</span><span class="p">][:]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">outputs</span><span class="p">:</span>
-            <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">get_serial_fields</span><span class="p">()</span>
-
-        <span class="c1"># this does not matter now, but will later</span>
-        <span class="c1"># if isinstance(cls.serial_field_relations, list):</span>
-        <span class="c1">#     outputs[&quot;field relations&quot;] = cls.serial_field_relations[:]</span>
-        <span class="c1"># elif isinstance(cls.serial_field_relations, dict):</span>
-        <span class="c1">#     if method in cls.serial_field_relations:</span>
-        <span class="c1">#         outputs[&quot;field relations&quot;] = cls.serial_field_relations[</span>
-        <span class="c1">#             method</span>
-        <span class="c1">#         ][:]</span>
-        <span class="c1">#</span>
-        <span class="c1"># if &quot;field relations&quot; not in outputs:</span>
-        <span class="c1">#     if cls.model_class.SERIAL_FIELD_RELATIONS is not None:</span>
-        <span class="c1">#         outputs[</span>
-        <span class="c1">#             &quot;field relations&quot;</span>
-        <span class="c1">#         ] = cls.model_class.SERIAL_FIELD_RELATIONS</span>
-
         <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">&quot;delete&quot;</span><span class="p">:</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">serial_fields</span><span class="o">=</span><span class="n">serial_fields</span><span class="p">)[</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">serial_fields</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_fields</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+            <span class="n">serial_field_relations</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_field_relations</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="p">)[</span>
                 <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
             <span class="p">]</span>
             <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
 
-            <span class="c1"># here is where the default sort would go for collections</span>
+            <span class="c1"># NOTE: here is where the default sort would go for collections</span>
 
         <span class="k">return</span> <span class="n">outputs</span>
 
@@ -481,7 +464,9 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_check_config_error</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># attempt to derive it</span>
+            <span class="n">_pluralizer</span> <span class="o">=</span> <span class="n">inflect</span><span class="o">.</span><span class="n">engine</span><span class="p">()</span>
             <span class="n">url_name</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">(),</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">url_name</span> <span class="o">=</span> <span class="n">_pluralizer</span><span class="o">.</span><span class="n">plural</span><span class="p">((</span><span class="n">url_name</span><span class="p">))</span>
             <span class="n">url_name</span> <span class="o">=</span> <span class="n">url_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">url_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span>
@@ -638,12 +623,13 @@
     style="margin-left: -10px"/>
 </a></p>
   <h3><a href="../../../index.html">Table Of Contents</a></h3>
-  <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>

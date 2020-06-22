@@ -1,6 +1,15 @@
 # Changelog
+## (0.1.6) -
+### Added
+*   Added more tests on resources
+*   Added more sections to documentation of resources
+
+### Changed
+*   Changed default urls. Added pluralizer for default urls. Now a model `Book` will default to a URL of `/books`
+*   Tightened up processing on process_{method}_input functions to a more standardized with more complete documentation.
+
 ## (0.1.5) -
-## Changed
+### Changed
 * Corrected the project location with hyphens instead of underlines
 * Corrected typo in the setup description
 

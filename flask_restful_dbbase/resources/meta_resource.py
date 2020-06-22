@@ -80,10 +80,10 @@ class MetaResource(Resource):
         api.add_resource(BookMetaCollection, *BookMetaCollection.get_urls())
 
         Default URLS:
-        /book
-        /book/<int:id>
-        /meta/book/single
-        /meta/book/collection
+        /books
+        /books/<int:id>
+        /meta/books/single
+        /meta/books/collection
 
         Bear in mind that the `get_urls` function is only for
         convenience when adding the resource the api.

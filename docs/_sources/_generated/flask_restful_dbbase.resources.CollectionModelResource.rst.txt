@@ -52,7 +52,6 @@ CollectionModelResource
       ~CollectionModelResource.method_decorators
       ~CollectionModelResource.methods
       ~CollectionModelResource.model_class
-      ~CollectionModelResource.order_by
       ~CollectionModelResource.process_get_input
       ~CollectionModelResource.provide_automatic_options
       ~CollectionModelResource.representations

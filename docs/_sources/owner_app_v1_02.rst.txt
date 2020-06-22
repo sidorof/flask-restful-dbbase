@@ -1,10 +1,10 @@
 .. code-block:: bash 
     
     # post an order, with the right user
-    curl -H "Content-Type: application/json" \
-         -H "Authorization: User:1" \
-         http://localhost:5000/orders \
-         -d '{"ownerId": 1, "description": "to do stuff"}'
+    curl http://localhost:5000/orders \
+        -H "Content-Type: application/json" \
+        -H "Authorization: User:1" \
+        -d '{"ownerId": 1, "description": "to do stuff"}'
     
 ..
 
@@ -13,7 +13,7 @@
     {
         "ownerId": 1,
         "id": 1,
-        "orderedAt": "2020-06-16 07:35:41",
+        "orderedAt": "2020-06-21 18:52:12",
         "description": "to do stuff",
         "statusId": 0
     }

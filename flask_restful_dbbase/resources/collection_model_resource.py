@@ -20,7 +20,6 @@ class CollectionModelResource(DBBaseResource):
     """
 
     process_get_input = None
-    order_by = None
     max_page_size = None
 
     @classmethod
@@ -65,7 +64,6 @@ class CollectionModelResource(DBBaseResource):
         # params not data so not converted
         page_size = data.get("page_size", None)
         offset = data.get("offset", None)
-        page = data.get("page", None)
         debug = data.get("debug", None)
 
         if debug == "False":

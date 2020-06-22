@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>&lt;no title&gt; &#8212; Flask-RESTful-DBBase 0.1.5 documentation</title>
+    <title>&lt;no title&gt; &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -40,12 +40,10 @@
             
   <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OrderCollection</span><span class="p">(</span><span class="n">OwnerCollectionResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;orders&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">OrderResource</span><span class="p">(</span><span class="n">OwnerResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;orders&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">OrderMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
@@ -58,12 +56,10 @@
 <span class="c1"># job resources</span>
 <span class="k">class</span> <span class="nc">JobCollection</span><span class="p">(</span><span class="n">OwnerCollectionResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Job</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;jobs&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">JobResource</span><span class="p">(</span><span class="n">OwnerResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Job</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;jobs&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">JobMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
@@ -85,12 +81,13 @@
     style="margin-left: -10px"/>
 </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
-  <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>

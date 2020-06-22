@@ -71,7 +71,7 @@ class ModelResource(DBBaseResource):
                     msg =  f"malformed error in {func}: {result}"
                     return { "message": msg}, 500
 
-            query = result
+            query, data = result
         try:
             item = query.filter(
                 getattr(self.model_class, key_name) == key

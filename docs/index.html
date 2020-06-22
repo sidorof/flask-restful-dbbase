@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Flask-RESTful-DBBase documentation &#8212; Flask-RESTful-DBBase 0.1.5 documentation</title>
+    <title>Flask-RESTful-DBBase documentation &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Flask-RESTful-DBBase 0.1.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -54,7 +54,6 @@
 <li><p>It can take advantage of Flask-RESTful method decorators and has functions that can use the information provided by such decorators.</p></li>
 </ul>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#requirements">Requirements</a></li>
@@ -67,16 +66,6 @@
 <li class="toctree-l3"><a class="reference internal" href="user_guide.html#create-resources">Create Resources</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_guide.html#use-the-api">Use the API</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user_guide.html#meta-information">Meta Information</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="user_guide.html#simple-owner-app">Simple Owner App</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#owner-based-tables">Owner Based Tables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#initiate-the-app-and-models">Initiate the App and Models</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#create-the-owner-based-resources">Create the Owner-Based Resources</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#mock-authentication">Mock Authentication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#owner-resources">Owner Resources</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#order-and-job-resources">Order and Job Resources</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#id1">Use the API</a></li>
 </ul>
 </li>
 </ul>
@@ -101,13 +90,30 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="model-resource-modifications.html#process-input-functions">Process Input Functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="model-resource-modifications.html#input-variables">Input Variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-resource-modifications.html#returns">Returns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model-resource.html#class-variables">Class Variables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-resource.html#set-up-variables">Set Up Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-resource.html#serialization">Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-resource.html#model-resource-serial-fields">Model Resource Serial Fields</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="model-resource-modifications.html#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-resource.html#model-resource-modifications">Model Resource Modifications</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model-resource.html#process-input-functions">Process Input Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model-resource.html#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#class-variables">Class Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#input-processing">Input Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#queries">Queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#processing-the-query">Processing the Query</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="meta-resource.html#creation">Creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meta-resource.html#get-method">GET Method</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
@@ -120,14 +126,21 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">(0.1.5) -</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#changed">Changed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">(0.1.1) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">(0.1.6) -</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#added">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#changed">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">(0.1.0) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">(0.1.5) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Changed</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">(0.1.1) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Added</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id6">(0.1.0) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Added</a></li>
 </ul>
 </li>
 </ul>
@@ -158,12 +171,13 @@
 
 </p>
 <h3><a href="#">Table Of Contents</a></h3>
-    <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+    <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>

@@ -78,7 +78,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 order_by = "status_id"
                 max_page_size = 5
 
-            cls.api.add_resource(Sample1CollectionResource, "/sample1")
+            cls.api.add_resource(Sample1CollectionResource, "/samples1")
             cls.needs_setup = False
 
         headers = {"Content-Type": "application/json"}
@@ -114,7 +114,7 @@ class TestCollectionModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/sample", headers=self.headers)
+            res = client.get(f"/samples", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(res.get_json()[self.Sample._class()]), 100)
@@ -131,7 +131,7 @@ class TestCollectionModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.get(
-                f"/sample",
+                f"/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": "statusId",
@@ -151,7 +151,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
             # invalid order column name
             res = client.get(
-                f"/sample",
+                f"/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": "statusID",
@@ -169,7 +169,7 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 400)
 
             res = client.get(
-                f"/sample",
+                f"/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": "statusId",
@@ -190,7 +190,7 @@ class TestCollectionModelResource(unittest.TestCase):
             # multiple sort with list
             # NOTE: this will be supplanted by query based method
             res = client.get(
-                f"/sample",
+                f"/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": ["statusId", "param1", "param2", "id"],
@@ -221,7 +221,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
             # test debug
             res = client.get(
-                f"/sample",
+                f"/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": ["statusId", "param1", "param2", "id"],
@@ -245,7 +245,7 @@ class TestCollectionModelResource(unittest.TestCase):
             # test max page size, default sort
             # NOTE: compare explicit queries
             res = client.get(
-                "/sample1",
+                "/samples1",
                 query_string={"ownerId": 1, "pageSize": 10, "debug": False},
                 headers=self.headers,
             )
@@ -261,7 +261,7 @@ class TestCollectionModelResource(unittest.TestCase):
             # offset
             # NOTE: compare explicit queries
             res = client.get(
-                "/sample1",
+                "/samples1",
                 query_string={
                     "ownerId": 1,
                     "pageSize": 10,
@@ -303,15 +303,15 @@ class TestCollectionModelResource(unittest.TestCase):
             model_class = Test
             serial_fields = ["faulty", "serial", "list"]
 
-        self.api.add_resource(TestResource, "/test")
+        self.api.add_resource(TestResource, "/tests")
 
         with self.app.test_client() as client:
 
-            res = client.get("/test", headers=self.headers,)
+            res = client.get("/tests", headers=self.headers,)
 
             self.assertDictEqual(
                 res.get_json(),
-                {"message": "Internal Server Error: method get: /test"},
+                {"message": "Internal Server Error: method get: /tests"},
             )
 
     def test_process_get_input(self):
@@ -343,11 +343,11 @@ class TestCollectionModelResource(unittest.TestCase):
 
                     return False, "debug is False"
 
-        self.api.add_resource(Test1Resource, "/test1")
+        self.api.add_resource(Test1Resource, "/test1s")
 
         with self.app.test_client() as client:
             res = client.get(
-                "/test1", query_string={"debug": False}, headers=self.headers,
+                "/test1s", query_string={"debug": False}, headers=self.headers,
             )
 
             self.assertDictEqual(
@@ -359,14 +359,14 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
 
             # debug is None
-            res = client.get("/test1", headers=self.headers)
+            res = client.get("/test1s", headers=self.headers)
 
             self.assertDictEqual(res.get_json(), {"message": "debug is None"})
             self.assertEqual(res.status_code, 400)
 
             # debug is True
             res = client.get(
-                "/test1", query_string={"debug": True}, headers=self.headers,
+                "/test1s", query_string={"debug": True}, headers=self.headers,
             )
 
             self.assertListEqual(

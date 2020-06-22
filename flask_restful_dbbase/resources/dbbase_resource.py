@@ -4,6 +4,7 @@ This module implements a starting point for model resources.
 
 """
 from os import path
+import inflect
 
 from flask_restful import Resource
 from dbbase.utils import xlate
@@ -420,7 +421,9 @@ class DBBaseResource(Resource):
         cls._check_config_error()
         if cls.url_name is None:
             # attempt to derive it
+            _pluralizer = inflect.engine()
             url_name = xlate(cls.model_class._class(), camel_case=False)
+            url_name = _pluralizer.plural((url_name))
             url_name = url_name.replace("_", "-")
         else:
             url_name = cls.url_name

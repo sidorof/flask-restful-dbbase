@@ -19,26 +19,24 @@
     
         method_decorators = [mock_jwt_required]
     
-        def process_get_input(self, query, kwargs):
+        def process_get_input(self, query, data, kwargs):
             """
             This function runs in the GET method with access to
             the Model.query object.
             """
-            try:
-                user_id = get_identity()
-                qry = query.filter_by(owner_id=user_id)
-                return True, qry
-            except Exception as err:
-                return False, ({"message": err.args[0]}, 400)
+            user_id = get_identity()
+            if user_id:
+                query = query.filter_by(owner_id=user_id)
+                return True, (query, data)
     
-        def process_post_input(self, data, kwargs):
+            return False, ("Not Found", 404)
+    
+        def process_post_input(self, data):
             """
             This function runs in the POST method with access to
             the data included with the request.
             """
             user_id = get_identity()
-            # see how owner is camel case, data at this stage
-            #   is not yet deserialized
             owner_id = data.get("ownerId", None)
             if owner_id:
                 if int(owner_id) == user_id:
@@ -47,15 +45,12 @@
             return False, ({"message": "The user id does not match the owner id"}, 400)
     
     
-        def process_put_input(self, qry, data, kwargs):
+        def process_put_input(self, query, data, kwargs):
             """
             This function runs in the PUT method with access to
             the data included with the request.
             """
             user_id = get_identity()
-    
-            # see how owner is camel case, data at this stage
-            #   is not yet deserialized
             owner_id = data.get("ownerId", None)
             if owner_id:
                 if int(owner_id) == user_id:
@@ -63,15 +58,12 @@
     
             return False, ({"message": "The user id does not match the owner id"}, 400)
     
-        def process_patch_input(self, qry, data, kwargs):
+        def process_patch_input(self, query, data, kwargs):
             """
             This function runs in the PATCH method with access to
             the data included with the request.
             """
             user_id = get_identity()
-    
-            # see how owner is camel case, data at this stage
-            #   is not yet deserialized
             owner_id = data.get("ownerId", None)
             if owner_id:
                 if int(owner_id) == user_id:
@@ -79,15 +71,16 @@
     
             return False, ({"message": "The user id does not match the owner id"}, 400)
     
-        def process_delete_input(self, qry, kwargs):
+        def process_delete_input(self, query, kwargs):
             """
-            This function runs in the DELETE method with access to
-            the data included with the request.
+            This function runs in the DELETE method.
             """
             user_id = get_identity()
-            qry = qry.filter_by(owner_id=user_id)
-            return True, qry
+            if user_id:
+                query = query.filter_by(owner_id=user_id)
+                return True, query
     
+            return False, ("Not found", 404)
     
     class OwnerCollectionResource(CollectionModelResource):
         """
@@ -96,10 +89,13 @@
     
         method_decorators = [mock_jwt_required]
     
-        def process_get_input(self, qry, kwargs):
+        def process_get_input(self, query, data):
             user_id = get_identity()
-            qry = qry.filter_by(owner_id=user_id)
-            return qry
+            if user_id:
+                query = query.filter_by(owner_id=user_id)
+                return True, (query, data)
+    
+            return False, ("The user id is not authorized", 400)
     
     
 ..

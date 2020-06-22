@@ -112,12 +112,10 @@ author = Author(first_name="Steven", last_name="Skiena").save()
 # api.create_resources(models=[Book, Author])`
 class BookCollection(CollectionModelResource):
     model_class = Book
-    url_name = "books"
 
 
 class BookResource(ModelResource):
     model_class = Book
-    url_name = "books"
 
 
 class BookMetaCollection(MetaResource):
@@ -130,12 +128,10 @@ class BookMeta(MetaResource):
 
 class AuthorCollection(CollectionModelResource):
     model_class = Author
-    url_name = "authors"
 
 
 class AuthorResource(ModelResource):
     model_class = Author
-    url_name = "authors"
 
 
 class AuthorMetaCollection(MetaResource):

@@ -138,7 +138,7 @@ class TestModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/book/{wrong_id}", headers=self.headers)
+            res = client.get(f"/books/{wrong_id}", headers=self.headers)
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
                 res.get_json(), {"message": "Book with id of 10 not found"},
@@ -152,7 +152,7 @@ class TestModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/book/{id}", headers=self.headers)
+            res = client.get(f"/books/{id}", headers=self.headers)
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
@@ -186,7 +186,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                f"/books", data=json.dumps(book), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -213,7 +213,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                f"/books", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -246,7 +246,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                f"/books", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 409)
             self.assertDictEqual(
@@ -268,7 +268,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/book", data=json.dumps(book), headers=self.headers
+                f"/books", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 201)
             self.assertDictEqual(
@@ -300,7 +300,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book", data=json.dumps({}), headers=self.headers
+                f"/books", data=json.dumps({}), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -315,7 +315,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         with self.app.test_client() as client:
-            res = client.patch(f"/book", headers=self.headers)
+            res = client.patch(f"/books", headers=self.headers)
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -328,7 +328,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         with self.app.test_client() as client:
-            res = client.delete(f"/book", headers=self.headers)
+            res = client.delete(f"/books", headers=self.headers)
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -353,7 +353,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book/1", data=json.dumps(book), headers=self.headers
+                f"/books/1", data=json.dumps(book), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -381,7 +381,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book/1", data=json.dumps(book), headers=self.headers
+                f"/books/1", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -413,7 +413,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/book/{id}", data=json.dumps(book), headers=self.headers
+                f"/books/{id}", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -448,7 +448,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.patch(
-                f"/book/1", data=json.dumps(book), headers=self.headers
+                f"/books/1", data=json.dumps(book), headers=self.headers
             )
 
             self.assertDictEqual(
@@ -479,7 +479,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.patch(
-                f"/book/{id}", data=json.dumps(book), headers=self.headers
+                f"/books/{id}", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -507,7 +507,7 @@ class TestModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.delete(f"/book/{wrong_id}", headers=self.headers)
+            res = client.delete(f"/books/{wrong_id}", headers=self.headers)
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
                 res.get_json(), {"message": "Book with id of 10 not found"},
@@ -528,7 +528,7 @@ class TestModelResource(unittest.TestCase):
                 author_id=1,
             ).save()
 
-            res = client.delete(f"/book/{book.id}", headers=self.headers)
+            res = client.delete(f"/books/{book.id}", headers=self.headers)
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
@@ -543,10 +543,10 @@ class TestModelResource(unittest.TestCase):
             {
                 "model_class": "Book",
                 "url_prefix": "/",
-                "url": "/book",
+                "url": "/books",
                 "methods": {
                     "get": {
-                        "url": "/book/<int:id>",
+                        "url": "/books/<int:id>",
                         "requirements": [],
                         "input": {
                             "id": {
@@ -726,7 +726,7 @@ class TestModelResource(unittest.TestCase):
                         },
                     },
                     "put": {
-                        "url": "/book/<int:id>",
+                        "url": "/books/<int:id>",
                         "requirements": [],
                         "input": {
                             "id": {
@@ -829,7 +829,7 @@ class TestModelResource(unittest.TestCase):
                         },
                     },
                     "patch": {
-                        "url": "/book/<int:id>",
+                        "url": "/books/<int:id>",
                         "requirements": [],
                         "input": {
                             "id": {
@@ -932,7 +932,7 @@ class TestModelResource(unittest.TestCase):
                         },
                     },
                     "delete": {
-                        "url": "/book/<int:id>",
+                        "url": "/books/<int:id>",
                         "requirements": [],
                         "input": {
                             "id": {
@@ -1054,14 +1054,14 @@ class TestModelBadDatabase(unittest.TestCase):
 
         with self.app.test_client() as client:
             self.db.drop_all()
-            res = client.get(f"/throw-away/1", headers=self.headers)
+            res = client.get(f"/throw-aways/1", headers=self.headers)
 
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
                     "message": "Internal Server Error: "
-                    "method get: /throw-away/1"
+                    "method get: /throw-aways/1"
                 },
             )
             self.assertEqual(res.content_type, "application/json")

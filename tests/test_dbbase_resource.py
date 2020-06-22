@@ -198,7 +198,7 @@ def test_get_urls():
 
     urls = UserResource.get_urls()
 
-    assert urls == ["/user", "/user/<string:username>"]
+    assert urls == ["/users", "/users/<string:username>"]
 
     UserResource.url_prefix = "/api/v1"
     UserResource.url_name = "users"
@@ -219,7 +219,7 @@ def test_get_urls():
     # multiple keys
     db = DB(config=":memory:")
 
-    class MultKeys(db.Model):
+    class MultKey(db.Model):
         __tablename__ = "mult_keys"
         key1 = db.Column(db.String, primary_key=True)
         key2 = db.Column(db.Integer, primary_key=True)
@@ -228,7 +228,7 @@ def test_get_urls():
     db.create_all()
 
     class MultKeyResource(DBBaseResource):
-        model_class = MultKeys
+        model_class = MultKey
 
     assert MultKeyResource.get_urls() == [
         "/mult-keys",
@@ -383,7 +383,7 @@ def test_create_url():
         url_prefix = "/api/v2"
 
     # url_name is None
-    assert UserResource.create_url() == "/api/v2/user"
+    assert UserResource.create_url() == "/api/v2/users"
 
     # another class name
     class CustomerOrder(object):
@@ -392,7 +392,7 @@ def test_create_url():
             return cls.__name__
 
     UserResource.model_class = CustomerOrder
-    assert UserResource.create_url() == "/api/v2/customer-order"
+    assert UserResource.create_url() == "/api/v2/customer-orders"
 
     # url_name is valid
     UserResource.url_name = "different"
@@ -510,10 +510,10 @@ def test_get_meta():
     assert BookResource.get_meta() == {
         "model_class": "Book",
         "url_prefix": "/",
-        "url": "/book",
+        "url": "/books",
         "methods": {
             "get": {
-                "url": "/book/<int:id>",
+                "url": "/books/<int:id>",
                 "requirements": ["my_decorator"],
                 "input": {
                     "id": {
@@ -693,7 +693,7 @@ def test_get_meta():
                 },
             },
             "delete": {
-                "url": "/book/<int:id>",
+                "url": "/books/<int:id>",
                 "requirements": [],
                 "input": {
                     "id": {
@@ -791,7 +791,7 @@ def test__meta_method():
         method_decorators = {"get": [my_decorator]}
 
     assert BookResource._meta_method("get") == {
-        "url": "/book/<int:id>",
+        "url": "/books/<int:id>",
         "requirements": ["my_decorator"],
         "input": {
             "id": {
@@ -879,7 +879,7 @@ def test__meta_method():
     assert AuthorCollection.is_collection() is True
 
     assert AuthorCollection._meta_method("get") == {
-        "url": "/author",
+        "url": "/authors",
         "requirements": [],
         "query_string": {
             "id": {
@@ -975,7 +975,7 @@ def test__meta_method_muliple_keys():
     db = DB(":memory:")
 
     # multiple keys
-    class MultKeys(db.Model):
+    class MultKey(db.Model):
         __tablename__ = "mult_keys"
         key1 = db.Column(db.String, primary_key=True)
         key2 = db.Column(db.Integer, primary_key=True)
@@ -984,7 +984,7 @@ def test__meta_method_muliple_keys():
     db.create_all()
 
     class MultKeyResource(DBBaseResource):
-        model_class = MultKeys
+        model_class = MultKey
 
     assert MultKeyResource._meta_method("get") == {
         "url": "/mult-keys/<string:key1><int:key2>",
