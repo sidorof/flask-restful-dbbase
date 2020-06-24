@@ -91,9 +91,26 @@ class TestCollectionModelResource(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.db.session.rollback()
-        cls.db.session.close()
         cls.db.session.remove()
-        cls.db.drop_all()
+        cls.db.Model.metadata.clear()
+        cls.db = None
+        del cls.db
+
+    def test_model_name(self):
+
+        db = self.db
+
+        class TestModel(db.Model):
+            __tablename__ = "test"
+            id = db.Column(db.Integer, primary_key=True)
+
+        class TestResource(CollectionModelResource):
+            pass
+
+        self.assertRaises(ValueError, TestResource)
+        TestResource.model_class = TestModel
+
+        self.assertEqual(TestResource().model_name, "TestModel")
 
     def test_is_collection(self):
         class SampleCollection(CollectionModelResource):
@@ -291,16 +308,16 @@ class TestCollectionModelResource(unittest.TestCase):
         """
         db = self.db
 
-        class Test(db.Model):
-            __tablename__ = "test"
+        class Test550(db.Model):
+            __tablename__ = "test550"
             id = db.Column(db.Integer, primary_key=True)
 
         db.create_all()
 
-        Test(id=300).save()
+        Test550(id=300).save()
 
         class TestResource(CollectionModelResource):
-            model_class = Test
+            model_class = Test550
             serial_fields = ["faulty", "serial", "list"]
 
         self.api.add_resource(TestResource, "/tests")
@@ -338,16 +355,17 @@ class TestCollectionModelResource(unittest.TestCase):
                 if debug:
                     return (True, (query, data))
                 else:
+
                     if debug is None:
                         return (False, ({"message": "debug is None"}, 400))
 
                     return False, "debug is False"
 
-        self.api.add_resource(Test1Resource, "/test1s")
+        self.api.add_resource(Test1Resource, "/test1")
 
         with self.app.test_client() as client:
             res = client.get(
-                "/test1s", query_string={"debug": False}, headers=self.headers,
+                "/test1", query_string={"debug": False}, headers=self.headers,
             )
 
             self.assertDictEqual(
@@ -359,14 +377,14 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
 
             # debug is None
-            res = client.get("/test1s", headers=self.headers)
+            res = client.get("/test1", headers=self.headers)
 
             self.assertDictEqual(res.get_json(), {"message": "debug is None"})
             self.assertEqual(res.status_code, 400)
 
             # debug is True
             res = client.get(
-                "/test1s", query_string={"debug": True}, headers=self.headers,
+                "/test1", query_string={"debug": True}, headers=self.headers,
             )
 
             self.assertListEqual(

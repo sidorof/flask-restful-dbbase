@@ -18,9 +18,17 @@ class CollectionModelResource(DBBaseResource):
     This model class implements the base class.
 
     """
-
+    model_name = None
     process_get_input = None
     max_page_size = None
+    order_by = None
+
+    def __init__(self):
+        if self.model_class is None:
+            msg = "A model class must be set for this resource to function."
+            raise ValueError(msg)
+        self.model_name = self.model_class._class()
+        super().__init__()
 
     @classmethod
     def get_urls(cls):
@@ -37,7 +45,7 @@ class CollectionModelResource(DBBaseResource):
 
     def get(self):
 
-        FUNC_NAME = 'get'
+        FUNC_NAME = "get"
         name = self.model_class._class()
         url = request.path
         data = request.args
@@ -46,6 +54,7 @@ class CollectionModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_get_input is not None:
+
             status, result = self.process_get_input(query, data)
             if status is False:
                 # exit the scene, data should be a
@@ -54,8 +63,8 @@ class CollectionModelResource(DBBaseResource):
                     return result
                 else:
                     func = self.process_get_input.__name__
-                    msg =  f"malformed error in {func}: {result}"
-                    return { "message": msg}, 500
+                    msg = f"malformed error in {func}: {result}"
+                    return {"message": msg}, 500
             query, data = result
 
         data = self.model_class.deserialize(data)
@@ -97,12 +106,11 @@ class CollectionModelResource(DBBaseResource):
             for order in order_by:
                 order = xlate(order, camel_case=False)
                 if hasattr(self.model_class, order):
-                    order_list.append(
-                        getattr(self.model_class, order))
+                    order_list.append(getattr(self.model_class, order))
                 else:
                     return (
                         {"message": msg.format(order=order, name=name)},
-                        400
+                        400,
                     )
             query = query.order_by(*order_list)
 

@@ -90,6 +90,7 @@ class DBBaseResource(Resource):
     """
 
     model_class = None
+    model_name = None
     url_prefix = "/"
 
     url_name = None
@@ -106,17 +107,16 @@ class DBBaseResource(Resource):
     after_commit = {}
 
     @classmethod
-    def get_key(cls, formatted=False):
-        """ get_key
+    def get_key_names(cls, formatted=False):
+        """ get_key_names
 
         This function returns column names marked as primary_key.
 
         Args:
-            formatted: (bool) : will return in form <int:id>
+            formatted: (bool) : will return in form [<int:id>]
 
         Returns:
-            key (str | list) : In the case of multiple primary keys
-                a list of keys is returned.
+            key_names (list) : a list of keys is returned
         """
         columns = cls.model_class.filter_columns(
             column_props=["primary_key", "type"]
@@ -133,7 +133,7 @@ class DBBaseResource(Resource):
                 if value.get("primary_key")
             ]
 
-        return keys if len(keys) > 1 else keys[0]
+        return keys
 
     @classmethod
     def get_obj_params(cls):
@@ -172,9 +172,8 @@ class DBBaseResource(Resource):
             raise ValueError("A model class must be defined")
 
         url = cls.create_url()
-        keys = cls.get_key(formatted=True)
-        if isinstance(keys, list):
-            keys = "".join(keys)
+        keys = cls.get_key_names(formatted=True)
+        keys = "".join(keys)
         url_with_id = "/".join([url, keys])
 
         return [url, url_with_id]
@@ -259,20 +258,21 @@ class DBBaseResource(Resource):
                     column_props=["!readOnly"], to_camel_case=True,
                 )
             else:
-                key = cls.get_key()
-                if isinstance(key, list):
+                keys = cls.get_key_names()
+                if len(keys) > 1:
                     method_dict["input"] = [
                         dict(
                             [
                                 [
-                                    key_part,
-                                    db.doc_column(cls.model_class, key_part),
+                                    key,
+                                    db.doc_column(cls.model_class, key),
                                 ]
                             ]
                         )
-                        for key_part in key
+                        for key in keys
                     ]
                 else:
+                    key = keys[0]
                     method_dict["input"] = {
                         key: db.doc_column(cls.model_class, key)
                     }
@@ -322,30 +322,48 @@ class DBBaseResource(Resource):
         outputs = {}
 
         if method != "delete":
-            doc = db.doc_table(cls.model_class, serial_fields=cls._get_serial_fields(method),
-            serial_field_relations=cls._get_serial_field_relations(method)
-            )[
-                cls.model_class._class()
-            ]
+            doc = db.doc_table(
+                cls.model_class,
+                serial_fields=cls._get_serial_fields(method),
+                serial_field_relations=cls._get_serial_field_relations(method),
+            )[cls.model_class._class()]
             outputs["fields"] = doc["properties"]
 
             # NOTE: here is where the default sort would go for collections
 
         return outputs
 
-    @classmethod
-    def _check_key(cls, kwargs):
+    @staticmethod
+    def _all_keys_found(key_names, data):
+        if isinstance(key_names, str):
+            if key_names in data:
+                return True, {key_names: data[key_names]}
+        else:
+            count = 0
+            new_dict = {}
+            for key_name in key_names:
+                if key_name in data:
+                    count += 1
+                    new_dict[key_name] = data[key_name]
+
+            if count and count == len(key_names):
+                return True, new_dict
+
+        return False, {}
+
+    def _check_key(self, kwargs):
         # these are the kwargs passed in
         # kwargs without ** is intentional
-        key_name = cls.get_key()
-        if key_name not in kwargs:
-            name = cls.model_class._class()
-            raise ValueError(
-                f"No key for {name} given. "
-                "This is a configuration problem in the url for "
-                "this kind of method."
-            )
-        return key_name, kwargs[key_name]
+        key_names = self.get_key_names()
+        status, kdict = self._all_keys_found(key_names, kwargs)
+        if status:
+            return kdict
+
+        if len(key_names) == 1:
+            key_names = key_names[0]
+        raise ValueError(
+            f"This method requires the {key_names} in the URL for " f"{self.model_name}."
+        )
 
     @classmethod
     def _get_serial_fields(cls, method):

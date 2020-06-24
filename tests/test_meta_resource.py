@@ -86,11 +86,10 @@ class TestMetaModelResource(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.db.session.commit()
-        cls.db.session.close()
+        cls.db.session.rollback()
+        cls.db.session.remove()
         cls.db.drop_all()
         cls.db.Model.metadata.clear()
-        cls.Product = None
         cls.db = None
         del cls.db
 
@@ -106,7 +105,8 @@ class TestMetaModelResource(unittest.TestCase):
         )
 
         self.assertListEqual(
-            self.ProductMetaCollection.get_urls(), ["/meta/products/collection"]
+            self.ProductMetaCollection.get_urls(),
+            ["/meta/products/collection"],
         )
 
         # with specified path

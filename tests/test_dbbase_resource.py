@@ -60,18 +60,18 @@ def test_default_class_variables():
     assert DBBaseResource.fields is None
 
 
-def test_get_key():
+def test_get_key_names():
     class UserResource(DBBaseResource):
         model_class = User
 
-    assert UserResource.get_key(formatted=False) == "username"
-    assert UserResource.get_key(formatted=True) == "<string:username>"
+    assert UserResource.get_key_names(formatted=False) == ["username"]
+    assert UserResource.get_key_names(formatted=True) == ["<string:username>"]
 
     class AddressResource(DBBaseResource):
         model_class = Address
 
-    assert AddressResource.get_key(formatted=False) == "id"
-    assert AddressResource.get_key(formatted=True) == "<int:id>"
+    assert AddressResource.get_key_names(formatted=False) == ["id"]
+    assert AddressResource.get_key_names(formatted=True) == ["<int:id>"]
 
 
 def test_get_obj_params():
@@ -243,12 +243,12 @@ def test__check_key():
     kwargs = {"username": "test"}
 
     # finds the key
-    assert UserResource._check_key(kwargs) == ("username", "test")
+    assert UserResource()._check_key(kwargs) == {"username": "test"}
 
     kwargs = {"something": "else"}
 
     # does not find the key
-    pytest.raises(ValueError, UserResource._check_key, kwargs)
+    pytest.raises(ValueError, UserResource()._check_key, kwargs)
 
 
 def test__get_serial_fields():
@@ -1130,3 +1130,33 @@ def test__meta_method_response():
             },
         }
     }
+
+def test__all_keys_found():
+
+    data = {
+        "key1": 1,
+        "key2": 2,
+        "extra": True
+    }
+
+    # key_names is a string
+    key_names = 'key1'
+    assert DBBaseResource._all_keys_found(key_names, data) == (True, {key_names: data[key_names]})
+
+    key_names = 'different'
+    assert DBBaseResource._all_keys_found(key_names, data) == (False, {})
+
+    # key_names is a list of key_names
+    key_names = ['key1', 'key2']
+
+    assert DBBaseResource._all_keys_found(key_names, data) == (True, {
+        "key1": 1,
+        "key2": 2,
+    })
+
+    # partial fit
+    data = {
+        "key1": 1,
+        "extra": True
+    }
+    assert DBBaseResource._all_keys_found(key_names, data) == (False, {})
