@@ -1,7 +1,7 @@
 # Changelog
 ## (0.1.6) -
 ### Added
-*   Added more tests on resources
+*   Added more tests on resources - coverage is now 98%
 *   Added more sections to documentation of resources
 
 ### Changed

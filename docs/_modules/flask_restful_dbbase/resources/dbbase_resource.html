@@ -98,6 +98,7 @@
 <span class="sd">        status_code (int) : The possibly altered response status_code</span>
 
 <span class="sd">    Example of a Class:</span>
+
 <span class="sd">    A class can be used to hold additional data.</span>
 <span class="sd">    This example shows how a resource can receive a POSTed object, but</span>
 <span class="sd">    return the job created as a result instead.</span>
@@ -133,6 +134,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_class</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
 
     <span class="n">url_name</span> <span class="o">=</span> <span class="kc">None</span>
@@ -148,18 +150,17 @@
     <span class="n">before_commit</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">after_commit</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="DBBaseResource.get_key"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_key.html#flask_restful_dbbase.resources.DBBaseResource.get_key">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get_key</span>
+<div class="viewcode-block" id="DBBaseResource.get_key_names"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_key_names.html#flask_restful_dbbase.resources.DBBaseResource.get_key_names">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_key_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; get_key_names</span>
 
 <span class="sd">        This function returns column names marked as primary_key.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            formatted: (bool) : will return in form &lt;int:id&gt;</span>
+<span class="sd">            formatted: (bool) : will return in form [&lt;int:id&gt;]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            key (str | list) : In the case of multiple primary keys</span>
-<span class="sd">                a list of keys is returned.</span>
+<span class="sd">            key_names (list) : a list of keys is returned</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
             <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
@@ -176,7 +177,7 @@
                 <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;primary_key&quot;</span><span class="p">)</span>
             <span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">keys</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">keys</span></div>
 
 <div class="viewcode-block" id="DBBaseResource.get_obj_params"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_obj_params.html#flask_restful_dbbase.resources.DBBaseResource.get_obj_params">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_obj_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -215,9 +216,8 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A model class must be defined&quot;</span><span class="p">)</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_url</span><span class="p">()</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key_names</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
         <span class="n">url_with_id</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">url</span><span class="p">,</span> <span class="n">keys</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">url</span><span class="p">,</span> <span class="n">url_with_id</span><span class="p">]</span></div>
@@ -302,20 +302,21 @@
                     <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;!readOnly&quot;</span><span class="p">],</span> <span class="n">to_camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key_names</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                         <span class="nb">dict</span><span class="p">(</span>
                             <span class="p">[</span>
                                 <span class="p">[</span>
-                                    <span class="n">key_part</span><span class="p">,</span>
-                                    <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_part</span><span class="p">),</span>
+                                    <span class="n">key</span><span class="p">,</span>
+                                    <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span>
                                 <span class="p">]</span>
                             <span class="p">]</span>
                         <span class="p">)</span>
-                        <span class="k">for</span> <span class="n">key_part</span> <span class="ow">in</span> <span class="n">key</span>
+                        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span>
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                         <span class="n">key</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
                     <span class="p">}</span>
@@ -365,30 +366,48 @@
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">&quot;delete&quot;</span><span class="p">:</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">serial_fields</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_fields</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
-            <span class="n">serial_field_relations</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_field_relations</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-            <span class="p">)[</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
-            <span class="p">]</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span>
+                <span class="n">serial_fields</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_fields</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+                <span class="n">serial_field_relations</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_serial_field_relations</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+            <span class="p">)[</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()]</span>
             <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
 
             <span class="c1"># NOTE: here is where the default sort would go for collections</span>
 
         <span class="k">return</span> <span class="n">outputs</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_check_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_all_keys_found</span><span class="p">(</span><span class="n">key_names</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key_names</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">{</span><span class="n">key_names</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">key_names</span><span class="p">]}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">key_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">count</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_names</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">new_dict</span>
+
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_check_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># these are the kwargs passed in</span>
         <span class="c1"># kwargs without ** is intentional</span>
-        <span class="n">key_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_key</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">key_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;No key for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> given. &quot;</span>
-                <span class="s2">&quot;This is a configuration problem in the url for &quot;</span>
-                <span class="s2">&quot;this kind of method.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span>
+        <span class="n">key_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_key_names</span><span class="p">()</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_keys_found</span><span class="p">(</span><span class="n">key_names</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">kdict</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">key_names</span> <span class="o">=</span> <span class="n">key_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;This method requires the </span><span class="si">{</span><span class="n">key_names</span><span class="si">}</span><span class="s2"> in the URL for &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_get_serial_fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>

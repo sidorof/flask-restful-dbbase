@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.ModelResource.post &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
+    <title>flask_restful_dbbase.resources.ModelResource.get_key_names &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -38,13 +38,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="flask-restful-dbbase-resources-modelresource-post">
-<h1>flask_restful_dbbase.resources.ModelResource.post<a class="headerlink" href="#flask-restful-dbbase-resources-modelresource-post" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="flask-restful-dbbase-resources-modelresource-get-key-names">
+<h1>flask_restful_dbbase.resources.ModelResource.get_key_names<a class="headerlink" href="#flask-restful-dbbase-resources-modelresource-get-key-names" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
-<dt id="flask_restful_dbbase.resources.ModelResource.post">
-<code class="sig-prename descclassname">ModelResource.</code><code class="sig-name descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.ModelResource.post" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is the HTTP POST method for a resource handling
-a single item.</p>
+<dt id="flask_restful_dbbase.resources.ModelResource.get_key_names">
+<em class="property">classmethod </em><code class="sig-prename descclassname">ModelResource.</code><code class="sig-name descname">get_key_names</code><span class="sig-paren">(</span><em class="sig-param">formatted=False</em><span class="sig-paren">)</span><a class="headerlink" href="#flask_restful_dbbase.resources.ModelResource.get_key_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns column names marked as primary_key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>formatted</strong> – (bool) : will return in form [&lt;int:id&gt;]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>key_names (list)</em> – a list of keys is returned</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -80,7 +87,7 @@ a single item.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/_generated/flask_restful_dbbase.resources.ModelResource.post.rst.txt"
+      <li><a href="../_sources/_generated/flask_restful_dbbase.resources.ModelResource.get_key_names.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>

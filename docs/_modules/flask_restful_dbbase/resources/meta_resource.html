@@ -51,9 +51,7 @@
 
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Resource</span><span class="p">,</span> <span class="n">CollectionModelResource</span><span class="p">,</span> <span class="n">ModelResource</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">CollectionModelResource</span><span class="p">,</span> <span class="n">ModelResource</span>
 
 
 <div class="viewcode-block" id="MetaResource"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource">[docs]</a><span class="k">class</span> <span class="nc">MetaResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
@@ -74,9 +72,10 @@
 <span class="sd">    Both the url_prefix and url_name come into play only upon initial</span>
 <span class="sd">    configuration.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">resource_class</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot; This is the resource class to be documented &quot;&quot;&quot;</span>
-    <span class="n">url_prefix</span> <span class="o">=</span> <span class="s1">&#39;/meta&#39;</span>
+    <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;/meta&quot;</span>
     <span class="sd">&quot;&quot;&quot; This is the default prefix to be used for the URL.&quot;&quot;&quot;</span>
     <span class="n">url_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;  This name can be used to make the default URL for the meta resource. &quot;&quot;&quot;</span>
@@ -91,7 +90,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            meta: (json) : The documentation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">method</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -102,7 +101,6 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span></div>
-
 
 <div class="viewcode-block" id="MetaResource.get_urls"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.MetaResource.get_urls.html#flask_restful_dbbase.resources.MetaResource.get_urls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_urls</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -133,20 +131,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">resource_url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">resource_class</span><span class="o">.</span><span class="n">create_url</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">resource_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">resource_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
                 <span class="n">resource_url</span> <span class="o">=</span> <span class="n">resource_url</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
             <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">resource_class</span><span class="p">,</span> <span class="n">CollectionModelResource</span><span class="p">):</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span>
-                    <span class="n">resource_url</span><span class="p">,</span>
-                    <span class="s1">&#39;collection&#39;</span>
-                <span class="p">)</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="n">resource_url</span><span class="p">,</span> <span class="s2">&quot;collection&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span>
-                    <span class="n">resource_url</span><span class="p">,</span>
-                    <span class="s1">&#39;single&#39;</span>
-                <span class="p">)</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="n">resource_url</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span><span class="p">)</span>
 

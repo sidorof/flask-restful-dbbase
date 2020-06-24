@@ -55,6 +55,7 @@ class DBBaseResource(Resource):
         status_code (int) : The possibly altered response status_code
 
     Example of a Class:
+
     A class can be used to hold additional data.
     This example shows how a resource can receive a POSTed object, but
     return the job created as a result instead.

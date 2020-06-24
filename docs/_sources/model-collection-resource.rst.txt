@@ -66,9 +66,11 @@ Note that the parameter variables can enter as camel case and will be converted 
 
 Processing the Query
 ^^^^^^^^^^^^^^^^^^^^
-Once the query has been processed, the serial fields and relational fields will be applied to create the output. The form of the out is:
+Once the query has been processed, the serial fields and relational fields will be applied to create the output. The form of the output is:
+
 
 .. code-block:: json
+
 
     {"MyModel": [
         {"id": 1, "field1": value1, "field2": value2, ...},

@@ -24,7 +24,7 @@ ModelResource
       
          ~ModelResource.get
       
-         ~ModelResource.get_key
+         ~ModelResource.get_key_names
       
          ~ModelResource.get_meta
       
@@ -59,6 +59,7 @@ ModelResource
       ~ModelResource.method_decorators
       ~ModelResource.methods
       ~ModelResource.model_class
+      ~ModelResource.model_name
       ~ModelResource.process_delete_input
       ~ModelResource.process_get_input
       ~ModelResource.process_patch_input

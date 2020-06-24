@@ -29,7 +29,7 @@
                 query = query.filter_by(owner_id=user_id)
                 return True, (query, data)
     
-            return False, ("Not Found", 404)
+            return False, ({"message": "Not found"}, 404)
     
         def process_post_input(self, data):
             """

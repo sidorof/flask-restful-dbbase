@@ -20,7 +20,7 @@ DBBaseResource
       
          ~DBBaseResource.format_key
       
-         ~DBBaseResource.get_key
+         ~DBBaseResource.get_key_names
       
          ~DBBaseResource.get_meta
       
@@ -49,6 +49,7 @@ DBBaseResource
       ~DBBaseResource.method_decorators
       ~DBBaseResource.methods
       ~DBBaseResource.model_class
+      ~DBBaseResource.model_name
       ~DBBaseResource.provide_automatic_options
       ~DBBaseResource.representations
       ~DBBaseResource.requires_parameter

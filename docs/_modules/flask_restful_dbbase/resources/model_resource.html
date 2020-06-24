@@ -79,20 +79,34 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">model_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The string version of the Model class name. This is set</span>
+<span class="sd">    upon inititialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">process_get_input</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">process_post_input</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">process_put_input</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">process_patch_input</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">process_delete_input</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;A model class must be set for this resource to function.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
 <div class="viewcode-block" id="ModelResource.get"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.get.html#flask_restful_dbbase.resources.ModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is the HTTP GET method for a resource handling a single item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;get&quot;</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
 
         <span class="c1"># the correct key test - raises error if improper url</span>
-        <span class="n">key_name</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># for use only with self.process_get_input</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
@@ -103,23 +117,25 @@
             <span class="c1"># success: result is an updated query</span>
             <span class="c1"># failure:</span>
             <span class="c1">#   exit with a tuple that is a</span>
-            <span class="c1">#       (message, status_code)</span>
-            <span class="c1">#   exit with message, 500 error</span>
+            <span class="c1">#       (JSON message, status_code)</span>
+            <span class="c1">#   exit with message, 500 error - failure of func</span>
             <span class="n">status</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">result</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="n">msg</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
 
             <span class="n">query</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span>
 
+                <span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -137,15 +153,19 @@
 
             <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="mi">200</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">kdict</span><span class="si">}</span><span class="s2"> not found&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">404</span></div>
 
 <div class="viewcode-block" id="ModelResource.post"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.post.html#flask_restful_dbbase.resources.ModelResource.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Post &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is the HTTP POST method for a resource handling</span>
+<span class="sd">        a single item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;post&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
         <span class="n">status_code</span> <span class="o">=</span> <span class="mi">201</span>
+
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
@@ -153,12 +173,9 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span>
                 <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A JSON format problem:</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">400</span>
-        <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span>
-        <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span>
+
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;JSON format is required&quot;</span><span class="p">},</span> <span class="mi">415</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_post_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">status</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_post_input</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -166,12 +183,12 @@
             <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="c1"># exit the scene, result should be a</span>
                 <span class="c1"># tuple of message and status</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">result</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_post_input</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="n">msg</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
 
             <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
 
@@ -179,13 +196,21 @@
         <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
 
-        <span class="n">key_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_key</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
+        <span class="n">key_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_key_names</span><span class="p">(</span><span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">status</span><span class="p">,</span> <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_keys_found</span><span class="p">(</span><span class="n">key_names</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="c1"># verify it does not already exist</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span>
+            <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span>
+                <span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: &quot;</span>
@@ -193,12 +218,118 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
 
-            <span class="k">if</span> <span class="n">item</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">},</span> <span class="mi">409</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kdict</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">},</span>
+                <span class="mi">409</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="n">status</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">validate_record</span><span class="p">(</span><span class="n">camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_before</span><span class="p">):</span>
+                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
+
+        <span class="n">adjust_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">adjust_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_after</span><span class="p">):</span>
+                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># class, requires a run function</span>
+                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+
+        <span class="n">ser_list</span><span class="p">,</span> <span class="n">rel_ser_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
+                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_list</span><span class="p">,</span> <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_lists</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">status_code</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelResource.put"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.put.html#flask_restful_dbbase.resources.ModelResource.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is the HTTP PUT method for a resource handling a</span>
+<span class="sd">        single item.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;put&quot;</span>
+        <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span>
+                <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A JSON format problem:</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">400</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;JSON format is required&quot;</span><span class="p">},</span> <span class="mi">415</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_put_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_put_input</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="c1"># exit the scene, data should be a</span>
+                <span class="c1"># tuple of message and status</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">result</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_put_input</span><span class="o">.</span><span class="vm">__name__</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
+
+            <span class="n">query</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="n">status</span><span class="p">,</span> <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_keys_found</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">kdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span>
+                <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># use the key(s) from the url</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kdict</span><span class="p">)</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
+
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -209,19 +340,18 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="c1"># may be helpful</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;An error occurred inserting the </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;An error occurred updating the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">},</span>
+                <span class="mi">500</span>
+            <span class="p">)</span>
 
         <span class="n">adjust_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">adjust_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -240,132 +370,19 @@
             <span class="n">status_code</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelResource.put"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.put.html#flask_restful_dbbase.resources.ModelResource.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; put</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
-        <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;put&quot;</span>
-        <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">key_name</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="c1"># NOTE: error check this</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
-
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span>
-                <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A JSON format problem:</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">400</span>
-        <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span>
-        <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
-
-        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_put_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">status</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_put_input</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="c1"># exit the scene, data should be a</span>
-                <span class="c1"># tuple of message and status</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">result</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_put_input</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="n">msg</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
-
-            <span class="n">query</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-        <span class="c1"># use the key from the url</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
-        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
-
-        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-        <span class="n">status</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">validate_record</span><span class="p">(</span><span class="n">camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_before</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
-
-        <span class="n">adjust_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">adjust_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_after</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># class, requires a run function</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
-
-        <span class="n">ser_list</span><span class="p">,</span> <span class="n">rel_ser_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
-                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_list</span><span class="p">,</span> <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_lists</span><span class="p">,</span>
-            <span class="p">),</span>
-            <span class="n">status_code</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="mi">400</span></div>
-
 <div class="viewcode-block" id="ModelResource.patch"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.patch.html#flask_restful_dbbase.resources.ModelResource.patch">[docs]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Patch</span>
-
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is the HTTP PATCH method for a resource handling</span>
+<span class="sd">        a single item.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;patch&quot;</span>
         <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">key_name</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
 
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
@@ -375,12 +392,8 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span>
                 <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A JSON format problem:</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">400</span>
-        <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span>
-        <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;JSON format is required&quot;</span><span class="p">},</span> <span class="mi">415</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_patch_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -389,19 +402,22 @@
             <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="c1"># exit the scene, data should be a</span>
                 <span class="c1"># tuple of message and status</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">result</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_patch_input</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="n">msg</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
 
             <span class="n">query</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
 
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span>
+            <span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -410,9 +426,9 @@
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="c1"># use the key from the url</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kdict</span><span class="p">)</span>
         <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
 
@@ -421,8 +437,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-        <span class="n">status</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">validate_record</span><span class="p">(</span><span class="n">camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -433,17 +447,14 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
-
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;An error occurred updating the </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;An error occurred updating the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">},</span>
                 <span class="mi">500</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -462,23 +473,21 @@
                 <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_list</span><span class="p">,</span> <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_lists</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">status_code</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="mi">400</span></div>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelResource.delete"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.delete.html#flask_restful_dbbase.resources.ModelResource.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Delete</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is the HTTP DELETE method for a resource</span>
+<span class="sd">        handling a single item.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;delete&quot;</span>
         <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
-
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">key_name</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">kdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_key</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]},</span> <span class="mi">400</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">400</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_delete_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -487,28 +496,29 @@
             <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="c1"># exit the scene, data should be a</span>
                 <span class="c1"># tuple of message and status</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">result</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_delete_input</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="n">msg</span> <span class="o">=</span>  <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
-
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
             <span class="n">query</span> <span class="o">=</span> <span class="n">result</span>
 
+        <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span>
+            <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
+            <span class="k">return</span>  <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
 
         <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">kdict</span><span class="si">}</span><span class="s2"> not found&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">404</span>
 
@@ -521,24 +531,18 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">return_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">400</span>
-
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> method </span><span class="si">{</span><span class="n">FUNC_NAME</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;An error occurred deleting the </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;An error occurred deleting the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">},</span>
                 <span class="mi">500</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">key_name</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is deleted&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">kdict</span><span class="si">}</span><span class="s2"> is deleted&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="n">status_code</span></div></div>
 </pre></div>
 
