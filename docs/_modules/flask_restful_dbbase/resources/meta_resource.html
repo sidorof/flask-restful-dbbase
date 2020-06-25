@@ -51,7 +51,7 @@
 
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">CollectionModelResource</span><span class="p">,</span> <span class="n">ModelResource</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">CollectionModelResource</span>
 
 
 <div class="viewcode-block" id="MetaResource"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource">[docs]</a><span class="k">class</span> <span class="nc">MetaResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
@@ -78,14 +78,17 @@
     <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;/meta&quot;</span>
     <span class="sd">&quot;&quot;&quot; This is the default prefix to be used for the URL.&quot;&quot;&quot;</span>
     <span class="n">url_name</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;  This name can be used to make the default URL for the meta resource. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This name can be used to make the default URL for the meta resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MetaResource.get"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.MetaResource.get.html#flask_restful_dbbase.resources.MetaResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is the request.GET method for the meta resource URL.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            method: (str) : can specify only a specific method of the resource to be documented, such as get or put.</span>
+<span class="sd">            method: (str) : can specify only a specific method of the resource</span>
+<span class="sd">            to be documented, such as get or put.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            meta: (json) : The documentation</span>
@@ -106,9 +109,10 @@
     <span class="k">def</span> <span class="nf">get_urls</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get_urls</span>
 
-<span class="sd">        This function returns a default url for the resource. To keep consistency</span>
-<span class="sd">        with the get_urls functions in other resources, it returns the</span>
-<span class="sd">        url in a list, even though there would never be more than one.</span>
+<span class="sd">        This function returns a default url for the resource. To keep</span>
+<span class="sd">        consistency with the get_urls functions in other resources,</span>
+<span class="sd">        it returns the url in a list, even though there would never be</span>
+<span class="sd">        more than one.</span>
 
 <span class="sd">        The approach enables a code consistent approach when using the</span>
 <span class="sd">        api.add_resource function.</span>
