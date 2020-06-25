@@ -8,7 +8,7 @@ Assumes a get method.
 
 from os import path
 from flask import request
-from . import Resource, CollectionModelResource, ModelResource
+from . import Resource, CollectionModelResource
 
 
 class MetaResource(Resource):
@@ -35,14 +35,17 @@ class MetaResource(Resource):
     url_prefix = "/meta"
     """ This is the default prefix to be used for the URL."""
     url_name = None
-    """  This name can be used to make the default URL for the meta resource. """
+    """
+    This name can be used to make the default URL for the meta resource.
+    """
 
     def get(self):
         """
         This function is the request.GET method for the meta resource URL.
 
         Args:
-            method: (str) : can specify only a specific method of the resource to be documented, such as get or put.
+            method: (str) : can specify only a specific method of the resource
+            to be documented, such as get or put.
 
         Returns:
             meta: (json) : The documentation
@@ -63,9 +66,10 @@ class MetaResource(Resource):
     def get_urls(cls):
         """ get_urls
 
-        This function returns a default url for the resource. To keep consistency
-        with the get_urls functions in other resources, it returns the
-        url in a list, even though there would never be more than one.
+        This function returns a default url for the resource. To keep
+        consistency with the get_urls functions in other resources,
+        it returns the url in a list, even though there would never be
+        more than one.
 
         The approach enables a code consistent approach when using the
         api.add_resource function.

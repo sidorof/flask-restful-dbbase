@@ -206,7 +206,7 @@ class DBBaseResource(Resource):
             }
             doc["methods"] = {}
             # this is done to force order without OrderedDict
-            for method in ["get", "post", "put", "patch", "delete"]:
+            for method in method_list:
                 if hasattr(cls, method):
                     doc["methods"][method] = cls._meta_method(method)
             doc["table"] = db.doc_table(cls.model_class)
@@ -262,14 +262,7 @@ class DBBaseResource(Resource):
                 keys = cls.get_key_names()
                 if len(keys) > 1:
                     method_dict["input"] = [
-                        dict(
-                            [
-                                [
-                                    key,
-                                    db.doc_column(cls.model_class, key),
-                                ]
-                            ]
-                        )
+                        dict([[key, db.doc_column(cls.model_class, key)]])
                         for key in keys
                     ]
                 else:
@@ -363,7 +356,8 @@ class DBBaseResource(Resource):
         if len(key_names) == 1:
             key_names = key_names[0]
         raise ValueError(
-            f"This method requires the {key_names} in the URL for " f"{self.model_name}."
+            f"This method requires the {key_names} in the URL for "
+            f"{self.model_name}."
         )
 
     @classmethod
@@ -421,7 +415,7 @@ class DBBaseResource(Resource):
         """
         if cls.model_class is None:
             return (
-                {"message": f"Configuration error: missing model_class."},
+                {"message": "Configuration error: missing model_class."},
                 500,
             )
 

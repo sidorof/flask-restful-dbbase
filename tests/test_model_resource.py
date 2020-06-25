@@ -197,7 +197,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/books", data=json.dumps(book), headers=self.headers
+                "/books", data=json.dumps(book), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
@@ -224,7 +224,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/books", data=json.dumps(book), headers=self.headers
+                "/books", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -257,7 +257,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/books", data=json.dumps(book), headers=self.headers
+                "/books", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 409)
             self.assertDictEqual(
@@ -280,7 +280,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                f"/books", data=json.dumps(book), headers=self.headers
+                "/books", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 201)
             result = res.get_json()
@@ -319,13 +319,15 @@ class TestModelResource(unittest.TestCase):
 
             # incorrect json entry
             res = client.post(
-                f"/books", data=json.dumps(book)[:-1], headers=self.headers
+                "/books", data=json.dumps(book)[:-1], headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": 'A JSON format problem:400 Bad Request: The browser (or proxy) sent a request that this server could not understand.: b\'{"isbn": "an isbn", "title": "The Cell: A Molecular Approach, 30th edition", "pub_year": 2034, "author_id": 1\''
+                    "message": "A JSON format problem:400 Bad Request: "
+                    "The browser (or proxy) sent a request that this server "
+                    f"could not understand.: {json.dumps(book)[:-1]}"
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -334,19 +336,12 @@ class TestModelResource(unittest.TestCase):
         """
         not JSON, reject
         """
-        book = {
-            "isbn": "an isbn",
-            "title": "The Cell: A Molecular Approach, 30th edition",
-            "pub_year": 2034,
-            "author_id": 1,
-        }
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
             res = client.post(
-                f"/books", data='isbn="newisbn", title="new title"',
+                "/books", data='isbn="newisbn", title="new title"',
             )
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
@@ -364,7 +359,7 @@ class TestModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/books", data=json.dumps({}), headers=self.headers
+                "/books", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -377,7 +372,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         with self.app.test_client() as client:
-            res = client.patch(f"/books", headers=self.headers)
+            res = client.patch("/books", headers=self.headers)
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -389,7 +384,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         with self.app.test_client() as client:
-            res = client.delete(f"/books", headers=self.headers)
+            res = client.delete("/books", headers=self.headers)
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -413,7 +408,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/books/1", data=json.dumps(book), headers=self.headers
+                "/books/1", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -440,7 +435,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                f"/books/1", data=json.dumps(book), headers=self.headers
+                "/books/1", data=json.dumps(book), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -474,7 +469,7 @@ class TestModelResource(unittest.TestCase):
 
             # incorrect json entry
             res = client.put(
-                f"/books/1000",
+                "/books/1000",
                 data=json.dumps(book)[:-1],
                 headers=self.headers,
             )
@@ -482,27 +477,22 @@ class TestModelResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": 'A JSON format problem:400 Bad Request: The browser (or proxy) sent a request that this server could not understand.: b\'{"id": 1000, "isbn": "an isbn", "title": "The Cell: A Molecular Approach, 30th edition", "pub_year": 2034, "author_id": 1\''
+                    "message": "A JSON format problem:400 Bad Request: "
+                    "The browser (or proxy) sent a request that this server "
+                    f"could not understand.: {json.dumps(book)[:-1]}"
                 },
             )
             self.assertEqual(res.content_type, "application/json")
 
     def test_put_not_json1(self):
         """not JSON, reject"""
-        book = {
-            "id": 1000,
-            "isbn": "an isbn",
-            "title": "The Cell: A Molecular Approach, 30th edition",
-            "pub_year": 2034,
-            "author_id": 1,
-        }
 
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
             res = client.put(
-                f"/books/1000", data='isbn="newisbn", title="new title"',
+                "/books/1000", data='isbn="newisbn", title="new title"',
             )
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
@@ -570,7 +560,9 @@ class TestModelResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": 'A JSON format problem:400 Bad Request: The browser (or proxy) sent a request that this server could not understand.: b\'{"id": 1000, "isbn": "an isbn", "title": "The Cell: A Molecular Approach, 30th edition", "pub_year": 2034, "author_id": 1\''
+                    "message": "A JSON format problem:400 Bad Request: "
+                    "The browser (or proxy) sent a request that this server "
+                    f"could not understand.: {json.dumps(book)[:-1]}"
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -578,14 +570,14 @@ class TestModelResource(unittest.TestCase):
     def test_patch_not_json1(self):
         """not JSON, reject
         """
-
+        data = 'isbn="newisbnafsasfasfasdsdsdfsdsadasf", title="new title"'
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
             res = client.patch(
-                f"/books/1000",
-                data='isbn="newisbnafsasfasfasdsdsdfsdsadasf", title="new title"',
+                "/books/1000",
+                data=data,
             )
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
@@ -607,7 +599,7 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.patch(
-                f"/books/1", data=json.dumps(book), headers=self.headers
+                "/books/1", data=json.dumps(book), headers=self.headers
             )
 
             self.assertDictEqual(
@@ -1213,16 +1205,13 @@ class TestModelBadDatabase(unittest.TestCase):
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAway
 
-            before_commit = {
-                "delete": delete_before_commit
-            }
-
+            before_commit = {"delete": delete_before_commit}
 
         self.api.add_resource(ThrowAwayResource, *ThrowAwayResource.get_urls())
 
         with self.app.test_client() as client:
             self.db.drop_all()
-            res = client.get(f"/throw-aways/1", headers=self.headers)
+            res = client.get("/throw-aways/1", headers=self.headers)
 
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
@@ -1244,7 +1233,7 @@ class TestModelBadDatabase(unittest.TestCase):
             name = db.Column(db.String(50), nullable=False)
 
             def save(self):
-                raise ValueError('trigger erroor')
+                raise ValueError("trigger erroor")
 
         self.db.create_all()
 
@@ -1252,7 +1241,7 @@ class TestModelBadDatabase(unittest.TestCase):
             model_class = ThrowAwayPost
 
             def process_post_input(self, data):
-                self.model_class.query.first = 'bad'
+                self.model_class.query.first = "bad"
 
                 return True, data
 
@@ -1260,20 +1249,20 @@ class TestModelBadDatabase(unittest.TestCase):
         self.api.add_resource(ThrowAwayResource, *ThrowAwayResource.get_urls())
 
         with self.app.test_client() as client:
-            item = dict(name='test')
+            item = dict(name="test")
             self.db.drop_all()
 
             res = client.post(
                 "/throw-away-posts",
                 data=json.dumps(item),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message':"Internal Server Error: method "
+                    "message": "Internal Server Error: method "
                     "post: /throw-away-posts"
                 },
             )
@@ -1300,60 +1289,54 @@ class TestModelBadDatabase(unittest.TestCase):
 
             def process_put_input(self, query, data, kwargs):
                 """wreck the first function"""
-                if 'disrupt' in data:
-                    query.first = 'bad'
-                    data.pop('disrupt')
+                if "disrupt" in data:
+                    query.first = "bad"
+                    data.pop("disrupt")
                 return True, (query, data)
 
+            before_commit = {"put": delete_before_commit}
 
-            before_commit = {
-                "put": delete_before_commit
-            }
         self.ThrowAwayResource = ThrowAwayResource
         self.api.add_resource(ThrowAwayResource, *ThrowAwayResource.get_urls())
 
         with self.app.test_client() as client:
-            item = ThrowAwayPut(name='test').save()
+            item = ThrowAwayPut(name="test").save()
 
             res = client.put(
                 f"/throw-away-puts/{item.id}",
                 data=item.serialize(),
-                headers=self.headers
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "An error occurred updating the "
-                    "ThrowAwayPut: 'NoneType' object has no attribute " "'save'."
+                    "message": "An error occurred updating the "
+                    "ThrowAwayPut: 'NoneType' object has no attribute "
+                    "'save'."
                 },
             )
             self.assertEqual(res.content_type, "application/json")
 
-
         with self.app.test_client() as client:
-            item = ThrowAwayPut(name='test').save()
+            item = ThrowAwayPut(name="test").save()
             data = item.to_dict()
-            data['disrupt'] = True
+            data["disrupt"] = True
             res = client.put(
                 f"/throw-away-puts/{item.id}",
                 data=json.dumps(data),
-                headers=self.headers
+                headers=self.headers,
             )
 
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "Internal Server Error: method put: "
+                    "message": "Internal Server Error: method put: "
                     f"/throw-away-puts/{item.id}"
                 },
             )
             self.assertEqual(res.content_type, "application/json")
-
-
-
-
 
     def test_patch_with_bad_db(self):
         """Uses a cheap trick by changing the item"""
@@ -1374,26 +1357,25 @@ class TestModelBadDatabase(unittest.TestCase):
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAwayPatch
 
-            before_commit = {
-                "patch": delete_before_commit
-            }
+            before_commit = {"patch": delete_before_commit}
 
         self.api.add_resource(ThrowAwayResource, *ThrowAwayResource.get_urls())
 
         with self.app.test_client() as client:
-            item = ThrowAwayPatch(name='test').save()
+            item = ThrowAwayPatch(name="test").save()
 
             res = client.patch(
                 f"/throw-away-patches/{item.id}",
                 data=item.serialize(),
-                headers=self.headers
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "An error occurred updating the "
-                    "ThrowAwayPatch: 'NoneType' object has no attribute " "'save'."
+                    "message": "An error occurred updating the "
+                    "ThrowAwayPatch: 'NoneType' object has no attribute "
+                    "'save'."
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -1417,15 +1399,14 @@ class TestModelBadDatabase(unittest.TestCase):
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAwayDelete
             test = None
+
             def process_delete_input(self, query, kwargs):
                 if self.test:
-                    query.first = 'bad'
+                    query.first = "bad"
 
                 return True, query
 
-            before_commit = {
-                "delete": delete_before_commit
-            }
+            before_commit = {"delete": delete_before_commit}
 
         self.api.add_resource(ThrowAwayResource, *ThrowAwayResource.get_urls())
 
@@ -1433,35 +1414,36 @@ class TestModelBadDatabase(unittest.TestCase):
 
         with self.app.test_client() as client:
 
-            item = ThrowAwayDelete(name='test').save()
+            item = ThrowAwayDelete(name="test").save()
 
-            res = client.delete(f"/throw-away-deletes/{item.id}", headers=self.headers)
+            res = client.delete(
+                f"/throw-away-deletes/{item.id}", headers=self.headers
+            )
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "An error occurred deleting the "
+                    "message": "An error occurred deleting the "
                     "ThrowAwayDelete: 'NoneType' object has no attribute "
                     "'delete'."
                 },
             )
             self.assertEqual(res.content_type, "application/json")
 
-
         with self.app.test_client() as client:
             self.ThrowAwayResource.test = True
-            item = ThrowAwayDelete(name='test').save()
+            item = ThrowAwayDelete(name="test").save()
 
-            res = client.delete(f"/throw-away-deletes/{item.id}", headers=self.headers)
+            res = client.delete(
+                f"/throw-away-deletes/{item.id}", headers=self.headers
+            )
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "Internal Server Error: method "
+                    "message": "Internal Server Error: method "
                     f"delete: /throw-away-deletes/{item.id}: 'str' object "
                     "is not callable"
                 },
             )
             self.assertEqual(res.content_type, "application/json")
-
-

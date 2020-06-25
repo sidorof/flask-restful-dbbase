@@ -183,7 +183,8 @@ class TestModelProcResource(unittest.TestCase):
                         False,
                         (
                             {
-                                "message": "The user id does not match the owner id"
+                                "message": "The user id does not match the "
+                                "owner id"
                             },
                             400,
                         ),
@@ -275,7 +276,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/samples", data=json.dumps(sample), headers=self.headers
+                "/samples", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -291,7 +292,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/samples", data=json.dumps(sample), headers=self.headers
+                "/samples", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 201)
 
@@ -324,7 +325,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -340,7 +341,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.put(
-                f"/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -375,7 +376,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.patch(
-                f"/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
@@ -391,7 +392,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.patch(
-                f"/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1", data=json.dumps(sample), headers=self.headers
             )
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -424,7 +425,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(f"/samples/100", headers=self.headers)
+            res = client.delete("/samples/100", headers=self.headers)
 
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
@@ -438,7 +439,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(f"/other-samples/1", headers=self.headers)
+            res = client.delete("/other-samples/1", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -577,7 +578,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/ml-models", data=json.dumps(new_model), headers=self.headers
+                "/ml-models", data=json.dumps(new_model), headers=self.headers
             )
 
             self.assertEqual(res.status_code, 202)
@@ -606,7 +607,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-befores", data=json.dumps({}), headers=self.headers
+                "/small-befores", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -661,7 +662,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-befores", data=json.dumps({}), headers=self.headers
+                "/small-befores", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -711,7 +712,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-afters", data=json.dumps({}), headers=self.headers
+                "/small-afters", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -752,7 +753,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.post(
-                f"/small-afters", data=json.dumps({}), headers=self.headers
+                "/small-afters", data=json.dumps({}), headers=self.headers
             )
             self.assertEqual(res.status_code, 418)
 
@@ -793,7 +794,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
         db.create_all()
 
         test_id = 34
-        test1 = Test1(id=test_id, name="this is a test").save()
+        Test1(id=test_id, name="this is a test").save()
 
         class Test1Resource(ModelResource):
             model_class = Test1
@@ -824,7 +825,8 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "malformed error in process_get_input: debug is False"
+                    "message": "malformed error in process_get_input: "
+                    "debug is False"
                 },
             )
             self.assertEqual(res.status_code, 500)
@@ -896,7 +898,8 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "malformed error in process_post_input: debug is False"
+                    "message": "malformed error in process_post_input: "
+                    "debug is False"
                 },
             )
             self.assertEqual(res.status_code, 500)
@@ -910,7 +913,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "debug is None"})
             self.assertEqual(res.status_code, 400)
 
-            test2 = Test2(name="this is test2").save()
+            Test2(name="this is test2").save()
 
             # debug is True
             data = {"id": 2, "debug": True, "name": "this is a test"}
@@ -979,7 +982,8 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "malformed error in process_put_input: debug is False"
+                    "message": "malformed error in process_put_input: "
+                    "debug is False"
                 },
             )
             self.assertEqual(res.status_code, 500)
@@ -993,7 +997,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "debug is None"})
             self.assertEqual(res.status_code, 400)
 
-            test3 = Test3(name="this is test3").save()
+            Test3(name="this is test3").save()
 
             # debug is True
             data = {"id": 2, "debug": True, "name": "this is a test"}
@@ -1013,10 +1017,9 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "An error occurred updating the Test3: "
+                    "message": "An error occurred updating the Test3: "
                     "(sqlite3.IntegrityError) datatype mismatch."
-                }
-,
+                },
             )
 
             self.assertEqual(res.status_code, 500)
@@ -1067,7 +1070,8 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "malformed error in process_patch_input: debug is False"
+                    "message": "malformed error in process_patch_input: "
+                    "debug is False"
                 },
             )
             self.assertEqual(res.status_code, 500)
@@ -1081,7 +1085,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "debug is None"})
             self.assertEqual(res.status_code, 400)
 
-            test3 = Test3a(name="this is test3").save()
+            Test3a(name="this is test3").save()
 
             # debug is True
             data = {"id": 2, "debug": True, "name": "this is a test"}
@@ -1101,10 +1105,9 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    'message': "An error occurred updating the Test3a: "
+                    "message": "An error occurred updating the Test3a: "
                     "(sqlite3.IntegrityError) datatype mismatch."
-                }
-,
+                },
             )
 
             self.assertEqual(res.status_code, 500)
@@ -1127,12 +1130,9 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             def process_delete_input(self, query, kwargs):
                 # no actual change to query
                 if self.input_flag == 0:
-                    return False, ('test', 'test', 'test')
+                    return False, ("test", "test", "test")
                 elif self.input_flag == 1:
-                    return (
-                        False,
-                        ({"message": "input_flag is 1"}, 400)
-                    )
+                    return (False, ({"message": "input_flag is 1"}, 400))
                 else:
                     return True, query
 
@@ -1141,32 +1141,31 @@ class TestModelBeforeAftertResource(unittest.TestCase):
 
         with self.app.test_client() as client:
             # input_flag is 0 - error in process input
-            res = client.delete(
-                "/test4/1", headers=self.headers,
-            )
+            res = client.delete("/test4/1", headers=self.headers,)
 
             self.assertDictEqual(
                 res.get_json(),
-                    {'message': "malformed error in process_delete_input: ('test', 'test', 'test')"}
+                {
+                    "message": "malformed error in process_delete_input: "
+                    "('test', 'test', 'test')"
+                },
             )
             self.assertEqual(res.status_code, 500)
 
             # input_flag is 1 - error discovered, end early
             self.Test4Resource.input_flag = 1
-            res = client.delete(
-                "/test4/1",  headers=self.headers
-            )
+            res = client.delete("/test4/1", headers=self.headers)
 
-            self.assertDictEqual(res.get_json(), {"message": "input_flag is 1"})
+            self.assertDictEqual(
+                res.get_json(), {"message": "input_flag is 1"}
+            )
             self.assertEqual(res.status_code, 400)
 
             # input_flag is 2 - continue to completion
             self.Test4Resource.input_flag = 2
             data = {"id": 1, "name": "this is a test"}
-            test = Test4(**data).save()
-            res = client.delete(
-                "/test4/1",  headers=self.headers,
-            )
+            Test4(**data).save()
+            res = client.delete("/test4/1", headers=self.headers,)
             self.assertDictEqual(
-                res.get_json(), {'message': "Test4 with {'id': 1} is deleted"},
+                res.get_json(), {"message": "Test4 with {'id': 1} is deleted"},
             )

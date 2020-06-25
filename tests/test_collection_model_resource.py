@@ -5,8 +5,6 @@ This module tests collections.
 import unittest
 from random import randint
 import logging
-import json
-from datetime import datetime
 
 import flask
 import flask_restful
@@ -131,7 +129,7 @@ class TestCollectionModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/samples", headers=self.headers)
+            res = client.get("/samples", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(res.get_json()[self.Sample._class()]), 100)
@@ -148,7 +146,7 @@ class TestCollectionModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
             res = client.get(
-                f"/samples",
+                "/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": "statusId",
@@ -168,7 +166,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
             # invalid order column name
             res = client.get(
-                f"/samples",
+                "/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": "statusID",
@@ -186,7 +184,7 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 400)
 
             res = client.get(
-                f"/samples",
+                "/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": "statusId",
@@ -207,7 +205,7 @@ class TestCollectionModelResource(unittest.TestCase):
             # multiple sort with list
             # NOTE: this will be supplanted by query based method
             res = client.get(
-                f"/samples",
+                "/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": ["statusId", "param1", "param2", "id"],
@@ -238,7 +236,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
             # test debug
             res = client.get(
-                f"/samples",
+                "/samples",
                 query_string={
                     "ownerId": 1,
                     "orderBy": ["statusId", "param1", "param2", "id"],
@@ -252,9 +250,13 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertListEqual(
                 res.get_json()["query"].split("\n"),
                 [
-                    "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id ",
+                    "SELECT sample.id AS sample_id, sample.owner_id AS "
+                    "sample_owner_id, sample.param1 AS sample_param1, "
+                    "sample.param2 AS sample_param2, sample.status_id AS "
+                    "sample_status_id ",
                     "FROM sample ",
-                    "WHERE sample.owner_id = ? ORDER BY sample.status_id, sample.param1, sample.param2, sample.id",
+                    "WHERE sample.owner_id = ? ORDER BY sample.status_id, "
+                    "sample.param1, sample.param2, sample.id",
                     " LIMIT ? OFFSET ?",
                 ],
             )
@@ -371,7 +373,8 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "malformed error in process_get_input: debug is False"
+                    "message": "malformed error in process_get_input: "
+                    "debug is False"
                 },
             )
             self.assertEqual(res.status_code, 500)

@@ -18,6 +18,7 @@ class CollectionModelResource(DBBaseResource):
     This model class implements the base class.
 
     """
+
     model_name = None
     process_get_input = None
     max_page_size = None

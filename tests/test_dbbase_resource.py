@@ -78,8 +78,6 @@ def test_get_obj_params():
     class UserResource(DBBaseResource):
         model_class = User
 
-    obj_params = UserResource.get_obj_params()
-
     assert UserResource.get_obj_params() == {
         "username": {
             "type": "string",
@@ -367,7 +365,7 @@ def test__check_config_error():
         pass
 
     assert UserResource._check_config_error() == (
-        {"message": f"Configuration error: missing model_class."},
+        {"message": "Configuration error: missing model_class."},
         500,
     )
 
@@ -1131,32 +1129,29 @@ def test__meta_method_response():
         }
     }
 
+
 def test__all_keys_found():
 
-    data = {
-        "key1": 1,
-        "key2": 2,
-        "extra": True
-    }
+    data = {"key1": 1, "key2": 2, "extra": True}
 
     # key_names is a string
-    key_names = 'key1'
-    assert DBBaseResource._all_keys_found(key_names, data) == (True, {key_names: data[key_names]})
+    key_names = "key1"
+    assert DBBaseResource._all_keys_found(key_names, data) == (
+        True,
+        {key_names: data[key_names]},
+    )
 
-    key_names = 'different'
+    key_names = "different"
     assert DBBaseResource._all_keys_found(key_names, data) == (False, {})
 
     # key_names is a list of key_names
-    key_names = ['key1', 'key2']
+    key_names = ["key1", "key2"]
 
-    assert DBBaseResource._all_keys_found(key_names, data) == (True, {
-        "key1": 1,
-        "key2": 2,
-    })
+    assert DBBaseResource._all_keys_found(key_names, data) == (
+        True,
+        {"key1": 1, "key2": 2},
+    )
 
     # partial fit
-    data = {
-        "key1": 1,
-        "extra": True
-    }
+    data = {"key1": 1, "extra": True}
     assert DBBaseResource._all_keys_found(key_names, data) == (False, {})

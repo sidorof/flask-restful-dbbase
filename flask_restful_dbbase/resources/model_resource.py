@@ -3,7 +3,6 @@
 This module implements a starting point for model resources.
 
 """
-from sqlalchemy.exc import IntegrityError
 from flask_restful import request
 from .dbbase_resource import DBBaseResource
 import logging
@@ -57,7 +56,8 @@ class ModelResource(DBBaseResource):
 
     def get(self, **kwargs):
         """
-        This function is the HTTP GET method for a resource handling a single item.
+        This function is the HTTP GET method for a resource handling
+        a single item.
         """
         url = request.path
         FUNC_NAME = "get"
@@ -90,7 +90,6 @@ class ModelResource(DBBaseResource):
             for key_name, key in kdict.items():
                 query = query.filter(
                     getattr(self.model_class, key_name) == key
-
                 )
             item = query.first()
         except Exception as err:
@@ -305,9 +304,10 @@ class ModelResource(DBBaseResource):
             logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
-                    "message": f"An error occurred updating the {self.model_name}: {msg}."
+                    "message": "An error occurred updating the "
+                    f"{self.model_name}: {msg}."
                 },
-                500
+                500,
             )
 
         adjust_after = self.after_commit.get(FUNC_NAME)
@@ -369,9 +369,7 @@ class ModelResource(DBBaseResource):
             query, data = result
 
         for key_name, value in kdict.items():
-            query = query.filter(
-                getattr(self.model_class, key_name) == value
-            )
+            query = query.filter(getattr(self.model_class, key_name) == value)
 
         try:
             item = query.first()
@@ -410,7 +408,8 @@ class ModelResource(DBBaseResource):
             logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
-                    "message": f"An error occurred updating the {self.model_name}: {msg}."
+                    "message": "An error occurred updating the "
+                    F"{self.model_name}: {msg}."
                 },
                 500,
             )
@@ -462,17 +461,17 @@ class ModelResource(DBBaseResource):
             query = result
 
         for key_name, value in kdict.items():
-            query = query.filter(
-                getattr(self.model_class, key_name) == value
-            )
+            query = query.filter(getattr(self.model_class, key_name) == value)
         try:
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}: {msg}"
+            return_msg = (
+                f"Internal Server Error: method {FUNC_NAME}: {url}: {msg}"
+            )
 
             logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return  {"message": return_msg}, 500
+            return {"message": return_msg}, 500
 
         if item is None:
             msg = f"{self.model_name} with {kdict} not found"
@@ -494,7 +493,8 @@ class ModelResource(DBBaseResource):
             logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
-                    "message": f"An error occurred deleting the {self.model_name}: {msg}."
+                    "message": "An error occurred deleting the "
+                    f"{self.model_name}: {msg}."
                 },
                 500,
             )

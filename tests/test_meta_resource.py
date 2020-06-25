@@ -1,6 +1,5 @@
 # tests/test_meta_resource.py
 import unittest
-from dbbase import DB
 import flask
 import flask_restful
 from flask_restful_dbbase import DBBase
@@ -123,7 +122,7 @@ class TestMetaModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.get(f"/meta/products/single", headers=self.headers)
+            res = client.get("/meta/products/single", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -572,7 +571,7 @@ class TestMetaModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.get(
-                f"/meta/products/single?method=get", headers=self.headers
+                "/meta/products/single?method=get", headers=self.headers
             )
 
             self.assertEqual(res.status_code, 200)
@@ -654,7 +653,7 @@ class TestMetaModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.get(
-                f"/meta/products/single?method=bad", headers=self.headers
+                "/meta/products/single?method=bad", headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)
