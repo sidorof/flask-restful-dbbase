@@ -322,14 +322,12 @@ class TestModelResource(unittest.TestCase):
                 "/books", data=json.dumps(book)[:-1], headers=self.headers
             )
             self.assertEqual(res.status_code, 400)
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "A JSON format problem:400 Bad Request: "
-                    "The browser (or proxy) sent a request that this server "
-                    f"could not understand.: {json.dumps(book)[:-1]}"
-                },
+            self.assertTrue(
+                res.get_json()["message"].startswith(
+                    "A JSON format problem:400 Bad Request: "
+                )
             )
+
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_not_json1(self):
@@ -474,13 +472,10 @@ class TestModelResource(unittest.TestCase):
                 headers=self.headers,
             )
             self.assertEqual(res.status_code, 400)
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "A JSON format problem:400 Bad Request: "
-                    "The browser (or proxy) sent a request that this server "
-                    f"could not understand.: {json.dumps(book)[:-1]}"
-                },
+            self.assertTrue(
+                res.get_json()["message"].startswith(
+                    "A JSON format problem:400 Bad Request: "
+                )
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -557,14 +552,12 @@ class TestModelResource(unittest.TestCase):
                 headers=self.headers,
             )
             self.assertEqual(res.status_code, 400)
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "A JSON format problem:400 Bad Request: "
-                    "The browser (or proxy) sent a request that this server "
-                    f"could not understand.: {json.dumps(book)[:-1]}"
-                },
+            self.assertTrue(
+                res.get_json()["message"].startswith(
+                    "A JSON format problem:400 Bad Request: "
+                )
             )
+
             self.assertEqual(res.content_type, "application/json")
 
     def test_patch_not_json1(self):
