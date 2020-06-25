@@ -85,11 +85,10 @@ class TestMetaModelResource(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.db.session.commit()
-        cls.db.session.close()
+        cls.db.session.rollback()
+        cls.db.session.remove()
         cls.db.drop_all()
         cls.db.Model.metadata.clear()
-        cls.Product = None
         cls.db = None
         del cls.db
 
@@ -100,13 +99,21 @@ class TestMetaModelResource(unittest.TestCase):
         self.assertIsNone(MetaResource.url_name)
 
     def test_get_urls(self):
-
         self.assertListEqual(
-            self.ProductMetaResource.get_urls(), ["/meta/product/single"]
+            self.ProductMetaResource.get_urls(), ["/meta/products/single"]
         )
 
         self.assertListEqual(
-            self.ProductMetaCollection.get_urls(), ["/meta/product/collection"]
+            self.ProductMetaCollection.get_urls(),
+            ["/meta/products/collection"],
+        )
+
+        # with specified path
+        self.ProductMetaResource.url_prefix = "/api/v2"
+        self.ProductMetaResource.url_name = "differents"
+
+        self.assertListEqual(
+            self.ProductMetaResource.get_urls(), ["/api/v2/differents"]
         )
 
     def test_get(self):
@@ -115,7 +122,7 @@ class TestMetaModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.get("/meta/product/single", headers=self.headers)
+            res = client.get("/meta/products/single", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -123,10 +130,10 @@ class TestMetaModelResource(unittest.TestCase):
                 {
                     "model_class": "Product",
                     "url_prefix": "/",
-                    "url": "/product",
+                    "url": "/products",
                     "methods": {
                         "get": {
-                            "url": "/product/<int:id>",
+                            "url": "/products/<int:id>",
                             "requirements": [],
                             "input": {
                                 "id": {
@@ -287,7 +294,7 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                         },
                         "put": {
-                            "url": "/product/<int:id>",
+                            "url": "/products/<int:id>",
                             "requirements": [],
                             "input": {
                                 "id": {
@@ -387,7 +394,7 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                         },
                         "patch": {
-                            "url": "/product/<int:id>",
+                            "url": "/products/<int:id>",
                             "requirements": [],
                             "input": {
                                 "id": {
@@ -487,7 +494,7 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                         },
                         "delete": {
-                            "url": "/product/<int:id>",
+                            "url": "/products/<int:id>",
                             "requirements": [],
                             "input": {
                                 "id": {
@@ -564,7 +571,7 @@ class TestMetaModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.get(
-                "/meta/product/single?method=get", headers=self.headers
+                "/meta/products/single?method=get", headers=self.headers
             )
 
             self.assertEqual(res.status_code, 200)
@@ -574,7 +581,7 @@ class TestMetaModelResource(unittest.TestCase):
                 {
                     "method": {
                         "get": {
-                            "url": "/product/<int:id>",
+                            "url": "/products/<int:id>",
                             "requirements": [],
                             "input": {
                                 "id": {
@@ -646,7 +653,7 @@ class TestMetaModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.get(
-                "/meta/product/single?method=bad", headers=self.headers
+                "/meta/products/single?method=bad", headers=self.headers
             )
 
             self.assertEqual(res.status_code, 400)

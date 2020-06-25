@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Simple Owner App &#8212; Flask-RESTful-DBBase 0.1.5 documentation</title>
+    <title>Simple Owner App &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -15,7 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Model Resource Modifications" href="model-resource-modifications.html" />
+    <link rel="next" title="Model Resources" href="model-resource.html" />
     <link rel="prev" title="User Guide" href="user_guide.html" />
      
     
@@ -32,12 +32,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="model-resource-modifications.html" title="Model Resource Modifications"
+          <a href="model-resource.html" title="Model Resources"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="user_guide.html" title="User Guide"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -193,7 +193,6 @@
 
 
 <span class="k">def</span> <span class="nf">get_identity</span><span class="p">():</span>
-
     <span class="n">user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">user_id</span>
@@ -224,26 +223,24 @@
 
     <span class="n">method_decorators</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_jwt_required</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function runs in the GET method with access to</span>
 <span class="sd">        the Model.query object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-            <span class="n">qry</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">qry</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]},</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Not found&quot;</span><span class="p">},</span> <span class="mi">404</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function runs in the POST method with access to</span>
 <span class="sd">        the data included with the request.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="c1"># see how owner is camel case, data at this stage</span>
-        <span class="c1">#   is not yet deserialized</span>
         <span class="n">owner_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ownerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">owner_id</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">owner_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
@@ -252,15 +249,12 @@
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">process_put_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qry</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_put_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function runs in the PUT method with access to</span>
 <span class="sd">        the data included with the request.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-
-        <span class="c1"># see how owner is camel case, data at this stage</span>
-        <span class="c1">#   is not yet deserialized</span>
         <span class="n">owner_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ownerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">owner_id</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">owner_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
@@ -268,15 +262,12 @@
 
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process_patch_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qry</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_patch_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function runs in the PATCH method with access to</span>
 <span class="sd">        the data included with the request.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-
-        <span class="c1"># see how owner is camel case, data at this stage</span>
-        <span class="c1">#   is not yet deserialized</span>
         <span class="n">owner_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ownerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">owner_id</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">owner_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
@@ -284,15 +275,16 @@
 
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process_delete_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qry</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_delete_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function runs in the DELETE method with access to</span>
-<span class="sd">        the data included with the request.</span>
+<span class="sd">        This function runs in the DELETE method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="n">qry</span> <span class="o">=</span> <span class="n">qry</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">qry</span>
+        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">query</span>
 
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Not found&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">OwnerCollectionResource</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -301,10 +293,13 @@
 
     <span class="n">method_decorators</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_jwt_required</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qry</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="n">qry</span> <span class="o">=</span> <span class="n">qry</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">qry</span>
+        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;The user id is not authorized&quot;</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -313,12 +308,10 @@
 <p>Now we create the order and job resources. And, the code is minimal.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OrderCollection</span><span class="p">(</span><span class="n">OwnerCollectionResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;orders&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">OrderResource</span><span class="p">(</span><span class="n">OwnerResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;orders&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">OrderMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
@@ -331,12 +324,10 @@
 <span class="c1"># job resources</span>
 <span class="k">class</span> <span class="nc">JobCollection</span><span class="p">(</span><span class="n">OwnerCollectionResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Job</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;jobs&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">JobResource</span><span class="p">(</span><span class="n">OwnerResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Job</span>
-    <span class="n">url_name</span> <span class="o">=</span> <span class="s2">&quot;jobs&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">JobMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
@@ -377,9 +368,9 @@
 <div class="section" id="post-without-authentication">
 <h3>Post without authentication<a class="headerlink" href="#post-without-authentication" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># post an order, but no authentication</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     http://localhost:5000/orders <span class="se">\</span>
-     -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -391,10 +382,10 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 <div class="section" id="post-an-order-wrong-login">
 <h3>Post An Order, Wrong Login<a class="headerlink" href="#post-an-order-wrong-login" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># post an order, but the wrong user</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     -H <span class="s2">&quot;Authorization: User:2&quot;</span> <span class="se">\</span>
-     http://localhost:5000/orders <span class="se">\</span>
-     -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:2&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -406,18 +397,18 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 <div class="section" id="post-an-order-that-is-correct">
 <h3>Post An Order That Is Correct<a class="headerlink" href="#post-an-order-that-is-correct" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># post an order, with the right user</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     -H <span class="s2">&quot;Authorization: User:1&quot;</span> <span class="se">\</span>
-     http://localhost:5000/orders <span class="se">\</span>
-     -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:1&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="nt">&quot;orderedAt&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-16 07:35:41&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;orderedAt&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-24 16:15:30&quot;</span><span class="p">,</span>
     <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;to do stuff&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -437,9 +428,9 @@ curl http://localhost:5000/orders
 <div class="section" id="get-the-order-collection-wrong-user">
 <h3>Get the Order Collection, Wrong User<a class="headerlink" href="#get-the-order-collection-wrong-user" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># get orders, with authorization, wrong user</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     -H <span class="s2">&quot;Authorization: User:2&quot;</span> <span class="se">\</span>
-     http://localhost:5000/orders
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:2&quot;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -451,19 +442,19 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 <div class="section" id="get-the-order-collection-right-user">
 <h3>Get the Order Collection, Right User<a class="headerlink" href="#get-the-order-collection-right-user" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># get orders, with authorization, right user</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     -H <span class="s2">&quot;Authorization: User:1&quot;</span> <span class="se">\</span>
-     http://localhost:5000/orders
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:1&quot;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;Order&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="nt">&quot;orderedAt&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-16 07:35:41&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;orderedAt&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-24 16:15:30&quot;</span><span class="p">,</span>
             <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;to do stuff&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="mi">1</span>
         <span class="p">}</span>
     <span class="p">]</span>
 <span class="p">}</span>
@@ -473,9 +464,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 <div class="section" id="order-meta-resource-information">
 <h3>Order Meta Resource Information<a class="headerlink" href="#order-meta-resource-information" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># get meta data for OrderResource</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     -H <span class="s2">&quot;Authorization: User:1&quot;</span> <span class="se">\</span>
-     http://localhost:5000/meta/orders/single
+curl http://localhost:5000/meta/orders/single <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:1&quot;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -484,7 +475,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
     <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
     <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;get&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -499,6 +490,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -506,11 +504,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -523,11 +519,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -598,6 +589,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -605,11 +603,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -622,11 +618,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -646,7 +637,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="nt">&quot;put&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -698,6 +689,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -705,11 +703,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -722,11 +718,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -746,7 +737,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="nt">&quot;patch&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -798,6 +789,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -805,11 +803,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -822,11 +818,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -846,7 +837,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="nt">&quot;delete&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -921,9 +912,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 <div class="section" id="order-meta-collection-information">
 <h3>Order Meta Collection Information<a class="headerlink" href="#order-meta-collection-information" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># get meta data for OrderResource</span>
-curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-     -H <span class="s2">&quot;Authorization: User:1&quot;</span> <span class="se">\</span>
-     http://localhost:5000/meta/orders/single
+curl http://localhost:5000/meta/orders/single <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:1&quot;</span>
 </pre></div>
 </div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -932,7 +923,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
     <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
     <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;get&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -947,6 +938,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -954,11 +952,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -971,11 +967,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1046,6 +1037,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -1053,11 +1051,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1070,11 +1066,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1094,7 +1085,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="nt">&quot;put&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -1146,6 +1137,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -1153,11 +1151,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1170,11 +1166,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1194,7 +1185,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="nt">&quot;patch&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -1246,6 +1237,13 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
                     <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
@@ -1253,11 +1251,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                         <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1270,11 +1266,6 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
                             <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">false</span>
                         <span class="p">},</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1294,7 +1285,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="nt">&quot;delete&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/orders/&lt;int:id&gt;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;mock_jwt_required&quot;</span>
             <span class="p">],</span>
@@ -1379,8 +1370,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
     style="margin-left: -10px"/>
 </a></p>
   <h3><a href="index.html">Table Of Contents</a></h3>
-  <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Simple Owner App</a><ul>
@@ -1403,7 +1393,9 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="model-resource-modifications.html">Model Resource Modifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
@@ -1414,7 +1406,7 @@ curl -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="user_guide.html" title="previous chapter">User Guide</a></li>
-      <li>Next: <a href="model-resource-modifications.html" title="next chapter">Model Resource Modifications</a></li>
+      <li>Next: <a href="model-resource.html" title="next chapter">Model Resources</a></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">

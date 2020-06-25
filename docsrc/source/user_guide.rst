@@ -25,4 +25,4 @@ The work that goes into carefully defining the data structures in the database c
 
 .. include:: app-simple.rst
 
-.. include:: app-owner-v1.rst
+Next: :ref:`Simple Owner App`

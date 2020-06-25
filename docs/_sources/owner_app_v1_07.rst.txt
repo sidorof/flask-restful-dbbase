@@ -1,10 +1,9 @@
 .. code-block:: bash 
     
     # get meta data for OrderCollectionResource
-    curl -H "Content-Type: application/json" \
-         -H "Authorization: User:1" \
-         http://localhost:5000/meta/orders/collection
-    
+    curl http://localhost:5000/meta/orders/collection \
+        -H "Content-Type: application/json" \
+        -H "Authorization: User:1"
     
 ..
 
@@ -68,6 +67,13 @@
                 },
                 "responses": {
                     "fields": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
                         "owner_id": {
                             "type": "integer",
                             "format": "int32",
@@ -75,11 +81,9 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "ordered_at": {
@@ -92,11 +96,6 @@
                                 "is_callable": true,
                                 "is_scalar": false
                             },
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
                             "info": {}
                         },
                         "status_id": {

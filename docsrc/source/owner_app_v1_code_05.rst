@@ -13,7 +13,6 @@
     
     
     def get_identity():
-    
         user = request.headers.get("Authorization", None)
         user_id = int(user.split(":")[1])
         return user_id

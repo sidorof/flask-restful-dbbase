@@ -15,12 +15,13 @@ The work that goes into carefully defining the data structures in the database c
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents:
 
    installation.rst
    user_guide.rst
    app-owner-v1.rst
-   model-resource-modifications.rst
+   model-resource.rst
+   model-collection-resource.rst
+   meta-resource.rst
    examples.rst
    api.rst
    testing.rst

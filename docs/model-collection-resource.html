@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Collection Resources &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Meta Resources" href="meta-resource.html" />
+    <link rel="prev" title="Model Resources" href="model-resource.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="meta-resource.html" title="Meta Resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="model-resource.html" title="Model Resources"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="model-collection-resources">
+<h1>Model Collection Resources<a class="headerlink" href="#model-collection-resources" title="Permalink to this headline">¶</a></h1>
+<p>Model collection resources are configured for HTTP GET methods only to conform to common usage patterns.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>the default URL function returns a single URL, such as [<cite>/api/v1/items</cite>]. Note that it is still wrapped in a list for consistency for usage in</dt><dd><p><cite>api.add_resource(MyCollection, *MyCollection.get_urls())</cite></p>
+</dd>
+</dl>
+</li>
+<li><p>serialization / deserialization services operate in the same fashion as the ModelResource class.</p></li>
+<li><p><cite>process_get_input</cite> is the same except that kwargs are not used.</p></li>
+<li><p>Additional class variables are used to assist in returning lists.</p></li>
+<li><p>the parser for the <cite>query_string</cite> looks for additional variables to provide guidance for the database queries such as sorting, filtering, paging.</p></li>
+</ul>
+<div class="section" id="class-variables">
+<h2>Class Variables<a class="headerlink" href="#class-variables" title="Permalink to this headline">¶</a></h2>
+<p>As discussed in <a class="reference internal" href="model-resource.html#model-resources"><span class="std std-ref">Model Resources</span></a> class variables are used here as well.</p>
+<ul class="simple">
+<li><p><cite>url_prefix</cite></p></li>
+<li><p><cite>url_name</cite></p></li>
+<li><p><cite>serial_fields</cite></p></li>
+<li><p><cite>serial_field_relations</cite></p></li>
+<li><p><cite>process_get_input</cite></p></li>
+</ul>
+<p>Additional Variable</p>
+<ul class="simple">
+<li><p><cite>max_page_size</cite> = None</p></li>
+</ul>
+<p><cite>max_page_size</cite> can be used automatically limit the number of entries in a list for paging to avoid outputting too much in one query.</p>
+</div>
+<div class="section" id="input-processing">
+<h2>Input Processing<a class="headerlink" href="#input-processing" title="Permalink to this headline">¶</a></h2>
+<p>The following parameters and returns should be used for <cite>process_get_input</cite>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 13%" />
+<col style="width: 11%" />
+<col style="width: 30%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td rowspan="2"><p>Method</p></td>
+<td colspan="4"><p>Args</p></td>
+<td colspan="2"><p>Returns a tuple</p></td>
+</tr>
+<tr class="row-even"><td><p>self</p></td>
+<td><p>query</p></td>
+<td><p>data</p></td>
+<td><p>kwargs</p></td>
+<td><p>status</p></td>
+<td><p>result</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>GET</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"><p>X</p></td>
+<td rowspan="2"></td>
+<td><p>True</p></td>
+<td><p>(query, data)</p></td>
+</tr>
+<tr class="row-even"><td><p>False</p></td>
+<td><p>(message, status_code)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="queries">
+<h2>Queries<a class="headerlink" href="#queries" title="Permalink to this headline">¶</a></h2>
+<p>The GET method looks to the <cite>request.query_string</cite> for filtering the resource, using a dict of
+column names as keys and specific values for which to select.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This package is under active development and more query options will become available soon.</p>
+</div>
+<p>Within the query string there can also be other variables:</p>
+<ul class="simple">
+<li><p><cite>page_size</cite>: This limits the number entries that are output.If the page size is greater than max_page_size, then the max_page_size will be used instead.</p></li>
+<li><p><cite>offset</cite>: This is the number of entries to skip before outputting lines</p></li>
+<li><p><cite>debug</cite>: If True, it will return the SQL query instead of executing to help assess if it is formulated correctly.</p></li>
+<li><p><cite>order_by</cite>: This is the order of the list and multiple variables can be used.</p></li>
+</ul>
+<p>Note that the parameter variables can enter as camel case and will be converted along with the column names and variables.</p>
+</div>
+<div class="section" id="processing-the-query">
+<h2>Processing the Query<a class="headerlink" href="#processing-the-query" title="Permalink to this headline">¶</a></h2>
+<p>Once the query has been processed, the serial fields and relational fields will be applied to create the output. The form of the output is:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{&quot;MyModel&quot;: [
+    {&quot;id&quot;: 1, &quot;field1&quot;: value1, &quot;field2&quot;: value2, ...},
+    {&quot;id&quot;: 2, &quot;field1&quot;: value1, &quot;field2&quot;: value2, ...},
+    {&quot;id&quot;: 3, &quot;field1&quot;: value1, &quot;field2&quot;: value2, ...},
+    {&quot;id&quot;: 4, &quot;field1&quot;: value1, &quot;field2&quot;: value2, ...}
+]}
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Collection Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#class-variables">Class Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-processing">Input Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#queries">Queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#processing-the-query">Processing the Query</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="model-resource.html" title="previous chapter">Model Resources</a></li>
+      <li>Next: <a href="meta-resource.html" title="next chapter">Meta Resources</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model-collection-resource.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

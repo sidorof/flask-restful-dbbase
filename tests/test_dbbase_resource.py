@@ -60,27 +60,25 @@ def test_default_class_variables():
     assert DBBaseResource.fields is None
 
 
-def test_get_key():
+def test_get_key_names():
     class UserResource(DBBaseResource):
         model_class = User
 
-    assert UserResource.get_key(formatted=False) == "username"
-    assert UserResource.get_key(formatted=True) == "<string:username>"
+    assert UserResource.get_key_names(formatted=False) == ["username"]
+    assert UserResource.get_key_names(formatted=True) == ["<string:username>"]
 
     class AddressResource(DBBaseResource):
         model_class = Address
 
-    assert AddressResource.get_key(formatted=False) == "id"
-    assert AddressResource.get_key(formatted=True) == "<int:id>"
+    assert AddressResource.get_key_names(formatted=False) == ["id"]
+    assert AddressResource.get_key_names(formatted=True) == ["<int:id>"]
 
 
 def test_get_obj_params():
     class UserResource(DBBaseResource):
         model_class = User
 
-    obj_params = UserResource.get_obj_params()
-
-    expected_result = {
+    assert UserResource.get_obj_params() == {
         "username": {
             "type": "string",
             "maxLength": 80,
@@ -152,11 +150,32 @@ def test_get_obj_params():
         "last_login": {"type": "date-time", "nullable": True, "info": {}},
         "addresses": {
             "readOnly": True,
-            "relationship": {"type": "list", "entity": "Address"},
+            "relationship": {
+                "type": "list",
+                "entity": "Address",
+                "fields": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "email_address": {
+                        "type": "string",
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "username": {
+                        "type": "string",
+                        "nullable": True,
+                        "foreign_key": "user.username",
+                        "info": {},
+                    },
+                },
+            },
         },
     }
-
-    assert obj_params == expected_result
 
 
 def test_format_key():
@@ -177,7 +196,7 @@ def test_get_urls():
 
     urls = UserResource.get_urls()
 
-    assert urls == ["/user", "/user/<string:username>"]
+    assert urls == ["/users", "/users/<string:username>"]
 
     UserResource.url_prefix = "/api/v1"
     UserResource.url_name = "users"
@@ -185,6 +204,34 @@ def test_get_urls():
     urls = UserResource.get_urls()
 
     assert urls == ["/api/v1/users", "/api/v1/users/<string:username>"]
+
+    class TestResource(DBBaseResource):
+        pass
+
+    assert TestResource.model_class is None
+
+    with pytest.raises(ValueError) as err:
+        TestResource.get_urls()
+    assert str(err.value) == "A model class must be defined"
+
+    # multiple keys
+    db = DB(config=":memory:")
+
+    class MultKey(db.Model):
+        __tablename__ = "mult_keys"
+        key1 = db.Column(db.String, primary_key=True)
+        key2 = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String)
+
+    db.create_all()
+
+    class MultKeyResource(DBBaseResource):
+        model_class = MultKey
+
+    assert MultKeyResource.get_urls() == [
+        "/mult-keys",
+        "/mult-keys/<string:key1><int:key2>",
+    ]
 
 
 def test__check_key():
@@ -194,12 +241,12 @@ def test__check_key():
     kwargs = {"username": "test"}
 
     # finds the key
-    assert UserResource._check_key(kwargs) == ("username", "test")
+    assert UserResource()._check_key(kwargs) == {"username": "test"}
 
     kwargs = {"something": "else"}
 
     # does not find the key
-    pytest.raises(ValueError, UserResource._check_key, kwargs)
+    pytest.raises(ValueError, UserResource()._check_key, kwargs)
 
 
 def test__get_serial_fields():
@@ -334,7 +381,7 @@ def test_create_url():
         url_prefix = "/api/v2"
 
     # url_name is None
-    assert UserResource.create_url() == "/api/v2/user"
+    assert UserResource.create_url() == "/api/v2/users"
 
     # another class name
     class CustomerOrder(object):
@@ -343,7 +390,7 @@ def test_create_url():
             return cls.__name__
 
     UserResource.model_class = CustomerOrder
-    assert UserResource.create_url() == "/api/v2/customer-order"
+    assert UserResource.create_url() == "/api/v2/customer-orders"
 
     # url_name is valid
     UserResource.url_name = "different"
@@ -461,10 +508,10 @@ def test_get_meta():
     assert BookResource.get_meta() == {
         "model_class": "Book",
         "url_prefix": "/",
-        "url": "/book",
+        "url": "/books",
         "methods": {
             "get": {
-                "url": "/book/<int:id>",
+                "url": "/books/<int:id>",
                 "requirements": ["my_decorator"],
                 "input": {
                     "id": {
@@ -477,16 +524,29 @@ def test_get_meta():
                 },
                 "responses": {
                     "fields": {
-                        "pub_year": {
+                        "id": {
                             "type": "integer",
                             "format": "int32",
-                            "nullable": False,
+                            "primary_key": True,
+                            "nullable": True,
                             "info": {},
                         },
                         "isbn": {
                             "type": "string",
                             "maxLength": 20,
                             "nullable": True,
+                            "info": {},
+                        },
+                        "title": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "pub_year": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": False,
                             "info": {},
                         },
                         "author_id": {
@@ -501,20 +561,29 @@ def test_get_meta():
                             "relationship": {
                                 "type": "single",
                                 "entity": "Author",
+                                "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "first_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "full_name": {"readOnly": True},
+                                },
                             },
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": True,
-                            "nullable": True,
-                            "info": {},
-                        },
-                        "title": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "nullable": False,
-                            "info": {},
                         },
                     }
                 },
@@ -557,16 +626,29 @@ def test_get_meta():
                 },
                 "responses": {
                     "fields": {
-                        "pub_year": {
+                        "id": {
                             "type": "integer",
                             "format": "int32",
-                            "nullable": False,
+                            "primary_key": True,
+                            "nullable": True,
                             "info": {},
                         },
                         "isbn": {
                             "type": "string",
                             "maxLength": 20,
                             "nullable": True,
+                            "info": {},
+                        },
+                        "title": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "pub_year": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": False,
                             "info": {},
                         },
                         "author_id": {
@@ -581,26 +663,35 @@ def test_get_meta():
                             "relationship": {
                                 "type": "single",
                                 "entity": "Author",
+                                "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "first_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "full_name": {"readOnly": True},
+                                },
                             },
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": True,
-                            "nullable": True,
-                            "info": {},
-                        },
-                        "title": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "nullable": False,
-                            "info": {},
                         },
                     }
                 },
             },
             "delete": {
-                "url": "/book/<int:id>",
+                "url": "/books/<int:id>",
                 "requirements": [],
                 "input": {
                     "id": {
@@ -652,7 +743,32 @@ def test_get_meta():
                     },
                     "author": {
                         "readOnly": True,
-                        "relationship": {"type": "single", "entity": "Author"},
+                        "relationship": {
+                            "type": "single",
+                            "entity": "Author",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "first_name": {
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "full_name": {"readOnly": True},
+                            },
+                        },
                     },
                 },
                 "xml": "Book",
@@ -673,7 +789,7 @@ def test__meta_method():
         method_decorators = {"get": [my_decorator]}
 
     assert BookResource._meta_method("get") == {
-        "url": "/book/<int:id>",
+        "url": "/books/<int:id>",
         "requirements": ["my_decorator"],
         "input": {
             "id": {
@@ -686,9 +802,28 @@ def test__meta_method():
         },
         "responses": {
             "fields": {
+                "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "primary_key": True,
+                    "nullable": True,
+                    "info": {},
+                },
+                "isbn": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "nullable": True,
+                    "info": {},
+                },
                 "title": {
                     "type": "string",
                     "maxLength": 100,
+                    "nullable": False,
+                    "info": {},
+                },
+                "pub_year": {
+                    "type": "integer",
+                    "format": "int32",
                     "nullable": False,
                     "info": {},
                 },
@@ -699,28 +834,193 @@ def test__meta_method():
                     "foreign_key": "author.id",
                     "info": {},
                 },
-                "pub_year": {
-                    "type": "integer",
-                    "format": "int32",
-                    "nullable": False,
-                    "info": {},
+                "author": {
+                    "readOnly": True,
+                    "relationship": {
+                        "type": "single",
+                        "entity": "Author",
+                        "fields": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": True,
+                                "nullable": False,
+                                "info": {},
+                            },
+                            "first_name": {
+                                "type": "string",
+                                "maxLength": 50,
+                                "nullable": False,
+                                "info": {},
+                            },
+                            "last_name": {
+                                "type": "string",
+                                "maxLength": 50,
+                                "nullable": False,
+                                "info": {},
+                            },
+                            "full_name": {"readOnly": True},
+                        },
+                    },
                 },
-                "isbn": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "nullable": True,
-                    "info": {},
-                },
+            }
+        },
+    }
+
+    class AuthorCollection(DBBaseResource):
+        model_class = Author
+        max_page_size = None  # indicator of coll
+
+        def get(self, **kwargs):
+            pass
+
+    assert AuthorCollection.is_collection() is True
+
+    assert AuthorCollection._meta_method("get") == {
+        "url": "/authors",
+        "requirements": [],
+        "query_string": {
+            "id": {
+                "type": "integer",
+                "format": "int32",
+                "primary_key": True,
+                "nullable": False,
+                "info": {},
+            },
+            "firstName": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": False,
+                "info": {},
+            },
+            "lastName": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": False,
+                "info": {},
+            },
+        },
+        "responses": {
+            "fields": {
                 "id": {
                     "type": "integer",
                     "format": "int32",
                     "primary_key": True,
-                    "nullable": True,
+                    "nullable": False,
                     "info": {},
                 },
-                "author": {
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "nullable": False,
+                    "info": {},
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "nullable": False,
+                    "info": {},
+                },
+                "full_name": {"readOnly": True},
+                "books": {
                     "readOnly": True,
-                    "relationship": {"type": "single", "entity": "Author"},
+                    "relationship": {
+                        "type": "list",
+                        "entity": "Book",
+                        "fields": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": True,
+                                "nullable": True,
+                                "info": {},
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "nullable": True,
+                                "info": {},
+                            },
+                            "title": {
+                                "type": "string",
+                                "maxLength": 100,
+                                "nullable": False,
+                                "info": {},
+                            },
+                            "pub_year": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": False,
+                                "info": {},
+                            },
+                            "author_id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": False,
+                                "foreign_key": "author.id",
+                                "info": {},
+                            },
+                        },
+                    },
+                },
+            }
+        },
+    }
+
+
+def test__meta_method_muliple_keys():
+
+    db = DB(":memory:")
+
+    # multiple keys
+    class MultKey(db.Model):
+        __tablename__ = "mult_keys"
+        key1 = db.Column(db.String, primary_key=True)
+        key2 = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String)
+
+    db.create_all()
+
+    class MultKeyResource(DBBaseResource):
+        model_class = MultKey
+
+    assert MultKeyResource._meta_method("get") == {
+        "url": "/mult-keys/<string:key1><int:key2>",
+        "requirements": [],
+        "input": [
+            {
+                "key1": {
+                    "type": "string",
+                    "primary_key": True,
+                    "nullable": False,
+                    "info": {},
+                }
+            },
+            {
+                "key2": {
+                    "type": "integer",
+                    "format": "int32",
+                    "primary_key": True,
+                    "nullable": False,
+                    "info": {},
+                }
+            },
+        ],
+        "responses": {
+            "fields": {
+                "name": {"type": "string", "nullable": True, "info": {}},
+                "key2": {
+                    "type": "integer",
+                    "format": "int32",
+                    "primary_key": True,
+                    "nullable": False,
+                    "info": {},
+                },
+                "key1": {
+                    "type": "string",
+                    "primary_key": True,
+                    "nullable": False,
+                    "info": {},
                 },
             }
         },
@@ -765,33 +1065,16 @@ def test__meta_method_response():
 
     assert BookResource._meta_method_response("get") == {
         "fields": {
-            "pub_year": {
+            "id": {
                 "type": "integer",
                 "format": "int32",
-                "nullable": False,
+                "primary_key": True,
+                "nullable": True,
                 "info": {},
             },
             "isbn": {
                 "type": "string",
                 "maxLength": 20,
-                "nullable": True,
-                "info": {},
-            },
-            "author": {
-                "readOnly": True,
-                "relationship": {"type": "single", "entity": "Author"},
-            },
-            "author_id": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": False,
-                "foreign_key": "author.id",
-                "info": {},
-            },
-            "id": {
-                "type": "integer",
-                "format": "int32",
-                "primary_key": True,
                 "nullable": True,
                 "info": {},
             },
@@ -801,5 +1084,74 @@ def test__meta_method_response():
                 "nullable": False,
                 "info": {},
             },
+            "pub_year": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": False,
+                "info": {},
+            },
+            "author_id": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": False,
+                "foreign_key": "author.id",
+                "info": {},
+            },
+            "author": {
+                "readOnly": True,
+                "relationship": {
+                    "type": "single",
+                    "entity": "Author",
+                    "fields": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": True,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "first_name": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "last_name": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "full_name": {"readOnly": True},
+                    },
+                },
+            },
         }
     }
+
+
+def test__all_keys_found():
+
+    data = {"key1": 1, "key2": 2, "extra": True}
+
+    # key_names is a string
+    key_names = "key1"
+    assert DBBaseResource._all_keys_found(key_names, data) == (
+        True,
+        {key_names: data[key_names]},
+    )
+
+    key_names = "different"
+    assert DBBaseResource._all_keys_found(key_names, data) == (False, {})
+
+    # key_names is a list of key_names
+    key_names = ["key1", "key2"]
+
+    assert DBBaseResource._all_keys_found(key_names, data) == (
+        True,
+        {"key1": 1, "key2": 2},
+    )
+
+    # partial fit
+    data = {"key1": 1, "extra": True}
+    assert DBBaseResource._all_keys_found(key_names, data) == (False, {})

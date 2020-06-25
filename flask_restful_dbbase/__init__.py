@@ -26,7 +26,10 @@ class DBBase(SQLAlchemy):
             session_options=session_options,
             metadata=metadata,
             query_class=BaseQuery,
-            model_class=Model,  # Note that this is DBBase's Model
+
+            # Note that this is DBBase's Model
+            model_class=Model,
+
             engine_options=engine_options,
         )
 
@@ -51,17 +54,3 @@ class DBBase(SQLAlchemy):
         Model._DEFAULT_SERIAL_STOPLIST.append("query_class")
 
         self.Model.db = self
-
-
-# def _apply_db(db):
-#     """ _apply_db
-#
-#     This function walks the Model classes and inserts the query
-#     and db objects. Applying db helps in situations where the
-#     db has changed from the original creation of the Model.
-#     """
-#     for cls in db.Model._decl_class_registry.values():
-#         if hasattr(cls, "__table__"):
-#             if isinstance(cls.__table__, Table):
-#                 cls.db = db
-#
