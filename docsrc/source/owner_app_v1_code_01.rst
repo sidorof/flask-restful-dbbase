@@ -10,8 +10,7 @@
     
         is_staff = db.Column(db.Boolean, default=False, nullable=False)
         is_active = db.Column(db.Boolean, default=False, nullable=False)
-        is_account_current = db.Column(
-            db.Boolean, default=False, nullable=False)
+        is_account_current = db.Column(db.Boolean, default=False, nullable=False)
     
         date_joined = db.Column(db.Date, default=date.today, nullable=False)
         last_login = db.Column(db.DateTime, nullable=True)

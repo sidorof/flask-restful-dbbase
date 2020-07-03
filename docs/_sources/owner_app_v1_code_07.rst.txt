@@ -1,35 +1,11 @@
 .. code-block:: python 
 
-    class OrderCollection(OwnerCollectionResource):
-        model_class = Order
+    api.add_resource(OrderCollection, *OrderCollection.get_urls())
+    api.add_resource(OrderResource, *OrderResource.get_urls())
+    api.add_resource(OrderMetaCollection, *OrderMetaCollection.get_urls())
+    api.add_resource(OrderMeta, *OrderMeta.get_urls())
     
     
-    class OrderResource(OwnerResource):
-        model_class = Order
-    
-    
-    class OrderMetaCollection(MetaResource):
-        resource_class = OrderCollection
-    
-    class OrderMeta(MetaResource):
-        resource_class = OrderResource
-    
-    
-    # job resources
-    class JobCollection(OwnerCollectionResource):
-        model_class = Job
-    
-    
-    class JobResource(OwnerResource):
-        model_class = Job
-    
-    
-    class JobMetaCollection(MetaResource):
-        resource_class = JobCollection
-    
-    
-    class JobMeta(MetaResource):
-        resource_class = JobResource
-    
-    
+    if __name__ == "__main__":
+        app.run(debug=True)
 ..

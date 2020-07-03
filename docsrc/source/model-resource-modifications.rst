@@ -96,7 +96,7 @@ To make the interface a little cleaner a ModelResource before / after commit is 
 
         after_commit = {
             "post": submit_job
-            "put": submit_job1
+            "put": submit_job
         }
 
 ..

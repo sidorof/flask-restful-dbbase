@@ -12,11 +12,11 @@
     {
         "Order": [
             {
-                "orderedAt": "2020-06-24 16:15:30",
+                "orderedAt": "2020-06-25 16:55:23",
+                "ownerId": 1,
                 "description": "to do stuff",
                 "id": 1,
-                "statusId": 0,
-                "ownerId": 1
+                "statusId": 0
             }
         ]
     }

@@ -1,16 +1,21 @@
 .. code-block:: python 
 
-    user = User(
-        username="our_main_user",
-        password="verysecret",
-        email="user_mainexample.com",
-    ).save()
+    def mock_jwt_required(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            user = request.headers.get("Authorization", None)
+            if user is not None and user.startswith("User"):
+                # we're completely secure, sir
+                return fn(*args, **kwargs)
+            return {"message": "Unauthorized User"}, 401
     
-    user = User(
-        username="another_user",
-        password="verysecret_tools",
-        email="another@example.com",
-    ).save()
+        return wrapper
+    
+    
+    def get_identity():
+        user = request.headers.get("Authorization", None)
+        user_id = int(user.split(":")[1])
+        return user_id
     
     
 ..

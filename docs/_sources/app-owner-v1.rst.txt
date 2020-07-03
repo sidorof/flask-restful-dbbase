@@ -38,16 +38,13 @@ As before the code for this example is found in the examples section as
     owner_app_v1 <https://sidorof.github.io/flask-restful-dbbase/examples/owner_app_v1.py>
 ..
 
-A link-  :ref:`Running Tests`
-
 Initiate the App and Models
 ---------------------------
 
-To implement this example, we will create three tables:
+To implement this example, we will create two tables:
 
 - A user table
 - An order table, that is apparently a request for a service.
-- A job table that represents the submission to a queue.
 
 As before we initialize the app:
 
@@ -61,11 +58,11 @@ Next, we create an Order model. Think of this as some useful service that is req
 
 .. include:: owner_app_v1_code_02.rst
 
-Finally, we create a Job model that represents the processing of the order. And, we create the database and create a couple users.
+Now we create the database and create a couple users.
 
 .. include:: owner_app_v1_code_03.rst
 
-The point of this example is to show how to control restricted services and make modifications. Accordingly, we will gloss over the portion of the API where the user register/confirm/log-in process by simply creating users. And, we will focus on the creation of orders.
+The point of this example is to show how to control restricted services and make modifications. Accordingly, we will gloss over the portion of the API for the user register/confirm/log-in process by simply creating users and focus on the creation of orders.
 
 .. include:: owner_app_v1_code_04.rst
 
@@ -99,9 +96,9 @@ Once we create the subclass Owner resources to have the right combination of met
 
 .. include:: owner_app_v1_code_06.rst
 
-Order and Job Resources
------------------------
-Now we create the order and job resources. And, the code is minimal.
+Create the Order Resources
+------------------------
+Now we create the order resources. And, the code is minimal.
 
 .. include:: owner_app_v1_code_07.rst
 
@@ -109,8 +106,6 @@ Now we create the order and job resources. And, the code is minimal.
 At this point we are ready to instantiate these resources with the API and fire up the app.
 
 .. include:: owner_app_v1_code_08.rst
-
-With this version, we are not using the jobs resource yet, but we will after a further modification.
 
 
 Use the API

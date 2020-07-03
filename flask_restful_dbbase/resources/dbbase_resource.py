@@ -4,6 +4,7 @@ This module implements a starting point for model resources.
 
 """
 from os import path
+from dateutil.parser import parse
 import inflect
 
 from flask_restful import Resource
@@ -103,6 +104,12 @@ class DBBaseResource(Resource):
     default_sort = None
     requires_parameter = False
     fields = None
+    use_date_conversions = False
+    """
+    use_date_conversions can be used if the database, such as SQlite3 does
+    not support the acceptance of string-based dates. Since it takes processing
+    time and adherence to a format, it is an optional feature.
+    """
 
     before_commit = {}
     after_commit = {}
@@ -153,6 +160,17 @@ class DBBaseResource(Resource):
 
     @staticmethod
     def format_key(key, key_type):
+        """
+        This function returns the portion of the URL that embodies the key.
+
+        Args:
+            key: (str) : The name of the key field.
+            key_type: (str) : Either 'integer' or something else.
+
+        Returns:
+
+            formatted key: (str) : such as <int:id>
+        """
         if key_type == "integer":
             return f"<int:{key}>"
 
@@ -162,22 +180,28 @@ class DBBaseResource(Resource):
     def get_urls(cls):
         """get_urls
 
-        This function returns something similar to
-        [
+        This function returns something similar to [
             {url_prefix}/{this_url},
             {url_prefix}/{this_url}/<int:id>
         ]
-
         """
         if cls.model_class is None:
             raise ValueError("A model class must be defined")
 
-        url = cls.create_url()
-        keys = cls.get_key_names(formatted=True)
-        keys = "".join(keys)
-        url_with_id = "/".join([url, keys])
+        urls = [cls.create_url()]
 
-        return [url, url_with_id]
+        if not cls.is_collection():
+            key_methods = ['get', 'put', 'patch', 'delete']
+
+            for method in key_methods:
+                if hasattr(cls, method):
+                    # create a URL with a key
+                    keys = cls.get_key_names(formatted=True)
+                    keys = "".join(keys)
+                    url_with_key = "/".join([urls[0], keys])
+                    urls.append(url_with_key)
+                    break
+        return urls
 
     @classmethod
     def get_meta(cls, method=None):
@@ -246,7 +270,6 @@ class DBBaseResource(Resource):
         method_dict = {}
 
         if method in ["get", "put", "patch", "delete"]:
-            # NOTE: need to identify a collection resource here
             if cls.is_collection():
                 method_dict["url"] = cls.get_urls()[0]
             else:
@@ -255,9 +278,16 @@ class DBBaseResource(Resource):
         method_dict["requirements"] = cls._meta_method_decorators(method)
         if method in ["get", "delete"]:
             if cls.is_collection():
-                method_dict["query_string"] = cls.model_class.filter_columns(
-                    column_props=["!readOnly"], to_camel_case=True,
+                obj_params = cls.get_obj_params()
+                tmp = dict(
+                    [
+                        [key, col_props]
+                        for key, col_props in obj_params.items()
+                        if "relationship" not in col_props
+                        and "readOnly" not in col_props
+                    ]
                 )
+                method_dict["query_string"] = tmp
             else:
                 keys = cls.get_key_names()
                 if len(keys) > 1:
@@ -316,13 +346,30 @@ class DBBaseResource(Resource):
         outputs = {}
 
         if method != "delete":
-            doc = db.doc_table(
-                cls.model_class,
-                serial_fields=cls._get_serial_fields(method),
-                serial_field_relations=cls._get_serial_field_relations(method),
-            )[cls.model_class._class()]
-            outputs["fields"] = doc["properties"]
 
+            serial_fields = cls._get_serial_fields(method, with_class=True)
+
+            if isinstance(serial_fields, dict):
+                # foreign class
+                foreign_class, serial_fields = list(serial_fields.items())[0]
+                # NOTE: serial field relations is unresolved
+                doc = db.doc_table(
+                    foreign_class,
+                    serial_fields=serial_fields,
+                    serial_field_relations=cls._get_serial_field_relations(
+                        method
+                    ),
+                )[foreign_class._class()]
+            else:
+                doc = db.doc_table(
+                    cls.model_class,
+                    serial_fields=serial_fields,
+                    serial_field_relations=cls._get_serial_field_relations(
+                        method
+                    ),
+                )[cls.model_class._class()]
+
+            outputs["fields"] = doc["properties"]
             # NOTE: here is where the default sort would go for collections
 
         return outputs
@@ -361,10 +408,18 @@ class DBBaseResource(Resource):
         )
 
     @classmethod
-    def _get_serial_fields(cls, method):
+    def _get_serial_fields(cls, method, with_class=False):
         """_get_serial_fields
 
         see class description for use
+
+        If with_class a foreign class will be included:
+        example:
+            model_class = "MlModels"
+            serial_fields = {
+                "get": ['id, 'model_name']
+                "post": {Job: ['id', 'job_type_id']}
+            }
         """
         serial_fields = None
         if isinstance(cls.serial_fields, dict):
@@ -373,8 +428,9 @@ class DBBaseResource(Resource):
         else:
             serial_fields = cls.serial_fields
 
-        # if serial_fields is None:
-        #    serial_fields = cls.model_class.get_serial_fields()
+        if isinstance(serial_fields, dict) and not with_class:
+            # dict is only used with meta information
+            serial_fields = list(serial_fields.values())[0]
 
         return serial_fields
 
@@ -395,6 +451,11 @@ class DBBaseResource(Resource):
 
         if serial_field_relations is None:
             serial_field_relations = cls.model_class.SERIAL_FIELD_RELATIONS
+
+        # NOTE: think about this one
+        # if isinstance(serial_field_relations, dict):
+        #     # dict is only used with meta information
+        #     serial_field_relations = serial_field_relations.values()[0]
 
         return serial_field_relations
 
@@ -445,7 +506,7 @@ class DBBaseResource(Resource):
 
         return path.join(url_prefix, url_name)
 
-    def screen_data(self, data, skip_missing_data=False):
+    def screen_data(self, data, obj_params, skip_missing_data=False):
         """
         Assumes data is deserialized
 
@@ -468,35 +529,56 @@ class DBBaseResource(Resource):
         successful test. Unsuccessful tests add the problem to an error
         list to be returned at the end. That way, there is a relatively
         complete list of the problems encountered.
-
         """
         # filtering first
         errors = []
-        data = self._remove_unnecessary_data(data)
+        required = []
+        # data = self._remove_unnecessary_data(data)
+
+        # check from standpoint of obj_params
+        for col_key, col_params in obj_params.items():
+            read_only = col_params.get("readOnly")
+            not_relation = "relationship" not in col_params
+            if not read_only and not_relation:
+                if col_key in data:
+                    value = data[col_key]
+                    # find reasons to exclude
+                    tmp_errors = self._check_numeric_casting(
+                        col_key, value, col_params
+                    )
+                    if tmp_errors:
+                        errors.extend(tmp_errors)
+
+                    tmp_errors = self._check_max_text_lengths(
+                        col_key, value, col_params
+                    )
+                    if tmp_errors:
+                        errors.extend(tmp_errors)
+
+                    if self.use_date_conversions:
+                        dtstatus, value = self._check_date_casting(
+                            col_key, value, col_params
+                        )
+                        if dtstatus:
+                            data[col_key] = value
+                        else:
+                            errors.extend(value)
+                else:
+                    # is it required
+                    if col_params.get("nullable") is False:
+                        required.append(col_key)
 
         if not skip_missing_data:
-            # check required first
-            missing_columns = self._missing_required(data)
-            if missing_columns:
-                errors.append(missing_columns)
-        # check lengths of text
-        tmp_errors = self._check_max_text_lengths(data)
-
-        if tmp_errors:
-            errors.extend(tmp_errors)
-
-        # check for numerics -- skipping check integer size for now
-        tmp_errors = self._check_numeric_casting(data)
-        if tmp_errors:
-            errors.extend(tmp_errors)
+            if required:
+                errors.append({"missing_columns": required})
 
         if errors:
             return False, errors
 
         return True, data
 
-    @classmethod
-    def _check_numeric_casting(cls, data):
+    @staticmethod
+    def _check_numeric_casting(col_key, value, col_params):
         """ _check_numeric_casting
 
         This function just makes a quick to see if a numeric field
@@ -505,80 +587,66 @@ class DBBaseResource(Resource):
         No check is made on integer or float sizes.
         """
         errors = []
-        column_types = cls.model_class.filter_columns(
-            column_props=["type"], only_props=True
-        )
 
-        for field, value in data.items():
-            if "type" in column_types[field]:
-                if column_types[field]["type"] in ["integer", "float"]:
-                    if isinstance(value, str):
-                        if not value.isnumeric():
-                            errors.append(
-                                {field: f"The value {value} is not a number"}
-                            )
+        if col_params["type"] in ["integer", "float"]:
+            if isinstance(value, str):
+                if not value.isnumeric():
+                    errors.append(
+                        {col_key: f"The value {value} is not a number"}
+                    )
+
         return errors
 
-    @classmethod
-    def _check_max_text_lengths(cls, data):
+    @staticmethod
+    def _check_max_text_lengths(col_key, value, col_params):
         """ _check_max_text_lengths
 
         This function compares a maximum length, if available with
         the data value.
         """
-        columns = cls.model_class.filter_columns(
-            column_props=["maxLength"], only_props=True
-        )
         errors = []
-        for column, col_length in columns.items():
-            max_len = col_length["maxLength"]
-            if column in data:
-                value = data[column]
 
-                if len(value.strip()) > max_len:
-                    errors.append(
-                        {
-                            column: "The data exceeds the maximum length "
-                            f"{max_len}"
-                        }
-                    )
+        max_len = col_params.get("maxLength")
+
+        if max_len:
+            if len(value.strip()) > max_len:
+                errors.append(
+                    {
+                        col_key: "The data exceeds the maximum length "
+                        f"{max_len}"
+                    }
+                )
+
         return errors
 
     @classmethod
-    def _remove_unnecessary_data(cls, data):
-        """ _remove_unnecessary_data
+    def _check_date_casting(cls, col_key, value, col_params):
+        """ _check_date_casting
 
-        This function removes any fields that are unnecessary.
+        This function attempts to change a string date to date object.
 
+        Unlike the other checking functions, this function
+        does a conversion to an object if possible.
         """
-        column_types = cls.model_class.filter_columns(
-            column_props=["!readOnly"], only_props=True
-        )
-        return dict(
-            [
-                (field, value)
-                for field, value in data.items()
-                if field in column_types
-            ]
-        )
+        errors = []
 
-    @classmethod
-    def _missing_required(cls, data):
-        """ _missing_required
+        if col_params["type"] == "date":
+            try:
+                value = parse(value).date()
+            except Exception as err:
+                msg = f"Date error: '{value}': {err}"
 
-        This function reports required fields that are missing data.
-        """
-        # NOTE: filtering needs improvement, includes relationships
-        #       this is due to no nullable in relationship
-        requireds = cls.model_class.filter_columns(
-            column_props=["!nullable"], only_props=True
-        )
-        missing_columns = []
-        for column in requireds.keys():
-            if "nullable" in requireds[column]:
-                if column not in data:
-                    missing_columns.append(column)
-        if missing_columns:
-            return {"missing_columns": missing_columns}
+                errors.append({col_key: msg})
 
-        return None
+        elif col_params["type"] == "date-time":
+            try:
+                value = parse(value)
+            except Exception as err:
+                msg = f"Date error: '{value}': {err}"
+
+                errors.append({col_key: msg})
+
+        if errors:
+            return False, errors
+        else:
+            return True, value

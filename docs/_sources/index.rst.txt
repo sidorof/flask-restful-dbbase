@@ -19,6 +19,7 @@ The work that goes into carefully defining the data structures in the database c
    installation.rst
    user_guide.rst
    app-owner-v1.rst
+   app-owner-v2.rst
    model-resource.rst
    model-collection-resource.rst
    meta-resource.rst

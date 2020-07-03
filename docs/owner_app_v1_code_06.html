@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>&lt;no title&gt; &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
+    <title>&lt;no title&gt; &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -38,102 +38,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OwnerResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Pretend that jwt is being used for determining</span>
-<span class="sd">    authenticated users.</span>
-
-<span class="sd">    The basic strategy for process_{method}_input functions:</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        status: (bool) : Success or failure</span>
-<span class="sd">        data: (obj) :  if success, the data</span>
-<span class="sd">                       if failure (explanation, status_code)</span>
-
-<span class="sd">    That means the response.status_code can be tailored to fit your</span>
-<span class="sd">    scenario.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">method_decorators</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_jwt_required</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function runs in the GET method with access to</span>
-<span class="sd">        the Model.query object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Not found&quot;</span><span class="p">},</span> <span class="mi">404</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function runs in the POST method with access to</span>
-<span class="sd">        the data included with the request.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="n">owner_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ownerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">owner_id</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">owner_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">data</span>
-
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
+  <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OrderCollection</span><span class="p">(</span><span class="n">OwnerCollectionResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
 
 
-    <span class="k">def</span> <span class="nf">process_put_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function runs in the PUT method with access to</span>
-<span class="sd">        the data included with the request.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="n">owner_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ownerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">owner_id</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">owner_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">data</span>
+<span class="k">class</span> <span class="nc">OrderResource</span><span class="p">(</span><span class="n">OwnerResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
 
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process_patch_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function runs in the PATCH method with access to</span>
-<span class="sd">        the data included with the request.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="n">owner_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ownerId&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">owner_id</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">owner_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">data</span>
+<span class="k">class</span> <span class="nc">OrderMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">OrderCollection</span>
 
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process_delete_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function runs in the DELETE method.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">query</span>
-
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Not found&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">)</span>
-
-<span class="k">class</span> <span class="nc">OwnerCollectionResource</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Pretend that jwt is being used for determine authenticated users.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">method_decorators</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_jwt_required</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">process_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="n">get_identity</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">owner_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;The user id is not authorized&quot;</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">OrderMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">OrderResource</span>
 </pre></div>
 </div>
 
@@ -151,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>

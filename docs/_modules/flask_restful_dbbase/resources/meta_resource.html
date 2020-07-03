@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.meta_resource &#8212; Flask-RESTful-DBBase 0.1.6 documentation</title>
+    <title>flask_restful_dbbase.resources.meta_resource &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -75,7 +75,7 @@
 
     <span class="n">resource_class</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot; This is the resource class to be documented &quot;&quot;&quot;</span>
-    <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;/meta&quot;</span>
+    <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;meta&quot;</span>
     <span class="sd">&quot;&quot;&quot; This is the default prefix to be used for the URL.&quot;&quot;&quot;</span>
     <span class="n">url_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -132,18 +132,28 @@
 
 <span class="sd">        Bear in mind that the `get_urls` function is only for</span>
 <span class="sd">        convenience when adding the resource the api.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">resource_url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">resource_class</span><span class="o">.</span><span class="n">create_url</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">resource_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
-                <span class="n">resource_url</span> <span class="o">=</span> <span class="n">resource_url</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">resource_class</span><span class="p">,</span> <span class="n">CollectionModelResource</span><span class="p">):</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="n">resource_url</span><span class="p">,</span> <span class="s2">&quot;collection&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="n">resource_url</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span><span class="p">)</span>
+            <span class="c1"># derive it from the resource</span>
+            <span class="n">resource_url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">resource_class</span><span class="o">.</span><span class="n">create_url</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 
+            <span class="c1"># insert meta url_prefix</span>
+            <span class="n">resource_url</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">)</span>
+
+            <span class="c1"># replace root</span>
+            <span class="n">resource_url</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">resource_class</span><span class="p">,</span> <span class="n">CollectionModelResource</span><span class="p">):</span>
+                <span class="n">resource_url</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;collection&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">resource_url</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;single&quot;</span><span class="p">)</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">resource_url</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># give exactly what is asked</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">url_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">url</span><span class="p">]</span></div></div>
 </pre></div>
 
@@ -160,6 +170,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v2.html">Simple Owner App Revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../meta-resource.html">Meta Resources</a></li>

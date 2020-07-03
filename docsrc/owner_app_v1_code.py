@@ -44,9 +44,8 @@ def find_block(start, end):
 locations = [
     ["# initialize", "# define users"],
     ["# define users", "# define orders"],
-    ["# define orders", "# define jobs"],
-    ["# define jobs", "# end database setup"],
-    ["# create users", "# mock authentication"],
+    ["# define orders", "# end database setup"],
+    ["# end database setup", "# mock authentication"],
     ["# mock authentication", "# create owner resources"],
     ["# create owner resources", "# order resources"],
     ["# order resources", "# add the resources to the API"],
