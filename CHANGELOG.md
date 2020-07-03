@@ -2,11 +2,36 @@
 ## (0.1.7) -
 ### Added
 *   Added a modification to the handling of ModelResource.serial_fields to enable a dictionary of a foreign class and serial fields to be returned when replacing the current Model class with another on responses.
+*   Added Parent/Child processing in POST. This enables the creation of child records as part of the commit process of a parent.
+*   Added an example program creating an invoice with invoice line items at the same time.
 
 ### Changed
 *   Corrected approach for default URLs for meta resources. Now the generation of the default URL stems from the root of the model resource.
 
-For example, if the model resource URL is `/products`, then the meta resources URLs will be `/meta/products/single` or `/meta/products/collection`. However if the prefix for products is changed to `/api/v1/products`, then the meta resources URLs will be `/api/v1/meta/products/single` or `/api/v1/meta/products/collection`.
+For example, if the model resource URL is:
+
+
+    /products
+
+
+then the meta resources URLs will be
+
+
+    /meta/products/single
+    /meta/products/collection
+
+
+However if the prefix for products is changed to
+
+
+    /api/v1/products
+
+
+then the meta resources URLs will be
+
+
+    /api/v1/meta/products/single or
+    /api/v1/meta/products/collection
 
 
 ## (0.1.6) -
