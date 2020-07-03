@@ -50,6 +50,8 @@
 <h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Added a modification to the handling of ModelResource.serial_fields to enable a dictionary of a foreign class and serial fields to be returned when replacing the current Model class with another on responses.</p></li>
+<li><p>Added Parent/Child processing in POST. This enables the creation of child records as part of the commit process of a parent.</p></li>
+<li><p>Added an example program creating an invoice with invoice line items at the same time.</p></li>
 </ul>
 </div>
 <div class="section" id="changed">
@@ -57,7 +59,24 @@
 <ul class="simple">
 <li><p>Corrected approach for default URLs for meta resources. Now the generation of the default URL stems from the root of the model resource.</p></li>
 </ul>
-<p>For example, if the model resource URL is <code class="docutils literal notranslate"><span class="pre">/products</span></code>, then the meta resources URLs will be <code class="docutils literal notranslate"><span class="pre">/meta/products/single</span></code> or <code class="docutils literal notranslate"><span class="pre">/meta/products/collection</span></code>. However if the prefix for products is changed to <code class="docutils literal notranslate"><span class="pre">/api/v1/products</span></code>, then the meta resources URLs will be <code class="docutils literal notranslate"><span class="pre">/api/v1/meta/products/single</span></code> or <code class="docutils literal notranslate"><span class="pre">/api/v1/meta/products/collection</span></code>.</p>
+<p>For example, if the model resource URL is:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>/products
+</pre></div>
+</div>
+<p>then the meta resources URLs will be</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>/meta/products/single
+/meta/products/collection
+</pre></div>
+</div>
+<p>However if the prefix for products is changed to</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>/api/v1/products
+</pre></div>
+</div>
+<p>then the meta resources URLs will be</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>/api/v1/meta/products/single or
+/api/v1/meta/products/collection
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="id2">

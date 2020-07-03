@@ -97,7 +97,7 @@ Once we create the subclass Owner resources to have the right combination of met
 .. include:: owner_app_v1_code_06.rst
 
 Create the Order Resources
-------------------------
+--------------------------
 Now we create the order resources. And, the code is minimal.
 
 .. include:: owner_app_v1_code_07.rst
