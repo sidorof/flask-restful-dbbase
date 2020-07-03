@@ -40,7 +40,6 @@ class ModelResource(DBBaseResource):
     The string version of the Model class name. This is set
     upon inititialization.
     """
-
     process_get_input = None
     process_post_input = None
     process_put_input = None
@@ -52,6 +51,7 @@ class ModelResource(DBBaseResource):
             msg = "A model class must be set for this resource to function."
             raise ValueError(msg)
         self.model_name = self.model_class._class()
+
         super().__init__()
 
     def get(self, **kwargs):
@@ -148,7 +148,11 @@ class ModelResource(DBBaseResource):
 
             data = result
 
-        status, data = self.screen_data(self.model_class.deserialize(data))
+        obj_params = self.get_obj_params()
+        status, data = self.screen_data(
+            self.model_class.deserialize(data), obj_params
+        )
+
         if status is False:
             return {"message": data}, 400
 
@@ -180,7 +184,63 @@ class ModelResource(DBBaseResource):
                 409,
             )
 
-        item = self.model_class(**data)
+        non_rel_columns = dict(
+            [
+                [key, value]
+                for key, value in obj_params.items()
+                if "relationship" not in value
+            ]
+        )
+
+        non_rel_data = dict(
+            [
+                [key, value]
+                for key, value in data.items()
+                if key in non_rel_columns
+            ]
+        )
+        item = self.model_class(**non_rel_data)
+
+        rel_columns = dict(
+            [
+                [key, value]
+                for key, value in obj_params.items()
+                if "relationship" in value
+            ]
+        )
+
+        # relationship data by column
+        rel_data = dict(
+            [[key, value] for key, value in data.items() if key in rel_columns]
+        )
+
+        for key, value in rel_data.items():
+            # key such as invoice_items
+            rel_info = rel_columns[key]["relationship"]
+            sub_obj_params = rel_info["fields"]
+            entity = rel_info["entity"]
+            sub_class = self.model_class._decl_class_registry[entity]
+
+            if rel_info["type"] == "list":
+                if not isinstance(value, list):
+                    return (
+                        {"message": f"{key} data must be in a list form"},
+                        400,
+                    )
+                for subitem in value:
+                    # subitem such as invoice item
+                    # screen against column
+                    # no missing data check, parent id auto filled
+                    # NOTE: needs further work
+                    sub_status, sub_data = self.screen_data(
+                        self.model_class.deserialize(subitem),
+                        sub_obj_params,
+                        skip_missing_data=True,
+                    )
+                    if sub_status is False:
+                        return {"message": sub_data}, 400
+
+                    getattr(item, key).append(sub_class(**sub_data))
 
         adjust_before = self.before_commit.get(FUNC_NAME)
 
@@ -208,11 +268,12 @@ class ModelResource(DBBaseResource):
                 # class, requires a run function
                 item, status_code = adjust_after.run(self, item, status_code)
 
-        ser_list, rel_ser_lists = self._get_serializations(FUNC_NAME)
+        ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
 
         return (
             item.to_dict(
-                serial_fields=ser_list, serial_field_relations=rel_ser_lists,
+                serial_fields=ser_fields,
+                serial_field_relations=rel_ser_fields,
             ),
             status_code,
         )
@@ -277,7 +338,9 @@ class ModelResource(DBBaseResource):
 
         # use the key(s) from the url
         data.update(kdict)
-        status, data = self.screen_data(data)
+        status, data = self.screen_data(
+            self.model_class.deserialize(data), self.get_obj_params()
+        )
         if status is False:
             return {"message": data}, 400
 
@@ -318,11 +381,12 @@ class ModelResource(DBBaseResource):
                 # class, requires a run function
                 item, status_code = adjust_after.run(self, item, status_code)
 
-        ser_list, rel_ser_lists = self._get_serializations(FUNC_NAME)
+        ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
 
         return (
             item.to_dict(
-                serial_fields=ser_list, serial_field_relations=rel_ser_lists,
+                serial_fields=ser_fields,
+                serial_field_relations=rel_ser_fields,
             ),
             status_code,
         )
@@ -382,7 +446,9 @@ class ModelResource(DBBaseResource):
         data = self.model_class.deserialize(data)
 
         data.update(kdict)
-        status, data = self.screen_data(data, skip_missing_data=True)
+        status, data = self.screen_data(
+            data, self.get_obj_params(), skip_missing_data=True
+        )
 
         if status is False:
             return {"message": data}, 400
@@ -409,7 +475,7 @@ class ModelResource(DBBaseResource):
             return (
                 {
                     "message": "An error occurred updating the "
-                    F"{self.model_name}: {msg}."
+                    f"{self.model_name}: {msg}."
                 },
                 500,
             )
@@ -422,11 +488,12 @@ class ModelResource(DBBaseResource):
                 # class, requires a run function
                 item, status_code = adjust_after.run(self, item, status_code)
 
-        ser_list, rel_ser_lists = self._get_serializations(FUNC_NAME)
+        ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
 
         return (
             item.to_dict(
-                serial_fields=ser_list, serial_field_relations=rel_ser_lists,
+                serial_fields=ser_fields,
+                serial_field_relations=rel_ser_fields,
             ),
             status_code,
         )

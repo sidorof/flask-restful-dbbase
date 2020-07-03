@@ -179,7 +179,6 @@ class TestModelProcResource(unittest.TestCase):
                     if data.get("ownerId") == user_id:
                         return True, (qry, data)
 
-                    msg = "The user id does not match the owner id"
                     return (
                         False,
                         (

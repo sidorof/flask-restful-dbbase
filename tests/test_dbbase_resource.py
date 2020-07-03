@@ -1,5 +1,6 @@
 # tests/test_dbbase_resource.py
 import pytest
+from datetime import date, datetime
 from dbbase import DB
 from flask_restful_dbbase.resources import DBBaseResource
 
@@ -149,7 +150,7 @@ def test_get_obj_params():
         },
         "last_login": {"type": "date-time", "nullable": True, "info": {}},
         "addresses": {
-            "readOnly": True,
+            "readOnly": False,
             "relationship": {
                 "type": "list",
                 "entity": "Address",
@@ -194,6 +195,10 @@ def test_get_urls():
     class UserResource(DBBaseResource):
         model_class = User
 
+        def get(self):
+            """To trigger keys to show"""
+            pass
+
     urls = UserResource.get_urls()
 
     assert urls == ["/users", "/users/<string:username>"]
@@ -227,6 +232,10 @@ def test_get_urls():
 
     class MultKeyResource(DBBaseResource):
         model_class = MultKey
+
+        def get(self):
+            """To trigger keys to show"""
+            pass
 
     assert MultKeyResource.get_urls() == [
         "/mult-keys",
@@ -302,6 +311,20 @@ def test__get_serial_fields():
 
     # unspecified for particular method, but still a dict
     assert UserResource._get_serial_fields(method="put") is None
+
+
+def test__get_serial_fields_foreign_class():
+    class UserResource(DBBaseResource):
+
+        serial_fields = {"post": {Address: ["city", "state"]}}
+
+    assert UserResource._get_serial_fields(method="post", with_class=True) == {
+        Address: ["city", "state"]
+    }
+
+    assert UserResource._get_serial_fields(
+        method="post", with_class=False
+    ) == ["city", "state"]
 
 
 def test__get_serial_field_relations():
@@ -399,84 +422,124 @@ def test_create_url():
 
 def test__check_numeric_casting():
 
-    db1 = DB(config=":memory:")
-    Author, Book, author, book = create_models(db1)
+    # valid
+    assert (
+        DBBaseResource._check_numeric_casting(
+            col_key="key", value=100, col_params={"type": "integer"}
+        )
+        == []
+    )
 
-    class BookResource(DBBaseResource):
-        model_class = Book
+    # valid
+    assert (
+        DBBaseResource._check_numeric_casting(
+            col_key="key", value=100, col_params={"type": "float"}
+        )
+        == []
+    )
 
-    book_data = book.to_dict(to_camel_case=False)
+    # valid
+    assert (
+        DBBaseResource._check_numeric_casting(
+            col_key="key", value=100.23456, col_params={"type": "float"}
+        )
+        == []
+    )
 
-    # follow the filtering first as found in screen
-    book_data = BookResource._remove_unnecessary_data(book_data)
+    # invalid
+    assert DBBaseResource._check_numeric_casting(
+        col_key="key", value="one hundred", col_params={"type": "float"}
+    ) == [{"key": "The value one hundred is not a number"}]
 
-    # since the source of data is from stored info in database, it is clean
-    assert BookResource._check_numeric_casting(book_data) == []
-
-    book_data["pub_year"] = "two thousand four"
-    assert BookResource._check_numeric_casting(book_data) == [
-        {"pub_year": "The value two thousand four is not a number"}
-    ]
+    # pass by
+    assert (
+        DBBaseResource._check_numeric_casting(
+            col_key="key", value="one hundred", col_params={"type": "string"}
+        )
+        == []
+    )
 
 
 def test__check_max_text_lengths():
 
-    db1 = DB(config=":memory:")
-    Author, Book, author, book = create_models(db1)
+    # valid
+    assert (
+        DBBaseResource._check_max_text_lengths(
+            col_key="key", value="this is a test", col_params={"maxLength": 20}
+        )
+        == []
+    )
 
-    class BookResource(DBBaseResource):
-        model_class = Book
+    # invalid
+    assert DBBaseResource._check_max_text_lengths(
+        col_key="key", value="this is a test", col_params={"maxLength": 5}
+    ) == [{"key": "The data exceeds the maximum length 5"}]
 
-    book_data = book.to_dict(to_camel_case=False)
-
-    # follow the filtering first as found in screen
-    book_data = BookResource._remove_unnecessary_data(book_data)
-
-    # since the source of data is from stored info in database, it is clean
-    assert BookResource._check_max_text_lengths(book_data) == []
-
-    book_data["title"] = book_data["title"] * 100
-
-    assert BookResource._check_max_text_lengths(book_data) == [
-        {"title": "The data exceeds the maximum length 100"}
-    ]
-
-
-def test__remove_unnecessary_data():
-
-    db1 = DB(config=":memory:")
-    Author, Book, author, book = create_models(db1)
-
-    class BookResource(DBBaseResource):
-        model_class = Book
-
-    book_data = book.to_dict(to_camel_case=False)
-
-    # add another extraneous field
-    book_data["test"] = "this is a"
-
-    assert "test" not in BookResource._remove_unnecessary_data(book_data)
+    # pass by
+    assert (
+        DBBaseResource._check_max_text_lengths(
+            col_key="key", value="this is a test", col_params={}
+        )
+        == []
+    )
 
 
-def test__missing_required():
+def test__check_date_casting():
 
-    db1 = DB(config=":memory:")
-    Author, Book, author, book = create_models(db1)
+    # DBBaseResource.use_date_conversions = True
 
-    class BookResource(DBBaseResource):
-        model_class = Book
+    # valid - date
+    assert DBBaseResource._check_date_casting(
+        col_key="key", value="2014-11-01", col_params={"type": "date"}
+    ) == (True, date(2014, 11, 1))
 
-    book_data = book.to_dict(to_camel_case=False)
+    # invalid format - date
+    assert DBBaseResource._check_date_casting(
+        col_key="key", value="blah, blah", col_params={"type": "date"}
+    ) == (
+        False,
+        [
+            {
+                "key": "Date error: 'blah, blah': "
+                "Unknown string format: blah, blah"
+            }
+        ],
+    )
 
-    assert BookResource._missing_required(book_data) is None
+    # valid - datetime
+    assert DBBaseResource._check_date_casting(
+        col_key="key", value="2014-11-01", col_params={"type": "date-time"}
+    ) == (True, datetime(2014, 11, 1))
 
-    # delete title and author_id
-    book_data.pop("title")
-    book_data.pop("author_id")
+    # invalid format - date
+    assert DBBaseResource._check_date_casting(
+        col_key="key", value="blah, blah", col_params={"type": "date-time"}
+    ) == (
+        False,
+        [
+            {
+                "key": "Date error: 'blah, blah': "
+                "Unknown string format: blah, blah"
+            }
+        ],
+    )
 
-    assert BookResource._missing_required(book_data) == {
-        "missing_columns": ["title", "author_id"]
-    }
+
+def test_screen_data():
+    """
+    Coverage from other tests except for
+    date related.
+    """
+    data = {"today": "2020-3-4"}
+    obj_params = {"today": {"type": "date"}}
+
+    class TestResource(DBBaseResource):
+        use_date_conversions = True
+
+    assert TestResource().screen_data(data, obj_params) == (
+        True,
+        {"today": date(2020, 3, 4)},
+    )
 
 
 def test_get_meta():
@@ -788,6 +851,11 @@ def test__meta_method():
         model_class = Book
         method_decorators = {"get": [my_decorator]}
 
+        serial_fields = {"post": {Author: ["first_name", "last_name"]}}
+
+        def get(self):
+            pass
+
     assert BookResource._meta_method("get") == {
         "url": "/books/<int:id>",
         "requirements": ["my_decorator"],
@@ -867,6 +935,60 @@ def test__meta_method():
         },
     }
 
+    assert BookResource._meta_method("post") == {
+        "requirements": [],
+        "input": {
+            "id": {
+                "type": "integer",
+                "format": "int32",
+                "primary_key": True,
+                "nullable": True,
+                "info": {},
+            },
+            "isbn": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": True,
+                "info": {},
+            },
+            "title": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": False,
+                "info": {},
+            },
+            "pubYear": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": False,
+                "info": {},
+            },
+            "authorId": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": False,
+                "foreign_key": "author.id",
+                "info": {},
+            },
+        },
+        "responses": {
+            "fields": {
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "nullable": False,
+                    "info": {},
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "nullable": False,
+                    "info": {},
+                },
+            }
+        },
+    }
+
     class AuthorCollection(DBBaseResource):
         model_class = Author
         max_page_size = None  # indicator of coll
@@ -887,13 +1009,13 @@ def test__meta_method():
                 "nullable": False,
                 "info": {},
             },
-            "firstName": {
+            "first_name": {
                 "type": "string",
                 "maxLength": 50,
                 "nullable": False,
                 "info": {},
             },
-            "lastName": {
+            "last_name": {
                 "type": "string",
                 "maxLength": 50,
                 "nullable": False,
@@ -923,7 +1045,7 @@ def test__meta_method():
                 },
                 "full_name": {"readOnly": True},
                 "books": {
-                    "readOnly": True,
+                    "readOnly": False,
                     "relationship": {
                         "type": "list",
                         "entity": "Book",
@@ -983,6 +1105,9 @@ def test__meta_method_muliple_keys():
 
     class MultKeyResource(DBBaseResource):
         model_class = MultKey
+
+        def get(self):
+            pass
 
     assert MultKeyResource._meta_method("get") == {
         "url": "/mult-keys/<string:key1><int:key2>",

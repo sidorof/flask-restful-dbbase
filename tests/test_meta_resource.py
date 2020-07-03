@@ -53,11 +53,27 @@ class TestMetaModelResource(unittest.TestCase):
             class ProductCollection(CollectionModelResource):
                 model_class = cls.Product
 
+            # alternate resource classes
+            class ProductResource1(ModelResource):
+                model_class = cls.Product
+                url_prefix = "/api/v1"
+
+            class ProductCollection1(CollectionModelResource):
+                model_class = cls.Product
+                url_prefix = "/api/v1"
+
             class ProductMetaResource(MetaResource):
                 resource_class = ProductResource
 
             class ProductMetaCollection(MetaResource):
                 resource_class = ProductCollection
+
+            # alternate meta resource classes
+            class ProductMetaResource1(MetaResource):
+                resource_class = ProductResource1
+
+            class ProductMetaCollection1(MetaResource):
+                resource_class = ProductCollection1
 
             cls.api.add_resource(ProductResource, *ProductResource.get_urls())
             cls.api.add_resource(
@@ -68,11 +84,24 @@ class TestMetaModelResource(unittest.TestCase):
                 ProductMetaCollection, *ProductMetaCollection.get_urls()
             )
 
+            cls.api.add_resource(
+                ProductResource1, *ProductResource1.get_urls()
+            )
+            cls.api.add_resource(
+                ProductMetaResource1, *ProductMetaResource1.get_urls()
+            )
+
+            cls.api.add_resource(
+                ProductMetaCollection1, *ProductMetaCollection1.get_urls()
+            )
+
             cls.ProductResource = ProductResource
-
             cls.ProductMetaResource = ProductMetaResource
-
             cls.ProductMetaCollection = ProductMetaCollection
+
+            cls.ProductResource1 = ProductResource1
+            cls.ProductMetaResource1 = ProductMetaResource1
+            cls.ProductMetaCollection1 = ProductMetaCollection1
 
             cls.needs_setup = False
 
@@ -95,7 +124,7 @@ class TestMetaModelResource(unittest.TestCase):
     def test_default_class_variables(self):
 
         self.assertIsNone(MetaResource.resource_class)
-        self.assertEqual(MetaResource.url_prefix, "/meta")
+        self.assertEqual(MetaResource.url_prefix, "meta")
         self.assertIsNone(MetaResource.url_name)
 
     def test_get_urls(self):
@@ -109,11 +138,21 @@ class TestMetaModelResource(unittest.TestCase):
         )
 
         # with specified path
-        self.ProductMetaResource.url_prefix = "/api/v2"
-        self.ProductMetaResource.url_name = "differents"
+        self.ProductMetaResource.url_prefix = "api/v2"
+        self.ProductMetaResource.url_name = "different"
 
         self.assertListEqual(
-            self.ProductMetaResource.get_urls(), ["/api/v2/differents"]
+            self.ProductMetaResource.get_urls(), ["/api/v2/different"]
+        )
+
+        self.assertListEqual(
+            self.ProductMetaResource1.get_urls(),
+            ["/api/v1/meta/products/single"],
+        )
+
+        self.assertListEqual(
+            self.ProductMetaCollection1.get_urls(),
+            ["/api/v1/meta/products/collection"],
         )
 
     def test_get(self):

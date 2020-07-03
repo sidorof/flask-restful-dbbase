@@ -31,18 +31,18 @@ class CollectionModelResource(DBBaseResource):
         self.model_name = self.model_class._class()
         super().__init__()
 
-    @classmethod
-    def get_urls(cls):
-        """get_urls
-
-        This version the function returns just the base url, unlike
-        the ModelResource.
-
-        """
-        if cls.model_class is None:
-            raise ValueError("A model class must be defined")
-
-        return [cls.create_url()]
+    # @classmethod
+    # def get_urls(cls):
+    #     """get_urls
+    #
+    #     This version the function returns just the base url, unlike
+    #     the ModelResource.
+    #
+    #     """
+    #     if cls.model_class is None:
+    #         raise ValueError("A model class must be defined")
+    #
+    #     return [cls.create_url()]
 
     def get(self):
 

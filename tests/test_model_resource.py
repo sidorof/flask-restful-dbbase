@@ -45,6 +45,12 @@ def create_models(db):
             db.Integer, db.ForeignKey("author.id"), nullable=False
         )
 
+    class DateTable(db.Model):
+        __tablename__ = "test_dates"
+        id = db.Column(db.Integer, nullable=True, primary_key=True)
+        today = db.Column(db.Date)
+        now = db.Column(db.DateTime)
+
     db.create_all()
 
     # sample data
@@ -57,7 +63,7 @@ def create_models(db):
     )
     book.save()
 
-    return Author, Book, author, book
+    return Author, Book, DateTable, author, book
 
 
 class TestModelResource(unittest.TestCase):
@@ -75,9 +81,10 @@ class TestModelResource(unittest.TestCase):
 
         @classmethod
         def set_db(cls):
-            Author, Book, author, book = create_models(db)
+            Author, Book, DateTable, author, book = create_models(db)
             cls.Author = Author
             cls.Book = Book
+            cls.DateTable = DateTable
             cls.author = author
             cls.book = book
 
@@ -99,12 +106,21 @@ class TestModelResource(unittest.TestCase):
             class AuthorResource(ModelResource):
                 model_class = cls.Author
 
+            # date conversions set to False to start
+            class DateResource(ModelResource):
+                model_class = DateTable
+                use_date_conversions = False
+
             cls.api.add_resource(BookResource, *BookResource.get_urls())
             cls.api.add_resource(AuthorResource, *AuthorResource.get_urls())
+
+            cls.api.add_resource(DateResource, *DateResource.get_urls())
+
             cls.needs_setup = False
 
             cls.BookResource = BookResource
             cls.AuthorResource = AuthorResource
+            cls.DateResource = DateResource
 
         headers = {"Content-Type": "application/json"}
         cls.set_db = set_db
@@ -231,11 +247,60 @@ class TestModelResource(unittest.TestCase):
                 res.get_json(),
                 {
                     "message": [
-                        {"missing_columns": ["author_id"]},
                         {"title": "The data exceeds the maximum length 100"},
                         {
                             "pub_year": "The value two "
                             "thousand 4 is not a number"
+                        },
+                        {"missing_columns": ["author_id"]},
+                    ]
+                },
+            )
+            self.assertEqual(res.content_type, "application/json")
+
+    def test_post_bad_date_data(self):
+
+        bad_datetbl = {"today": "wrong", "now": "wrong"}
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            # no date conversions
+            res = client.post(
+                "/date-tables",
+                data=json.dumps(bad_datetbl),
+                headers=self.headers,
+            )
+            self.assertEqual(res.status_code, 500)
+            self.assertDictEqual(
+                res.get_json(),
+                {
+                    "message": "Internal Server Error: "
+                    "method post: /date-tables"
+                },
+            )
+            self.assertEqual(res.content_type, "application/json")
+
+            # now set date conversions
+            self.DateResource.use_date_conversions = True
+            res = client.post(
+                "/date-tables",
+                data=json.dumps(bad_datetbl),
+                headers=self.headers,
+            )
+            self.assertEqual(res.status_code, 400)
+            self.assertDictEqual(
+                res.get_json(),
+                {
+                    "message": [
+                        {
+                            "today": "Date error: 'wrong': "
+                            "Unknown string format: wrong"
+                        },
+                        {
+                            "now": "Date error: 'wrong': "
+                            "Unknown string format: wrong"
                         },
                     ]
                 },
@@ -272,34 +337,76 @@ class TestModelResource(unittest.TestCase):
             "isbn": "an isbn",
             "title": "The Cell: A Molecular Approach, 30th edition",
             "pub_year": 2034,
-            "author_id": 1,
+            # "author_id": 1,
         }
 
+        author = {"first_name": "joe", "last_name": "fonebone", "books": book}
+
+        # do it wrong first
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
+            res = client.post(
+                "/authors", data=json.dumps(author), headers=self.headers
+            )
+
+            self.assertEqual(res.status_code, 400)
+            self.assertDictEqual(
+                res.get_json(),
+                {"message": "books data must be in a list form"},
+            )
+
+            # wrong because author is incomplete
+            bad_book = {
+                "isbn": "an isbn",
+                "pub_year": "wrong",
+            }
+            author = {
+                "first_name": "joe",
+                "last_name": "fonebone",
+                "books": [bad_book],
+            }
 
             res = client.post(
-                "/books", data=json.dumps(book), headers=self.headers
+                "/authors", data=json.dumps(author), headers=self.headers
             )
+
+            self.assertEqual(res.status_code, 400)
+            result = res.get_json()
+            self.assertDictEqual(
+                result,
+                {"message": [{"pub_year": "The value wrong is not a number"}]},
+            )
+            author = {
+                "first_name": "joe",
+                "last_name": "fonebone",
+                "books": [book],
+            }
+
+            res = client.post(
+                "/authors", data=json.dumps(author), headers=self.headers
+            )
+
             self.assertEqual(res.status_code, 201)
             result = res.get_json()
 
-            # pop id, don't care to test it
-            result.pop("id")
             self.assertDictEqual(
                 result,
                 {
-                    "pubYear": 2034,
-                    "isbn": "an isbn",
-                    "title": "The Cell: A Molecular Approach, 30th edition",
-                    "author": {
-                        "firstName": "Geoffrey",
-                        "lastName": "Cooper",
-                        "id": 1,
-                        "fullName": "Geoffrey Cooper",
-                    },
-                    "authorId": 1,
+                    "firstName": "joe",
+                    "lastName": "fonebone",
+                    "fullName": "joe fonebone",
+                    "id": 2,
+                    "books": [
+                        {
+                            "title": "The Cell: A Molecular Approach, "
+                            "30th edition",
+                            "pubYear": 2034,
+                            "isbn": "an isbn",
+                            "id": 1001,
+                            "authorId": 2,
+                        }
+                    ],
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -435,17 +542,16 @@ class TestModelResource(unittest.TestCase):
             res = client.put(
                 "/books/1", data=json.dumps(book), headers=self.headers
             )
-            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
                 {
                     "message": [
-                        {"missing_columns": ["author_id"]},
                         {"title": "The data exceeds the maximum length 100"},
                         {
                             "pub_year": "The value two "
                             "thousand 4 is not a number"
                         },
+                        {"missing_columns": ["author_id"]},
                     ]
                 },
             )
@@ -568,10 +674,7 @@ class TestModelResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.patch(
-                "/books/1000",
-                data=data,
-            )
+            res = client.patch("/books/1000", data=data,)
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
                 res.get_json(), {"message": "JSON format is required"},

@@ -26,10 +26,8 @@ class DBBase(SQLAlchemy):
             session_options=session_options,
             metadata=metadata,
             query_class=BaseQuery,
-
             # Note that this is DBBase's Model
             model_class=Model,
-
             engine_options=engine_options,
         )
 

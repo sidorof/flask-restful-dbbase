@@ -32,7 +32,7 @@ class MetaResource(Resource):
 
     resource_class = None
     """ This is the resource class to be documented """
-    url_prefix = "/meta"
+    url_prefix = "meta"
     """ This is the default prefix to be used for the URL."""
     url_name = None
     """
@@ -89,16 +89,26 @@ class MetaResource(Resource):
 
         Bear in mind that the `get_urls` function is only for
         convenience when adding the resource the api.
+
         """
         if cls.url_name is None:
-            resource_url = cls.resource_class.create_url()
-            if resource_url.startswith("/"):
-                resource_url = resource_url[1:]
-            if issubclass(cls.resource_class, CollectionModelResource):
-                url = path.join(cls.url_prefix, resource_url, "collection")
-            else:
-                url = path.join(cls.url_prefix, resource_url, "single")
-        else:
-            url = path.join(cls.url_prefix, cls.url_name)
+            # derive it from the resource
+            resource_url = cls.resource_class.create_url().split("/")
 
+            # insert meta url_prefix
+            resource_url.insert(-1, cls.url_prefix)
+
+            # replace root
+            resource_url[0] = "/"
+
+            if issubclass(cls.resource_class, CollectionModelResource):
+                resource_url.append("collection")
+            else:
+                resource_url.append("single")
+            url = path.join(*resource_url)
+        else:
+            # give exactly what is asked
+            url = path.join(cls.url_prefix, cls.url_name)
+            if not url.startswith("/"):
+                url = f"/{url}"
         return [url]
