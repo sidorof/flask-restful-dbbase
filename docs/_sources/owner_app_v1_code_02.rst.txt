@@ -9,4 +9,5 @@
         ordered_at = db.Column(db.DateTime, default=datetime.now)
         status_id = db.Column(db.SmallInteger, default=0, nullable=True)
     
+    
 ..

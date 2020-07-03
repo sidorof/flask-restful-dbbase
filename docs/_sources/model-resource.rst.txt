@@ -25,6 +25,13 @@ If the url_name is left as None, a URL can be created from the model class name.
 
 ..
 
+Date-Related Variables
+^^^^^^^^^^^^^^^^^^^^^^
+If your database does support automatic conversion of dates in string form, such as SQLite3, you can ask the ModelResource to do this:
+
+* use_date_conversions = True
+
+This variable defaults to False to avoid unnecessary processing, but it is helpful in the right situation.
 
 Serialization
 ^^^^^^^^^^^^^

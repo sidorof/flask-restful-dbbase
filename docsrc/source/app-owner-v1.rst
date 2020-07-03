@@ -46,11 +46,11 @@ To implement this example, we will create two tables:
 - A user table
 - An order table, that is apparently a request for a service.
 
-As before we initialize the app:
+As before, we initialize the app:
 
 .. include:: owner_app_v1_code_00.rst
 
-First, we create the User model. Of course, password would normally be encrypted, but note the use of a column class of `WriteOnlyColumn`. What this means is that when the returning results, the password would be automatically excluded, which can limit awkward mistakes, even when appropriately encrypted.
+First, we create the User model. Of course, `password` would normally be encrypted, but note the use of a column class of `WriteOnlyColumn`. This means that when returning results, the password would be automatically excluded, which can limit awkward mistakes, even when appropriately encrypted.
 
 .. include:: owner_app_v1_code_01.rst
 

@@ -10,8 +10,10 @@ To install the latest released version
 
 Requirements
 ------------
+* The base packages
 
-* Flask-RESTful
+.. literalinclude:: ../../requirements.txt
+    :language: none
 
 * your database driver, for example:
 

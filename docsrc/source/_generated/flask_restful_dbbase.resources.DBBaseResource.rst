@@ -57,5 +57,6 @@ DBBaseResource
       ~DBBaseResource.serial_fields
       ~DBBaseResource.url_name
       ~DBBaseResource.url_prefix
+      ~DBBaseResource.use_date_conversions
    
    

@@ -74,18 +74,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CollectionModelResource.get_urls"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.CollectionModelResource.get_urls.html#flask_restful_dbbase.resources.CollectionModelResource.get_urls">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_urls</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;get_urls</span>
-
-<span class="sd">        This version the function returns just the base url, unlike</span>
-<span class="sd">        the ModelResource.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A model class must be defined&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">create_url</span><span class="p">()]</span></div>
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def get_urls(cls):</span>
+    <span class="c1">#     &quot;&quot;&quot;get_urls</span>
+    <span class="c1">#</span>
+    <span class="c1">#     This version the function returns just the base url, unlike</span>
+    <span class="c1">#     the ModelResource.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     if cls.model_class is None:</span>
+    <span class="c1">#         raise ValueError(&quot;A model class must be defined&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return [cls.create_url()]</span>
 
 <div class="viewcode-block" id="CollectionModelResource.get"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.CollectionModelResource.get.html#flask_restful_dbbase.resources.CollectionModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -209,6 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v2.html">Simple Owner App Revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>

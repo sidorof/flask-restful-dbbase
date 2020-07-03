@@ -62,5 +62,6 @@ CollectionModelResource
       ~CollectionModelResource.serial_fields
       ~CollectionModelResource.url_name
       ~CollectionModelResource.url_prefix
+      ~CollectionModelResource.use_date_conversions
    
    

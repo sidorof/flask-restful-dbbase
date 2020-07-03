@@ -15,7 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Model Collection Resources" href="model-collection-resource.html" />
+    <link rel="next" title="Parent Post - Child Records" href="parent-child-posting.html" />
     <link rel="prev" title="Simple Owner App Revised" href="app-owner-v2.html" />
      
     
@@ -32,7 +32,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="model-collection-resource.html" title="Model Collection Resources"
+          <a href="parent-child-posting.html" title="Parent Post - Child Records"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="app-owner-v2.html" title="Simple Owner App Revised"
@@ -64,6 +64,14 @@
 <span class="o">/</span><span class="n">customer</span><span class="o">-</span><span class="n">orders</span><span class="o">/&lt;</span><span class="nb">int</span><span class="p">:</span><span class="nb">id</span><span class="o">&gt;</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="date-related-variables">
+<h3>Date-Related Variables<a class="headerlink" href="#date-related-variables" title="Permalink to this headline">¶</a></h3>
+<p>If your database does support automatic conversion of dates in string form, such as SQLite3, you can ask the ModelResource to do this:</p>
+<ul class="simple">
+<li><p>use_date_conversions = True</p></li>
+</ul>
+<p>This variable defaults to False to avoid unnecessary processing, but it is helpful in the right situation.</p>
 </div>
 <div class="section" id="serialization">
 <h3>Serialization<a class="headerlink" href="#serialization" title="Permalink to this headline">¶</a></h3>
@@ -316,6 +324,7 @@ process the input data for the HTTP methods.</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Model Resources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#class-variables">Class Variables</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#set-up-variables">Set Up Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#date-related-variables">Date-Related Variables</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#serialization">Serialization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#model-resource-serial-fields">Model Resource Serial Fields</a></li>
 </ul>
@@ -331,6 +340,7 @@ process the input data for the HTTP methods.</p>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -343,7 +353,7 @@ process the input data for the HTTP methods.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="app-owner-v2.html" title="previous chapter">Simple Owner App Revised</a></li>
-      <li>Next: <a href="model-collection-resource.html" title="next chapter">Model Collection Resources</a></li>
+      <li>Next: <a href="parent-child-posting.html" title="next chapter">Parent Post - Child Records</a></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">

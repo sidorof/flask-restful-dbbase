@@ -191,7 +191,7 @@ class DBBaseResource(Resource):
         urls = [cls.create_url()]
 
         if not cls.is_collection():
-            key_methods = ['get', 'put', 'patch', 'delete']
+            key_methods = ["get", "put", "patch", "delete"]
 
             for method in key_methods:
                 if hasattr(cls, method):

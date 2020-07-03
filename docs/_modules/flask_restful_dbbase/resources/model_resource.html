@@ -83,7 +83,6 @@
 <span class="sd">    The string version of the Model class name. This is set</span>
 <span class="sd">    upon inititialization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">process_get_input</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">process_post_input</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">process_put_input</span> <span class="o">=</span> <span class="kc">None</span>
@@ -95,6 +94,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;A model class must be set for this resource to function.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ModelResource.get"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.ModelResource.get.html#flask_restful_dbbase.resources.ModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -191,7 +191,11 @@
 
             <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
 
-        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">obj_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_obj_params</span><span class="p">()</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">obj_params</span>
+        <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
 
@@ -223,7 +227,63 @@
                 <span class="mi">409</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">non_rel_columns</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;relationship&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">non_rel_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">non_rel_columns</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="o">**</span><span class="n">non_rel_data</span><span class="p">)</span>
+
+        <span class="n">rel_columns</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;relationship&quot;</span> <span class="ow">in</span> <span class="n">value</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># relationship data by column</span>
+        <span class="n">rel_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="p">[[</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">rel_columns</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">rel_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># key such as invoice_items</span>
+            <span class="n">rel_info</span> <span class="o">=</span> <span class="n">rel_columns</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;relationship&quot;</span><span class="p">]</span>
+            <span class="n">sub_obj_params</span> <span class="o">=</span> <span class="n">rel_info</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
+            <span class="n">entity</span> <span class="o">=</span> <span class="n">rel_info</span><span class="p">[</span><span class="s2">&quot;entity&quot;</span><span class="p">]</span>
+            <span class="n">sub_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_decl_class_registry</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">rel_info</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">(</span>
+                        <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> data must be in a list form&quot;</span><span class="p">},</span>
+                        <span class="mi">400</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">for</span> <span class="n">subitem</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="c1"># subitem such as invoice item</span>
+                    <span class="c1"># screen against column</span>
+                    <span class="c1"># no missing data check, parent id auto filled</span>
+                    <span class="c1"># NOTE: needs further work</span>
+                    <span class="n">sub_status</span><span class="p">,</span> <span class="n">sub_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">subitem</span><span class="p">),</span>
+                        <span class="n">sub_obj_params</span><span class="p">,</span>
+                        <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">sub_status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">sub_data</span><span class="p">},</span> <span class="mi">400</span>
+
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_class</span><span class="p">(</span><span class="o">**</span><span class="n">sub_data</span><span class="p">))</span>
 
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
 
@@ -255,7 +315,8 @@
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
-                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_fields</span><span class="p">,</span> <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_fields</span><span class="p">,</span>
+                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_fields</span><span class="p">,</span>
+                <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_fields</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">status_code</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -320,7 +381,9 @@
 
         <span class="c1"># use the key(s) from the url</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kdict</span><span class="p">)</span>
-        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_obj_params</span><span class="p">()</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
 
@@ -365,7 +428,8 @@
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
-                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_fields</span><span class="p">,</span> <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_fields</span><span class="p">,</span>
+                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_fields</span><span class="p">,</span>
+                <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_fields</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">status_code</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -425,7 +489,9 @@
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kdict</span><span class="p">)</span>
-        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_data</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_obj_params</span><span class="p">(),</span> <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">},</span> <span class="mi">400</span>
@@ -469,7 +535,8 @@
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
-                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_fields</span><span class="p">,</span> <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_fields</span><span class="p">,</span>
+                <span class="n">serial_fields</span><span class="o">=</span><span class="n">ser_fields</span><span class="p">,</span>
+                <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">rel_ser_fields</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">status_code</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -562,6 +629,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v2.html">Simple Owner App Revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>

@@ -13,6 +13,7 @@
     class JobMetaCollection(MetaResource):
         resource_class = JobCollection
     
+    
     class JobMeta(MetaResource):
         resource_class = JobResource
     

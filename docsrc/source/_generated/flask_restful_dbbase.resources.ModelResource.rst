@@ -72,5 +72,6 @@ ModelResource
       ~ModelResource.serial_fields
       ~ModelResource.url_name
       ~ModelResource.url_prefix
+      ~ModelResource.use_date_conversions
    
    

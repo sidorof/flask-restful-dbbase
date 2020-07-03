@@ -78,7 +78,7 @@ or</p>
 <td><p>Subclasses have to override this method to implement the actual view function code.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.format_key.html#flask_restful_dbbase.resources.ModelResource.format_key" title="flask_restful_dbbase.resources.ModelResource.format_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_key</span></code></a>(key, key_type)</p></td>
-<td><p></p></td>
+<td><p>This function returns the portion of the URL that embodies the key.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.get.html#flask_restful_dbbase.resources.ModelResource.get" title="flask_restful_dbbase.resources.ModelResource.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(**kwargs)</p></td>
 <td><p>This function is the HTTP GET method for a resource handling a single item.</p></td>
@@ -93,7 +93,7 @@ or</p>
 <td><p>This is a convenience function for getting documentation parameters from the model class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.get_urls.html#flask_restful_dbbase.resources.ModelResource.get_urls" title="flask_restful_dbbase.resources.ModelResource.get_urls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_urls</span></code></a>()</p></td>
-<td><p>This function returns something similar to</p></td>
+<td><p>This function returns something similar to [</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.is_collection.html#flask_restful_dbbase.resources.ModelResource.is_collection" title="flask_restful_dbbase.resources.ModelResource.is_collection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_collection</span></code></a>()</p></td>
 <td><p>This function returns True if identified as a collection resource.</p></td>
@@ -107,7 +107,7 @@ or</p>
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.put.html#flask_restful_dbbase.resources.ModelResource.put" title="flask_restful_dbbase.resources.ModelResource.put"><code class="xref py py-obj docutils literal notranslate"><span class="pre">put</span></code></a>(**kwargs)</p></td>
 <td><p>This function is the HTTP PUT method for a resource handling a single item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.screen_data.html#flask_restful_dbbase.resources.ModelResource.screen_data" title="flask_restful_dbbase.resources.ModelResource.screen_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen_data</span></code></a>(data[, skip_missing_data])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.ModelResource.screen_data.html#flask_restful_dbbase.resources.ModelResource.screen_data" title="flask_restful_dbbase.resources.ModelResource.screen_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen_data</span></code></a>(data, obj_params[, …])</p></td>
 <td><p>Assumes data is deserialized</p></td>
 </tr>
 </tbody>
@@ -182,6 +182,9 @@ or</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_prefix</span></code></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">use_date_conversions</span></code></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 <dl class="attribute">
@@ -246,6 +249,7 @@ handling a single item.</p>
 <li class="toctree-l1"><a class="reference internal" href="../app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../app-owner-v2.html">Simple Owner App Revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>

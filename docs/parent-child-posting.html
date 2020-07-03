@@ -1,0 +1,475 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Parent Post - Child Records &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Collection Resources" href="model-collection-resource.html" />
+    <link rel="prev" title="Model Resources" href="model-resource.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="model-collection-resource.html" title="Model Collection Resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="model-resource.html" title="Model Resources"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="parent-post-child-records">
+<h1>Parent Post - Child Records<a class="headerlink" href="#parent-post-child-records" title="Permalink to this headline">¶</a></h1>
+<p>Since some kinds of records by their nature are really a set consisting of a parent record and a list of child records. In this section we will look at an example for efficiently handling that.</p>
+<p>Our example is that of an invoice. Suppose an invoice is created with 20 items. If we follow a purely REST approach, we would create a parent invoice followed by another 20 trips to the database for each item. Or, we could implement a collection POST resource for the invoice items and only have two trips. In that case, one trip for the parent and one for the set of invoice items.</p>
+<p>With Flask-RESTful-DBBase, we will do it in one trip in the following example.</p>
+<p>As before the code for this example is found in the examples section as</p>
+<div class="default docutils container">
+<p>invoice_app &lt;<a class="reference external" href="https://sidorof.github.io/flask-restful-dbbase/examples/invoice_app.py">https://sidorof.github.io/flask-restful-dbbase/examples/invoice_app.py</a>&gt;</p>
+</div>
+<div class="section" id="create-the-database-models">
+<h2>Create the database models<a class="headerlink" href="#create-the-database-models" title="Permalink to this headline">¶</a></h2>
+<p>When we create our two tables to make up an invoice, note how the <cite>invoice_items</cite> relation is specified with <cite>backref</cite>. That means that the InvoiceItem will also have a field called <cite>invoice</cite>. And, it invokes a bidirectional update capability between an invoice and the set of invoice items.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Invoice</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;invoice&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">invoice_date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># this is the critical part, it requires either backref or</span>
+    <span class="c1">#   back_populates</span>
+    <span class="n">invoice_items</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;InvoiceItem&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;invoice&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceItem</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;invoice_item&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">invoice_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;invoice.id&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">part_code</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">unit_price</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-the-invoice-resource">
+<h2>Create the Invoice Resource<a class="headerlink" href="#create-the-invoice-resource" title="Permalink to this headline">¶</a></h2>
+<p>The InvoiceResource is pretty standard. There is one twist, unrelated to the topic at hand. Because we are using Sqlite3 as the default database, the invoice date that is sent as a string is not properly processed by Sqlite3. Converting a date string to a datatime object takes some time, so if your database automatically does this, there is no need for the extra step.</p>
+<p>In this case, however, we will use <cite>use_date_conversion</cite> to signify that the API should do the conversion for us.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">InvoiceResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Invoice</span>
+
+    <span class="c1"># necessary only if the database does not understand</span>
+    <span class="c1">#   dates in string form -- such as Sqlite3</span>
+    <span class="n">use_date_conversions</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="finish-the-rest-of-the-invoice-resources">
+<h2>Finish the Rest of the Invoice Resources<a class="headerlink" href="#finish-the-rest-of-the-invoice-resources" title="Permalink to this headline">¶</a></h2>
+<p>The following resources are consistent with the other examples with nothing else that is special.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">InvoiceCollectionResource</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Invoice</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceItemResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">InvoiceItem</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceItemCollectionResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">InvoiceItem</span>
+
+
+<span class="c1"># create meta resources</span>
+<span class="k">class</span> <span class="nc">InvoiceMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">InvoiceResource</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">InvoiceResource</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceItemMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">InvoiceItemResource</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceItemMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">InvoiceItemResource</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-the-resources-to-the-api">
+<h2>Add the Resources to the API<a class="headerlink" href="#add-the-resources-to-the-api" title="Permalink to this headline">¶</a></h2>
+<p>Finally, as before the resources are added to the API and we are ready for business.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span>
+    <span class="n">InvoiceCollectionResource</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceCollectionResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">InvoiceResource</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span>
+    <span class="n">InvoiceItemCollectionResource</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceItemCollectionResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">InvoiceItemResource</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">InvoiceMeta</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceMeta</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">InvoiceMetaCollection</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceMetaCollection</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">InvoiceItemMeta</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceItemMeta</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span>
+    <span class="n">InvoiceItemMetaCollection</span><span class="p">,</span> <span class="o">*</span><span class="n">InvoiceItemMetaCollection</span><span class="o">.</span><span class="n">get_urls</span><span class="p">()</span>
+<span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-the-api">
+<h2>Use the API<a class="headerlink" href="#use-the-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-an-invoice">
+<h3>Create an Invoice<a class="headerlink" href="#create-an-invoice" title="Permalink to this headline">¶</a></h3>
+<p>We will now create an invoice. The data consists of both the invoice portion and a list of line items that are to be added to the invoice. See how the <cite>invoice_id</cite> is left off of the invoice items data. While it is unknowable until the invoice is created, SQLAlchemy automatically fills it in when posting the line items.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># post an invoice</span>
+curl http://localhost:5000/invoices <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{</span>
+<span class="s1">  &quot;userId&quot;: 1,</span>
+<span class="s1">  &quot;invoiceDate&quot;: &quot;2020-07-02&quot;,</span>
+<span class="s1">  &quot;invoiceItems&quot;: [</span>
+<span class="s1">    {</span>
+<span class="s1">      &quot;partCode&quot;: &quot;111&quot;,</span>
+<span class="s1">      &quot;units&quot;: &quot;1&quot;,</span>
+<span class="s1">      &quot;unitPrice&quot;: 20.0</span>
+<span class="s1">    },</span>
+<span class="s1">    {</span>
+<span class="s1">      &quot;partCode&quot;: &quot;222&quot;,</span>
+<span class="s1">      &quot;units&quot;: &quot;5&quot;,</span>
+<span class="s1">      &quot;unitPrice&quot;: 15.0</span>
+<span class="s1">    }</span>
+<span class="s1">  ]</span>
+<span class="s1">}&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;userId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;invoiceDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;invoiceItems&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;invoiceId&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;partCode&quot;</span><span class="p">:</span> <span class="s2">&quot;111&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;units&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="nt">&quot;unitPrice&quot;</span><span class="p">:</span> <span class="mf">20.0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;invoiceId&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;partCode&quot;</span><span class="p">:</span> <span class="s2">&quot;222&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;units&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;unitPrice&quot;</span><span class="p">:</span> <span class="mf">15.0</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-an-invoice">
+<h3>Get an Invoice:<a class="headerlink" href="#get-an-invoice" title="Permalink to this headline">¶</a></h3>
+<p>And we can GET an invoice with its related line items.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># get an invoice</span>
+curl http://localhost:5000/invoices/1 <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;userId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;invoiceDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;invoiceItems&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;invoiceId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;partCode&quot;</span><span class="p">:</span> <span class="s2">&quot;111&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;units&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;unitPrice&quot;</span><span class="p">:</span> <span class="mf">20.0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;invoiceId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;partCode&quot;</span><span class="p">:</span> <span class="s2">&quot;222&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;units&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;unitPrice&quot;</span><span class="p">:</span> <span class="mf">15.0</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="meta-information-for-invoice-post">
+<h3>Meta Information for Invoice Post<a class="headerlink" href="#meta-information-for-invoice-post" title="Permalink to this headline">¶</a></h3>
+<p>By examining the meta information for an invoice we can also determine whether we have the correct settings to create invoice items with the invoice.</p>
+<p>If you look at <cite>input</cite> section and <cite>invoiceItems</cite>, it shows <cite>readOnly</cite> as False, meaning that it is updatable.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># meta info for POSt</span>
+curl http://localhost:5000/meta/invoices/single?method<span class="o">=</span>post <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;userId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;invoiceDate&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;invoiceItems&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;InvoiceItem&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;invoiceId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;invoice.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;partCode&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;units&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;unitPrice&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;user_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;invoice_date&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;invoice_items&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;InvoiceItem&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;invoice_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;invoice.id&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;part_code&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;units&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;unit_price&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="caveat">
+<h2>Caveat<a class="headerlink" href="#caveat" title="Permalink to this headline">¶</a></h2>
+<p>This ability to post child records with the parent is only implemented in the POST method. It is probably more efficient to update individual line items if using PUT or PATCH avoiding reconciliation issues related to alterations of existing records.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parent Post - Child Records</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-database-models">Create the database models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-invoice-resource">Create the Invoice Resource</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#finish-the-rest-of-the-invoice-resources">Finish the Rest of the Invoice Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#add-the-resources-to-the-api">Add the Resources to the API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-the-api">Use the API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-an-invoice">Create an Invoice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-an-invoice">Get an Invoice:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#meta-information-for-invoice-post">Meta Information for Invoice Post</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#caveat">Caveat</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="model-resource.html" title="previous chapter">Model Resources</a></li>
+      <li>Next: <a href="model-collection-resource.html" title="next chapter">Model Collection Resources</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/parent-child-posting.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

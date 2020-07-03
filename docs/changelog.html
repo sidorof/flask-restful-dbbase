@@ -46,6 +46,12 @@
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>(0.1.7) -<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="added">
+<h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Added a modification to the handling of ModelResource.serial_fields to enable a dictionary of a foreign class and serial fields to be returned when replacing the current Model class with another on responses.</p></li>
+</ul>
+</div>
 <div class="section" id="changed">
 <h3>Changed<a class="headerlink" href="#changed" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -56,45 +62,45 @@
 </div>
 <div class="section" id="id2">
 <h2>(0.1.6) -<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="added">
-<h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Added<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Added more tests on resources - coverage is now 98%</p></li>
 <li><p>Added more sections to documentation of resources</p></li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h3>Changed<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Changed<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Changed default URLs. Added pluralizer for default URLs. Now a model <code class="docutils literal notranslate"><span class="pre">Book</span></code> will default to a URL of <code class="docutils literal notranslate"><span class="pre">/books</span></code></p></li>
 <li><p>Tightened up processing on process_{method}_input functions to a more standardized with more complete documentation.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>(0.1.5) -<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id5">
-<h3>Changed<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<h2>(0.1.5) -<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h3>Changed<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Corrected the project location with hyphens instead of underlines</p></li>
 <li><p>Corrected typo in the setup description</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id6">
-<h2>(0.1.1) -<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id7">
-<h3>Added<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<h2>(0.1.1) -<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Added<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Added ModelResource for datacentric methods that are not collections.</p></li>
 <li><p>Added tests using unittest and pytest.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id8">
-<h2>(0.1.0) -<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id9">
-<h3>Added<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<h2>(0.1.0) -<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h3>Added<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Initial public release</p></li>
 </ul>
@@ -118,6 +124,7 @@
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -126,24 +133,25 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">(0.1.7) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#added">Added</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changed">Changed</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">(0.1.6) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#added">Added</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">Changed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">(0.1.5) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">Changed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">(0.1.5) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">(0.1.1) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">(0.1.1) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Added</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">(0.1.0) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">(0.1.0) -</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Added</a></li>
 </ul>
 </li>
 </ul>

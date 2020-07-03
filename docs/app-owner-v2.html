@@ -73,8 +73,7 @@
     <span class="n">ordered_at</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
     <span class="n">status_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">jobs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
-        <span class="s2">&quot;Job&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="s1">&#39;immediate&#39;</span><span class="p">)</span>
+    <span class="n">jobs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Job&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;order&quot;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="s2">&quot;immediate&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The jobs column provides access to the jobs associated with an order.</p>
@@ -140,14 +139,11 @@
     <span class="n">url_prefix</span> <span class="o">=</span> <span class="s2">&quot;/api/v2&quot;</span>
 
     <span class="n">serial_fields</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">Job</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">,</span> <span class="s2">&quot;status_id&quot;</span><span class="p">]},</span>
-        <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">Job</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">,</span> <span class="s2">&quot;status_id&quot;</span><span class="p">]},</span>
+        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">Job</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">,</span> <span class="s2">&quot;status_id&quot;</span><span class="p">]},</span>
+        <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">Job</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;started_at&quot;</span><span class="p">,</span> <span class="s2">&quot;status_id&quot;</span><span class="p">]},</span>
     <span class="p">}</span>
 
-    <span class="n">after_commit</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">create_job</span><span class="p">,</span>
-        <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="n">create_job</span>
-    <span class="p">}</span>
+    <span class="n">after_commit</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">create_job</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">:</span> <span class="n">create_job</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>You can see that the <cite>after_commit</cite> function that we created, <cite>create_job</cite> is associated with the POST and PUT methods. The other methods are unchanged by this process.</p>
@@ -181,6 +177,7 @@ default serial fields for your replacement class then use the form such as:</p>
 
 <span class="k">class</span> <span class="nc">JobMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">JobCollection</span>
+
 
 <span class="k">class</span> <span class="nc">JobMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">JobResource</span>
@@ -1709,6 +1706,7 @@ curl http://localhost:5000/api/v2/meta/jobs/single <span class="se">\</span>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>

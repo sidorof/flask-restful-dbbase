@@ -16,5 +16,4 @@
         resource_class = OrderResource
     
     
-    
 ..
