@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Meta Resources" href="meta-resource.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="meta-resource.html" title="Meta Resources"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="limited-method-resources">
+<h1>Limited Method Resources<a class="headerlink" href="#limited-method-resources" title="Permalink to this headline">¶</a></h1>
+<p>Sometimes a pure REST approach does not fit the problem. For example, suppose a URL primarily represents an action. If the problem still interacts with the database in some fashion, it may be appropriate to create a resource that is limited in the methods that it exposes.</p>
+<div class="section" id="create-resource">
+<h2>Create Resource<a class="headerlink" href="#create-resource" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>create_resource</cite> function can create a resource with a custom configuration. The basic principals:</p>
+<ul class="simple">
+<li><p>Specify the name of the resource.</p></li>
+<li><p>Use a prototype resource class to model it on.</p></li>
+<li><p>Specify a model_class to use.</p></li>
+<li><p>Specify which methods to implement. If there is a <cite>process_{method}_input</cite> function in your prototype resource, it will be included.</p></li>
+<li><p>You can set <cite>url_prefix</cite> and <cite>url_name</cite> if necessary.</p></li>
+<li><p>You can overwrite any of the class variables to customize further your new resource by including a dict of class variables.</p></li>
+<li><p>Finally, the new resource will be created.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyResource</span> <span class="o">=</span> <span class="n">create_resource</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyResource&quot;</span><span class="p">,</span>
+    <span class="n">resource_class</span><span class="o">=</span><span class="n">ModelResource</span><span class="p">,</span>
+    <span class="n">model_class</span><span class="o">=</span><span class="n">MyModel</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">],</span>
+    <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="n">url_name</span><span class="o">=</span><span class="s2">&quot;custom-action&quot;</span><span class="p">,</span>
+    <span class="n">class_vars</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;process_post_input&quot;</span><span class="p">:</span> <span class="n">custom_input_processing</span><span class="p">,</span>
+        <span class="s2">&quot;after_commit&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">special_function</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The above will create <cite>MyResource</cite> with only the POST method, which can then be added to the api just as any resource.</p>
+</div>
+<div class="section" id="caveat">
+<h2>Caveat<a class="headerlink" href="#caveat" title="Permalink to this headline">¶</a></h2>
+<p>When using a package, there can be tendency to try to do <em>everything</em> with it. Sometimes it is simply easier do it another way. As a general guideline for using these resources, some following conditions might be considered:</p>
+<ul class="simple">
+<li><p>Does the method benefit from automatic enforcement of primary keys in the URL? If it is a problem not a benefit, the regular Flask-RESTful Resource class might be a better choice.</p></li>
+<li><p>Is a connection to a database only minor portion of the work that is done? Maybe there is no benefit to a <cite>model_class</cite> central to a resource.</p></li>
+<li><p>Do you struggle to define the problem within the context of Flask-RESTful-DBBase, but you know it could be done more simply outside of it? Do it that other way.</p></li>
+</ul>
+<p>The beauty of Flask in part flows from being able to mix and match capabilities from all sorts of extensions, so it may be that Flask-RESTful-DBBase can handle the portions of the puzzle that fit without getting in the way of other approaches better suited to that portion of the system.</p>
+</div>
+<div class="section" id="further">
+<h2>Further<a class="headerlink" href="#further" title="Permalink to this headline">¶</a></h2>
+<p>An example of this kind of usage is available in <a class="reference internal" href="app-register.html#register-app"><span class="std std-ref">Register App</span></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Limited Method Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-resource">Create Resource</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#caveat">Caveat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#further">Further</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="meta-resource.html" title="previous chapter">Meta Resources</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/limited-method-resources.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

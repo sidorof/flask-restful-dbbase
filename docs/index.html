@@ -44,7 +44,7 @@
             
   <div class="section" id="flask-restful-dbbase-documentation">
 <h1>Flask-RESTful-DBBase documentation<a class="headerlink" href="#flask-restful-dbbase-documentation" title="Permalink to this headline">¶</a></h1>
-<p>This package provides datacentric Web API resources within the Flask environment.</p>
+<p>This package provides datacentric web API resources within the Flask environment.</p>
 <p>The work that goes into carefully defining the data structures in the database can be reused in all the layers out to the front-end application. Flask-RESTful-DBBase evaluates the model definitions and expresses this understanding in resources in the API via introspection. It is used for several functions:</p>
 <ul class="simple">
 <li><p>Data validation and conversion</p></li>
@@ -107,6 +107,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app-register.html#the-sequence">The Sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-register.html#required-resources">Required Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#initialize">Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#user-model">User Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#create-expiring-tokens">Create Expiring Tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#before-after-commits">Before / After Commits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#create-register-resource">Create Register Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#create-confirmresource">Create ConfirmResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#create-signinresource">Create SignInResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#create-metaresources">Create MetaResources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#add-resources-to-the-api">Add Resources to the API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app-register.html#use-the-api">Use the API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#post-without-authentication">Post without authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app-register.html#post-an-order-wrong-login">Post An Order, Wrong Login</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="model-resource.html#class-variables">Class Variables</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="model-resource.html#set-up-variables">Set Up Variables</a></li>
@@ -146,6 +167,12 @@
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="meta-resource.html#creation">Creation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="meta-resource.html#get-method">GET Method</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="limited-method-resources.html#create-resource">Create Resource</a></li>
+<li class="toctree-l2"><a class="reference internal" href="limited-method-resources.html#caveat">Caveat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="limited-method-resources.html#further">Further</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
@@ -213,10 +240,12 @@
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
