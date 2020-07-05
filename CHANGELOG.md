@@ -1,4 +1,8 @@
 # Changelog
+## (0.1.8) -
+### Changed
+* Corrected issue with the response meta docs which did not correctly pull modified serial lists from Model configuration.
+
 ## (0.1.7) -
 ### Added
 *   Added a modification to the handling of ModelResource.serial_fields to enable a dictionary of a foreign class and serial fields to be returned when replacing the current Model class with another on responses.
