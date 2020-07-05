@@ -361,6 +361,10 @@ class DBBaseResource(Resource):
                     ),
                 )[foreign_class._class()]
             else:
+                if serial_fields is None:
+                    if cls.model_class.SERIAL_FIELDS is not None:
+                        serial_fields = cls.model_class.get_serial_fields()
+
                 doc = db.doc_table(
                     cls.model_class,
                     serial_fields=serial_fields,
