@@ -1,6 +1,6 @@
 .. code-block:: bash 
     
-    # meta info for POSt
+    # meta info for POST
     curl http://localhost:5000/meta/invoices/single?method=post \
         -H "Content-Type: application/json"
     

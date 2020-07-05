@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
+    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.8 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.8 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -404,6 +404,10 @@
                     <span class="p">),</span>
                 <span class="p">)[</span><span class="n">foreign_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()]</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">serial_fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">SERIAL_FIELDS</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">serial_fields</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">get_serial_fields</span><span class="p">()</span>
+
                 <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">doc_table</span><span class="p">(</span>
                     <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span>
                     <span class="n">serial_fields</span><span class="o">=</span><span class="n">serial_fields</span><span class="p">,</span>
