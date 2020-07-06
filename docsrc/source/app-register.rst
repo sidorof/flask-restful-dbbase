@@ -92,28 +92,20 @@ Note that ConfirmResource must use an explicit URL.
 Use the API
 -----------
 
-Register a new user.
+Register a new user. This triggers time-sensitive confirmation token. Since emails are not implemented for this, you can see the token printed to the screen on the sample app.
 
 .. include:: register_app_00.rst
 
-show confirm
+Confirmation with the token takes place below. The user record is also marked as active. At this point the user can sign in to the system.
 
 .. include:: register_app_01.rst
 
-get with confirm
+Sign-in takes place.
+
 
 .. include:: register_app_02.rst
 
-Sign-in
 
 .. include:: register_app_00.rst
 
-
-Post without authentication
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. include:: owner_app_v1_00.rst
-
-Post An Order, Wrong Login
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. include:: owner_app_v1_01.rst
 

@@ -46,11 +46,11 @@ class User(db.Model):
 
     SERIAL_FIELDS = ["username", "email"]
 
-
 db.create_all()
 
+
 # tokens
-def encode_token(email):
+def create_token(email):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
 
@@ -77,7 +77,7 @@ def register_confirm(self, item, status_code):
 
     try:
         # use the default status_code for response
-        token = encode_token(item.email)
+        token = create_token(item.email)
         print(f"The url /confirm/{token} would be included in the welcome email")
         return item, status_code
     except:
@@ -140,11 +140,19 @@ class ConfirmResource(Resource):
 
 
 # create SignIn resource
+class SignInResource(Resource):
+    """Just needs a look up"""
+
+    def post(self):
+
+        data = requests.values()
+        username = data.get('username')
+        password =
 SignInResource = create_resource(
     name="SignInResource",
     resource_class=ModelResource,
     model_class=User,
-    methods=["post"],
+    methods=["put"],
     url_prefix="/",
     url_name="sign-in",
     class_vars={
