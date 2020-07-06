@@ -24,6 +24,7 @@ There are a number of simple modifications that can be applied to tweak
 the resources and models for more complicated situations. Those
 will be found in the documentation and other examples.
 """
+# initialize
 from flask import Flask
 from flask_restful import Api
 from flask_restful_dbbase import DBBase
@@ -68,6 +69,7 @@ class Book(db.Model):
 
 db.create_all()
 
+# create some data
 author = Author(first_name="Geoffrey", last_name="Cooper").save()
 
 book = Book(
@@ -109,38 +111,34 @@ book = Book(
 author = Author(first_name="Steven", last_name="Skiena").save()
 
 
-# api.create_resources(models=[Book, Author])`
+# create resources
 class BookCollection(CollectionModelResource):
     model_class = Book
-
 
 class BookResource(ModelResource):
     model_class = Book
 
-
-class BookMetaCollection(MetaResource):
-    resource_class = BookCollection
-
-
-class BookMeta(MetaResource):
-    resource_class = BookResource
-
-
 class AuthorCollection(CollectionModelResource):
     model_class = Author
-
 
 class AuthorResource(ModelResource):
     model_class = Author
 
 
+# create meta resources
+class BookMetaCollection(MetaResource):
+    resource_class = BookCollection
+
+class BookMeta(MetaResource):
+    resource_class = BookResource
+
 class AuthorMetaCollection(MetaResource):
     resource_class = AuthorCollection
-
 
 class AuthorMeta(MetaResource):
     resource_class = AuthorResource
 
+# end create_resources
 
 print()
 print("urls created:")
@@ -157,6 +155,7 @@ print("\n".join(BookMeta.get_urls()))
 print("\n".join(BookMetaCollection.get_urls()))
 print()
 
+# add resources to api
 api.add_resource(AuthorCollection, *AuthorCollection.get_urls())
 api.add_resource(AuthorResource, *AuthorResource.get_urls())
 api.add_resource(AuthorMetaCollection, *AuthorMetaCollection.get_urls())

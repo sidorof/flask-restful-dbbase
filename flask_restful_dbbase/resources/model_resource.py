@@ -38,7 +38,7 @@ class ModelResource(DBBaseResource):
     model_name = None
     """
     The string version of the Model class name. This is set
-    upon inititialization.
+    upon initialization.
     """
     process_get_input = None
     process_post_input = None

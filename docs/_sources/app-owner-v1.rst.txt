@@ -6,7 +6,7 @@ We discussed how resources use the table models as the basis for validating inco
 
 To get a better understanding of why these capabilities matter, let us look at a few scenarios and see how they can be solved by taking some additional actions.
 
-We touched on how access to data can be limited to authenticated users by table using method decorators, a feature that is part of Flask-RESTful. But suppose we want to let users only see information related to their own accounts? That would mean that we need to restrict on a record by record basis, not the table or method.
+We touched on how access to data can be limited to authenticated users by table using method decorators, a feature that is part of Flask-RESTful. But suppose we want to let users only see information related to their own accounts? That would mean that we need to restrict on a record by record basis, not the table or decorator method.
 
 This would be time to write some code for that method that gets the authenticated `user_id`, does some checking and passes it along, or not. But then, you would need to write the rest of the code for that method.
 
@@ -54,7 +54,7 @@ First, we create the User model. Of course, `password` would normally be encrypt
 
 .. include:: owner_app_v1_code_01.rst
 
-Next, we create an Order model. Think of this as some useful service that is requested by the user. An order has a life-cycle of *ordered*, *processed*, *complete*, and *cancelled*. For simplicity we will use codes from 0 to 3 respectively.
+Next, we create an Order model. Think of this as some useful service that is requested by the user.
 
 .. include:: owner_app_v1_code_02.rst
 
@@ -150,3 +150,4 @@ Order Meta Collection Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. include:: owner_app_v1_06.rst
 
+Next: :ref:`Simple Owner App Revised`

@@ -5,7 +5,7 @@ parent class through the example of an invoice.
 
 """
 # initialize
-from flask import Flask, request
+from flask import Flask
 from flask_restful import Api
 from flask_restful_dbbase import DBBase
 from flask_restful_dbbase.resources import (

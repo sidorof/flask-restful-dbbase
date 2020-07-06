@@ -18,7 +18,7 @@ Process Input Functions
 Process input functions take the form of a function that can
 process the input data for the HTTP methods.
 
-The format name for these functions is `process_{method}_input`.
+The format template for these functions is `process_{method}_input`.
 
 Since HTTP methods have different requirements for input data, the inputs vary according to the method. And, since these functions are inserted into an on-going process, the arguments and returns for the functions are specific. However, the returns follow a common format of `(status, result)`. The status is a True / False indicating that you would like the method to continue with the possibly altered data. `False` indicates that the method should end. A failure must have a tuple of a text message and a response status code that will be made into a return result and returned to the front end.
 
@@ -26,7 +26,15 @@ Input Variables
 +++++++++++++++
 * `kwargs`: as passed into the method
 * `data`: the data gleaned from the request in a dictionary form: This is the data prior to deserializations, so the variable names would be in camel case still.
-* `query`: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy's session.query(Model), for example `session.query(Book)`. So an additional filter as may be necessary would be done by `query = query.filter_by(my_var='test')`. And finally, this is an unexecuted query that the normal program will execute afterwards.
+* `query`: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy's session.query(Model), for example `session.query(Book)`. So an additional filter as may be necessary would be done by
+
+.. code-block:: python
+
+    query = query.filter_by(my_var='test').
+
+..
+
+And finally, this is an unexecuted query that the normal program will execute afterwards.
 
 Returns
 +++++++

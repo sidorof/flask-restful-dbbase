@@ -44,14 +44,32 @@
             
   <div class="section" id="flask-restful-dbbase-documentation">
 <h1>Flask-RESTful-DBBase documentation<a class="headerlink" href="#flask-restful-dbbase-documentation" title="Permalink to this headline">¶</a></h1>
-<p>This package provides datacentric Web API resources within the Flask environment.</p>
+<p>This package provides datacentric web API resources within the Flask environment.</p>
 <p>The work that goes into carefully defining the data structures in the database can be reused in all the layers out to the front-end application. Flask-RESTful-DBBase evaluates the model definitions and expresses this understanding in resources in the API via introspection. It is used for several functions:</p>
 <ul class="simple">
 <li><p>Data validation and conversion</p></li>
-<li><p>Presentation of the return data, which can be tailored according to your audience</p></li>
-<li><p>A method of communcation of the capabilities and requirements of your API through the use of meta resources</p></li>
+<li><p>Presentation of the return data can be tailored according to your audience</p></li>
+<li><p>Meta resources provide documentation functions to the API of capabilities and requirements.</p></li>
 <li><p>An awareness that special cases and considerations exist that require modifications beyond just the basics. There are functions for each kind of method that can hit the processing at important points for validation, dataconversion, and message passing.</p></li>
 <li><p>It can take advantage of Flask-RESTful method decorators and has functions that can use the information provided by such decorators.</p></li>
+</ul>
+<p>A REST resource can be created as easily as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Book</span>
+</pre></div>
+</div>
+<p>This resource class by default instantiates a URL at:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">books</span>
+<span class="o">/</span><span class="n">books</span><span class="o">/&lt;</span><span class="nb">int</span><span class="p">:</span><span class="nb">id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>URLs are pluralized by default, but can be customized, relocated, or replaced completely.</p></li>
+<li><p>The primary key(s) are automatically derived from the underlying model.</p></li>
+<li><p>Serialization / deserialization, validation and conversion, services flow from introspection of the data model. Specifying output fields is straight-forward and can include / exclude relationship data.</p></li>
+<li><p>HTTP methods implemented are GET, POST, PUT, PATCH, and DELETE.</p></li>
+<li><p>POSTing parent data may include child data to reduce round trips.</p></li>
+<li><p>If a requirement is sufficiently different from the REST API approach, the serialization and validation services can still be used in a non-model resource.</p></li>
 </ul>
 <div class="toctree-wrapper compound">
 <ul>
@@ -61,13 +79,14 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_guide.html#a-first-look">A First Look</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#initialize-the-app-and-models">Initialize the App and Models</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#create-resources">Create Resources</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#use-the-api">Use the API</a></li>
-<li class="toctree-l3"><a class="reference internal" href="user_guide.html#meta-information">Meta Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#a-first-look">A First Look</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app-simple.html#initialize-the-app-and-models">Initialize the App and Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-simple.html#create-resources">Create Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-simple.html#use-the-api">Use the API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app-simple.html#meta-information">Meta Information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a><ul>
@@ -77,17 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#mock-authentication">Mock Authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#owner-resources">Owner Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#create-the-order-resources">Create the Order Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#use-the-api">Use the API</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#post-without-authentication">Post without authentication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#post-an-order-wrong-login">Post An Order, Wrong Login</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#post-an-order-that-is-correct">Post An Order That Is Correct</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#get-the-order-collection-no-authorization">Get the Order Collection, No Authorization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#get-the-order-collection-wrong-user">Get the Order Collection, Wrong User</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#get-the-order-collection-right-user">Get the Order Collection, Right User</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#order-meta-resource-information">Order Meta Resource Information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v1.html#order-meta-collection-information">Order Meta Collection Information</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v1.html#use-the-api">Use the API</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a><ul>
@@ -96,30 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="app-owner-v2.html#after-commit-function">After Commit Function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app-owner-v2.html#revised-order-resource">Revised Order Resource</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app-owner-v2.html#job-resources">Job Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app-owner-v2.html#use-the-api">Use the API</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v2.html#create-an-order-receive-a-job">Create an Order, Receive a Job</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v2.html#update-an-order-receive-a-job">Update an Order, Receive a Job</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v2.html#get-orders">Get Orders</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v2.html#get-jobs">Get Jobs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v2.html#order-meta-resource-information">Order Meta Resource Information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="app-owner-v2.html#job-meta-information">Job Meta Information</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="model-resource.html#class-variables">Class Variables</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="model-resource.html#set-up-variables">Set Up Variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-resource.html#date-related-variables">Date-Related Variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-resource.html#serialization">Serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-resource.html#model-resource-serial-fields">Model Resource Serial Fields</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="model-resource.html#model-resource-modifications">Model Resource Modifications</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="model-resource.html#process-input-functions">Process Input Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-resource.html#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="app-owner-v2.html#use-the-api">Use the API</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a><ul>
@@ -127,63 +113,27 @@
 <li class="toctree-l2"><a class="reference internal" href="parent-child-posting.html#create-the-invoice-resource">Create the Invoice Resource</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parent-child-posting.html#finish-the-rest-of-the-invoice-resources">Finish the Rest of the Invoice Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parent-child-posting.html#add-the-resources-to-the-api">Add the Resources to the API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parent-child-posting.html#use-the-api">Use the API</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="parent-child-posting.html#create-an-invoice">Create an Invoice</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parent-child-posting.html#get-an-invoice">Get an Invoice:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parent-child-posting.html#meta-information-for-invoice-post">Meta Information for Invoice Post</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="parent-child-posting.html#use-the-api">Use the API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parent-child-posting.html#caveat">Caveat</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#class-variables">Class Variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#input-processing">Input Processing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#queries">Queries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html#processing-the-query">Processing the Query</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resource-classes.html">Resource Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="meta-resource.html#creation">Creation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="meta-resource.html#get-method">GET Method</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#simple-app">Simple-App</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#owner-app-version-1">Owner-App Version 1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#owner-app-version-2">Owner-App Version 2</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">(0.1.8) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#changed">Changed</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">(0.1.7) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#added">Added</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Changed</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">(0.1.6) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Added</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id6">Changed</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id7">(0.1.5) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id8">Changed</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id9">(0.1.1) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id10">Added</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id11">(0.1.0) -</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id12">Added</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">(0.1.8) -</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">(0.1.7) -</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">(0.1.6) -</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id7">(0.1.5) -</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id9">(0.1.1) -</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id11">(0.1.0) -</a></li>
 </ul>
 </li>
 </ul>
@@ -215,12 +165,11 @@
     <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resource-classes.html">Resource Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>

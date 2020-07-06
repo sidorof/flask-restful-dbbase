@@ -1255,18 +1255,28 @@ def test__meta_method_response():
     }
 
     class BookV1(db1.Model):
-        __tablename__ = 'bookv1'
+        __tablename__ = "bookv1"
         id = db1.Column(db1.Integer, primary_key=True)
         title = db1.Column(db1.String)
         other_column = db1.Column(db1.String)
 
-        SERIAL_FIELDS = ['id', 'title']
+        SERIAL_FIELDS = ["id", "title"]
 
     class BookResourceV1(DBBaseResource):
         model_class = BookV1
 
-    assert BookResourceV1._meta_method_response("get") == {'fields': {'id': {'type': 'integer', 'format': 'int32', 'primary_key': True, 'nullable': False, 'info': {}}, 'title': {'type': 'string', 'nullable': True, 'info': {}}}}
-
+    assert BookResourceV1._meta_method_response("get") == {
+        "fields": {
+            "id": {
+                "type": "integer",
+                "format": "int32",
+                "primary_key": True,
+                "nullable": False,
+                "info": {},
+            },
+            "title": {"type": "string", "nullable": True, "info": {}},
+        }
+    }
 
 
 def test__all_keys_found():

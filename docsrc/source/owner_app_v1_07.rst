@@ -27,7 +27,7 @@
                         "nullable": true,
                         "info": {}
                     },
-                    "ownerId": {
+                    "owner_id": {
                         "type": "integer",
                         "format": "int32",
                         "nullable": false,
@@ -39,7 +39,7 @@
                         "nullable": false,
                         "info": {}
                     },
-                    "orderedAt": {
+                    "ordered_at": {
                         "type": "date-time",
                         "nullable": true,
                         "default": {
@@ -51,7 +51,7 @@
                         },
                         "info": {}
                     },
-                    "statusId": {
+                    "status_id": {
                         "type": "integer",
                         "format": "int8",
                         "nullable": true,
@@ -74,7 +74,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "owner_id": {
+                        "ownerId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": false,
@@ -86,7 +86,7 @@
                             "nullable": false,
                             "info": {}
                         },
-                        "ordered_at": {
+                        "orderedAt": {
                             "type": "date-time",
                             "nullable": true,
                             "default": {
@@ -98,7 +98,7 @@
                             },
                             "info": {}
                         },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,

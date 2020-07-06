@@ -7,16 +7,38 @@ The design of the model resource configuration provides several areas to control
 Class Variables
 ---------------
 
+.. code-block:: python
+
+    url_prefix = '/'
+    url_name = None
+
+    # for controlling presentation with output fields
+    serial_fields = None
+    serial_field_relations = None
+
+    # for modifying incoming data/queries with a function
+    process_get_inputs = None
+    process_post_inputs = None
+    process_put_inputs = None
+    process_patch_inputs = None
+    process_delete_inputs = None
+
+    # for modifying database objects before or after commits
+    before_commit = {}
+    after_commit = {}
+
+..
+
 Set Up Variables
 ^^^^^^^^^^^^^^^^
-Two variables are used for automatic URL generation with the function `get_urls()`. It is a convenience function. The url_prefix defaults to root, but can be set to as needed. The url_name is the name the resource and together they make up the URL.
+Two variables are used for automatic URL generation with the function `get_urls()`. It is a convenience function. The url_prefix defaults to root, but can be set to whatever is needed. The `url_name` is the name of the resource and together they make up the URL.
 
 It only comes in to play when adding resources.
 
 * `url_prefix = '/'`
 * `url_name = None`
 
-If the url_name is left as None, a URL can be created from the model class name. For example, if a model class is `CustomerOrder` and its primary key is `id`, using a pluralizer, the default URLs will be:
+If the `url_name` is left as None, a URL can be created from the model class name. For example, if a model class is `CustomerOrder` and its primary key is `id`, using a pluralizer, the default URLs will be:
 
 .. code-block::
 
@@ -27,9 +49,9 @@ If the url_name is left as None, a URL can be created from the model class name.
 
 Date-Related Variables
 ^^^^^^^^^^^^^^^^^^^^^^
-If your database does support automatic conversion of dates in string form, such as SQLite3, you can ask the ModelResource to do this:
+If your database does not support automatic conversion of dates in string form, such as SQLite3, you can ask the ModelResource to do this:
 
-* use_date_conversions = True
+    `use_date_conversions = True`
 
 This variable defaults to False to avoid unnecessary processing, but it is helpful in the right situation.
 
@@ -40,6 +62,9 @@ There are several avenues for controlling the output from model resources. Becau
 
 * Configure the Model Class serialization: This method would mean that the primary usage of DBBase model classes would be the same within the Flask environment or without as well.
 * Configure the model resource class. This can be done by HTTP method or for all methods.
+
+More detailed informations is available at:
+https://github.com/sidorof/DBBase
 
 Model Resource Serial Fields
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -57,7 +82,7 @@ The default for `serial_fields` and `serial_field_relations` looks like the foll
         serial_field_relations = None
 ..
 
-The default serial fields and serial field relations uses what is found from the model class.
+The default serial fields and serial field relations use what is found from the model class.
 
 Here is an example where both the serial fields and serial field relations are specified. Note that `serial_field_relations` is a dict with keys for each relationship to be specified.
 
@@ -98,3 +123,6 @@ Here is an example where the serial fields and relations vary by method. At firs
 ..
 
 .. include:: model-resource-modifications.rst
+
+
+Next: :ref:`Model Collection Resources`
