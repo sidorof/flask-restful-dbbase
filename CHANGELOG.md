@@ -1,6 +1,6 @@
 ## (0.1.9) -
 ### Changed
-* Modified setup files for additional required packages.
+* Modified setup and requirements.txt files for additional required packages.
 
 ## (0.1.8) -
 ### Changed
