@@ -18,7 +18,13 @@ AUTHOR = "Donald Smiley"
 AUTHOR_EMAIL = "dsmiley@sidorof.com"
 PYTHON_REQUIRES = ">=3.6"
 ZIP_SAFE=False
-INSTALL_REQUIRES = ["flask", "Flask-RESTful", "Flask-SQLAlchemy", "DBBase"]
+INSTALL_REQUIRES = [
+    "flask", 
+    "Flask-RESTful", 
+    "Flask-SQLAlchemy", 
+    "DBBase", 
+    "python-dateutil"
+]
 EXTRAS_REQUIRE = {
     "dev": ["unittest", "pytest"]
 }
