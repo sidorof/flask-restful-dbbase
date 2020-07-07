@@ -1,3 +1,4 @@
+inflect
 python-dateutil
 Flask-Restful
 Flask-SQLAlchemy
