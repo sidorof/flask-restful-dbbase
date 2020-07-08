@@ -500,8 +500,7 @@ def test__check_date_casting():
         False,
         [
             {
-                "key": "Date error: 'blah, blah': "
-                "Unknown string format: blah, blah"
+                "key": "Date error: 'blah, blah': Unknown string format: blah, blah"
             }
         ],
     )
@@ -518,8 +517,7 @@ def test__check_date_casting():
         False,
         [
             {
-                "key": "Date error: 'blah, blah': "
-                "Unknown string format: blah, blah"
+                "key": "Date error: 'blah, blah': Unknown string format: blah, blah"
             }
         ],
     )
