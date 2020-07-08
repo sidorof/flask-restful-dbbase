@@ -1,3 +1,7 @@
+## (0.1.10) -
+### Changed
+* Ensured that response fields for meta information were in camel case format. Table property fields remain in snake case to be consistent for usage within Python.
+
 ## (0.1.9) -
 ### Changed
 * Modified setup and requirements.txt files for additional required packages.
