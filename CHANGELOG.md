@@ -1,6 +1,10 @@
-# Changelog
+## (0.1.9) -
+### Changed
+* Modified setup and requirements.txt files for additional required packages.
+
 ## (0.1.8) -
 ### Changed
+# Changelog
 * Corrected issue with the response meta docs which did not correctly pull modified serial lists from Model configuration.
 
 ## (0.1.7) -
