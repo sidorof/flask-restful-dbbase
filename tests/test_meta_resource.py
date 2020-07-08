@@ -185,18 +185,37 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                             "responses": {
                                 "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
                                     "description": {
                                         "type": "string",
                                         "maxLength": 200,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "vendor_part_number": {
+                                    "vendorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "vendorPartNumber": {
                                         "type": "string",
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_ordered": {
+                                    "lastOrdered": {
                                         "type": "date-time",
                                         "nullable": True,
                                         "info": {},
@@ -209,25 +228,6 @@ class TestMetaModelResource(unittest.TestCase):
                                             "for_update": False,
                                             "arg": False,
                                         },
-                                        "info": {},
-                                    },
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": True,
-                                        "nullable": True,
-                                        "info": {},
-                                    },
-                                    "vendor_id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": False,
-                                        "info": {},
-                                    },
-                                    "name": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": False,
                                         "info": {},
                                     },
                                 }
@@ -284,18 +284,37 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                             "responses": {
                                 "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
                                     "description": {
                                         "type": "string",
                                         "maxLength": 200,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "vendor_part_number": {
+                                    "vendorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "vendorPartNumber": {
                                         "type": "string",
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_ordered": {
+                                    "lastOrdered": {
                                         "type": "date-time",
                                         "nullable": True,
                                         "info": {},
@@ -308,25 +327,6 @@ class TestMetaModelResource(unittest.TestCase):
                                             "for_update": False,
                                             "arg": False,
                                         },
-                                        "info": {},
-                                    },
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": True,
-                                        "nullable": True,
-                                        "info": {},
-                                    },
-                                    "vendor_id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": False,
-                                        "info": {},
-                                    },
-                                    "name": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": False,
                                         "info": {},
                                     },
                                 }
@@ -384,18 +384,37 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                             "responses": {
                                 "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
                                     "description": {
                                         "type": "string",
                                         "maxLength": 200,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "vendor_part_number": {
+                                    "vendorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "vendorPartNumber": {
                                         "type": "string",
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_ordered": {
+                                    "lastOrdered": {
                                         "type": "date-time",
                                         "nullable": True,
                                         "info": {},
@@ -408,25 +427,6 @@ class TestMetaModelResource(unittest.TestCase):
                                             "for_update": False,
                                             "arg": False,
                                         },
-                                        "info": {},
-                                    },
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": True,
-                                        "nullable": True,
-                                        "info": {},
-                                    },
-                                    "vendor_id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": False,
-                                        "info": {},
-                                    },
-                                    "name": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": False,
                                         "info": {},
                                     },
                                 }
@@ -484,18 +484,37 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                             "responses": {
                                 "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
                                     "description": {
                                         "type": "string",
                                         "maxLength": 200,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "vendor_part_number": {
+                                    "vendorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "vendorPartNumber": {
                                         "type": "string",
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_ordered": {
+                                    "lastOrdered": {
                                         "type": "date-time",
                                         "nullable": True,
                                         "info": {},
@@ -508,25 +527,6 @@ class TestMetaModelResource(unittest.TestCase):
                                             "for_update": False,
                                             "arg": False,
                                         },
-                                        "info": {},
-                                    },
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": True,
-                                        "nullable": True,
-                                        "info": {},
-                                    },
-                                    "vendor_id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": False,
-                                        "info": {},
-                                    },
-                                    "name": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": False,
                                         "info": {},
                                     },
                                 }
@@ -633,18 +633,37 @@ class TestMetaModelResource(unittest.TestCase):
                             },
                             "responses": {
                                 "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
                                     "description": {
                                         "type": "string",
                                         "maxLength": 200,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "vendor_part_number": {
+                                    "vendorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "vendorPartNumber": {
                                         "type": "string",
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_ordered": {
+                                    "lastOrdered": {
                                         "type": "date-time",
                                         "nullable": True,
                                         "info": {},
@@ -657,25 +676,6 @@ class TestMetaModelResource(unittest.TestCase):
                                             "for_update": False,
                                             "arg": False,
                                         },
-                                        "info": {},
-                                    },
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": True,
-                                        "nullable": True,
-                                        "info": {},
-                                    },
-                                    "vendor_id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": False,
-                                        "info": {},
-                                    },
-                                    "name": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": False,
                                         "info": {},
                                     },
                                 }
