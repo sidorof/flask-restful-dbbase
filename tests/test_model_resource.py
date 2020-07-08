@@ -295,12 +295,10 @@ class TestModelResource(unittest.TestCase):
                 {
                     "message": [
                         {
-                            "today": "Date error: 'wrong': "
-                            "Unknown string format: wrong"
+                            "today": "Date error: 'wrong': Unknown string format: wrong"
                         },
                         {
-                            "now": "Date error: 'wrong': "
-                            "Unknown string format: wrong"
+                            "now": "Date error: 'wrong': Unknown string format: wrong"
                         },
                     ]
                 },
@@ -783,7 +781,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_meta(self):
-
         self.assertDictEqual(
             self.BookResource.get_meta(),
             {
@@ -824,13 +821,13 @@ class TestModelResource(unittest.TestCase):
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "pub_year": {
+                                "pubYear": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "author_id": {
+                                "authorId": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
@@ -850,19 +847,19 @@ class TestModelResource(unittest.TestCase):
                                                 "nullable": True,
                                                 "info": {},
                                             },
-                                            "first_name": {
+                                            "firstName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "last_name": {
+                                            "lastName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "full_name": {"readOnly": True},
+                                            "fullName": {"readOnly": True},
                                         },
                                     },
                                 },
@@ -926,13 +923,13 @@ class TestModelResource(unittest.TestCase):
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "pub_year": {
+                                "pubYear": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "author_id": {
+                                "authorId": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
@@ -952,19 +949,19 @@ class TestModelResource(unittest.TestCase):
                                                 "nullable": True,
                                                 "info": {},
                                             },
-                                            "first_name": {
+                                            "firstName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "last_name": {
+                                            "lastName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "full_name": {"readOnly": True},
+                                            "fullName": {"readOnly": True},
                                         },
                                     },
                                 },
@@ -1029,13 +1026,13 @@ class TestModelResource(unittest.TestCase):
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "pub_year": {
+                                "pubYear": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "author_id": {
+                                "authorId": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
@@ -1055,19 +1052,19 @@ class TestModelResource(unittest.TestCase):
                                                 "nullable": True,
                                                 "info": {},
                                             },
-                                            "first_name": {
+                                            "firstName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "last_name": {
+                                            "lastName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "full_name": {"readOnly": True},
+                                            "fullName": {"readOnly": True},
                                         },
                                     },
                                 },
@@ -1132,13 +1129,13 @@ class TestModelResource(unittest.TestCase):
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "pub_year": {
+                                "pubYear": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
                                     "info": {},
                                 },
-                                "author_id": {
+                                "authorId": {
                                     "type": "integer",
                                     "format": "int32",
                                     "nullable": False,
@@ -1158,19 +1155,19 @@ class TestModelResource(unittest.TestCase):
                                                 "nullable": True,
                                                 "info": {},
                                             },
-                                            "first_name": {
+                                            "firstName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "last_name": {
+                                            "lastName": {
                                                 "type": "string",
                                                 "maxLength": 50,
                                                 "nullable": False,
                                                 "info": {},
                                             },
-                                            "full_name": {"readOnly": True},
+                                            "fullName": {"readOnly": True},
                                         },
                                     },
                                 },

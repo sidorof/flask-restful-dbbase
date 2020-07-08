@@ -500,8 +500,7 @@ def test__check_date_casting():
         False,
         [
             {
-                "key": "Date error: 'blah, blah': "
-                "Unknown string format: blah, blah"
+                "key": "Date error: 'blah, blah': Unknown string format: blah, blah"
             }
         ],
     )
@@ -518,8 +517,7 @@ def test__check_date_casting():
         False,
         [
             {
-                "key": "Date error: 'blah, blah': "
-                "Unknown string format: blah, blah"
+                "key": "Date error: 'blah, blah': Unknown string format: blah, blah"
             }
         ],
     )
@@ -606,13 +604,13 @@ def test_get_meta():
                             "nullable": False,
                             "info": {},
                         },
-                        "pub_year": {
+                        "pubYear": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": False,
                             "info": {},
                         },
-                        "author_id": {
+                        "authorId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": False,
@@ -632,19 +630,19 @@ def test_get_meta():
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "first_name": {
+                                    "firstName": {
                                         "type": "string",
                                         "maxLength": 50,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_name": {
+                                    "lastName": {
                                         "type": "string",
                                         "maxLength": 50,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "full_name": {"readOnly": True},
+                                    "fullName": {"readOnly": True},
                                 },
                             },
                         },
@@ -708,13 +706,13 @@ def test_get_meta():
                             "nullable": False,
                             "info": {},
                         },
-                        "pub_year": {
+                        "pubYear": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": False,
                             "info": {},
                         },
-                        "author_id": {
+                        "authorId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": False,
@@ -734,19 +732,19 @@ def test_get_meta():
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "first_name": {
+                                    "firstName": {
                                         "type": "string",
                                         "maxLength": 50,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "last_name": {
+                                    "lastName": {
                                         "type": "string",
                                         "maxLength": 50,
                                         "nullable": False,
                                         "info": {},
                                     },
-                                    "full_name": {"readOnly": True},
+                                    "fullName": {"readOnly": True},
                                 },
                             },
                         },
@@ -889,13 +887,13 @@ def test__meta_method():
                     "nullable": False,
                     "info": {},
                 },
-                "pub_year": {
+                "pubYear": {
                     "type": "integer",
                     "format": "int32",
                     "nullable": False,
                     "info": {},
                 },
-                "author_id": {
+                "authorId": {
                     "type": "integer",
                     "format": "int32",
                     "nullable": False,
@@ -915,19 +913,19 @@ def test__meta_method():
                                 "nullable": False,
                                 "info": {},
                             },
-                            "first_name": {
+                            "firstName": {
                                 "type": "string",
                                 "maxLength": 50,
                                 "nullable": False,
                                 "info": {},
                             },
-                            "last_name": {
+                            "lastName": {
                                 "type": "string",
                                 "maxLength": 50,
                                 "nullable": False,
                                 "info": {},
                             },
-                            "full_name": {"readOnly": True},
+                            "fullName": {"readOnly": True},
                         },
                     },
                 },
@@ -973,13 +971,13 @@ def test__meta_method():
         },
         "responses": {
             "fields": {
-                "first_name": {
+                "firstName": {
                     "type": "string",
                     "maxLength": 50,
                     "nullable": False,
                     "info": {},
                 },
-                "last_name": {
+                "lastName": {
                     "type": "string",
                     "maxLength": 50,
                     "nullable": False,
@@ -1031,19 +1029,19 @@ def test__meta_method():
                     "nullable": False,
                     "info": {},
                 },
-                "first_name": {
+                "firstName": {
                     "type": "string",
                     "maxLength": 50,
                     "nullable": False,
                     "info": {},
                 },
-                "last_name": {
+                "lastName": {
                     "type": "string",
                     "maxLength": 50,
                     "nullable": False,
                     "info": {},
                 },
-                "full_name": {"readOnly": True},
+                "fullName": {"readOnly": True},
                 "books": {
                     "readOnly": False,
                     "relationship": {
@@ -1069,13 +1067,13 @@ def test__meta_method():
                                 "nullable": False,
                                 "info": {},
                             },
-                            "pub_year": {
+                            "pubYear": {
                                 "type": "integer",
                                 "format": "int32",
                                 "nullable": False,
                                 "info": {},
                             },
-                            "author_id": {
+                            "authorId": {
                                 "type": "integer",
                                 "format": "int32",
                                 "nullable": False,
@@ -1209,13 +1207,13 @@ def test__meta_method_response():
                 "nullable": False,
                 "info": {},
             },
-            "pub_year": {
+            "pubYear": {
                 "type": "integer",
                 "format": "int32",
                 "nullable": False,
                 "info": {},
             },
-            "author_id": {
+            "authorId": {
                 "type": "integer",
                 "format": "int32",
                 "nullable": False,
@@ -1235,19 +1233,19 @@ def test__meta_method_response():
                             "nullable": False,
                             "info": {},
                         },
-                        "first_name": {
+                        "firstName": {
                             "type": "string",
                             "maxLength": 50,
                             "nullable": False,
                             "info": {},
                         },
-                        "last_name": {
+                        "lastName": {
                             "type": "string",
                             "maxLength": 50,
                             "nullable": False,
                             "info": {},
                         },
-                        "full_name": {"readOnly": True},
+                        "fullName": {"readOnly": True},
                     },
                 },
             },
