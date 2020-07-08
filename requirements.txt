@@ -1,3 +1,4 @@
+Flask==1.1.2
 inflect
 python-dateutil
 Flask-Restful
