@@ -1,6 +1,6 @@
 Flask==1.1.2
+python-dateutil==2.8.1
 inflect
-python-dateutil
 Flask-Restful
 Flask-SQLAlchemy
 DBBase
