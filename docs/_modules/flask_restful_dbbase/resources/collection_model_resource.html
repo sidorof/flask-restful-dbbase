@@ -74,19 +74,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="c1"># @classmethod</span>
-    <span class="c1"># def get_urls(cls):</span>
-    <span class="c1">#     &quot;&quot;&quot;get_urls</span>
-    <span class="c1">#</span>
-    <span class="c1">#     This version the function returns just the base url, unlike</span>
-    <span class="c1">#     the ModelResource.</span>
-    <span class="c1">#</span>
-    <span class="c1">#     &quot;&quot;&quot;</span>
-    <span class="c1">#     if cls.model_class is None:</span>
-    <span class="c1">#         raise ValueError(&quot;A model class must be defined&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     return [cls.create_url()]</span>
-
 <div class="viewcode-block" id="CollectionModelResource.get"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.CollectionModelResource.get.html#flask_restful_dbbase.resources.CollectionModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;get&quot;</span>
@@ -206,14 +193,20 @@
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v2.html">Simple Owner App Revised</a></li>
+<<<<<<< HEAD
 <li class="toctree-l1"><a class="reference internal" href="../../../app-register.html">Register App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../limited-method-resources.html">Limited Method Resources</a></li>
+=======
+<li class="toctree-l1"><a class="reference internal" href="../../../parent-child-posting.html">Parent Post - Child Records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resource-classes.html">Resource Classes</a></li>
+>>>>>>> develop
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>

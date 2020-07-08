@@ -15,8 +15,13 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+<<<<<<< HEAD
     <link rel="next" title="Parent Post - Child Records" href="parent-child-posting.html" />
     <link rel="prev" title="Register App" href="app-register.html" />
+=======
+    <link rel="next" title="Model Collection Resources" href="model-collection-resource.html" />
+    <link rel="prev" title="Resource Classes" href="resource-classes.html" />
+>>>>>>> develop
      
     
     <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -32,12 +37,17 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="parent-child-posting.html" title="Parent Post - Child Records"
+          <a href="model-collection-resource.html" title="Model Collection Resources"
              accesskey="N">next</a> |</li>
         <li class="right" >
+<<<<<<< HEAD
           <a href="app-register.html" title="Register App"
+=======
+          <a href="resource-classes.html" title="Resource Classes"
+>>>>>>> develop
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.8 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.8 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="resource-classes.html" accesskey="U">Resource Classes</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -51,15 +61,34 @@
 <p>The design of the model resource configuration provides several areas to control the data provided via the request and the responses.</p>
 <div class="section" id="class-variables">
 <h2>Class Variables<a class="headerlink" href="#class-variables" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">url_prefix</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+<span class="n">url_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># for controlling presentation with output fields</span>
+<span class="n">serial_fields</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">serial_field_relations</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># for modifying incoming data/queries with a function</span>
+<span class="n">process_get_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">process_post_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">process_put_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">process_patch_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">process_delete_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># for modifying database objects before or after commits</span>
+<span class="n">before_commit</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">after_commit</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+</div>
 <div class="section" id="set-up-variables">
 <h3>Set Up Variables<a class="headerlink" href="#set-up-variables" title="Permalink to this headline">¶</a></h3>
-<p>Two variables are used for automatic URL generation with the function <cite>get_urls()</cite>. It is a convenience function. The url_prefix defaults to root, but can be set to as needed. The url_name is the name the resource and together they make up the URL.</p>
+<p>Two variables are used for automatic URL generation with the function <cite>get_urls()</cite>. It is a convenience function. The url_prefix defaults to root, but can be set to whatever is needed. The <cite>url_name</cite> is the name of the resource and together they make up the URL.</p>
 <p>It only comes in to play when adding resources.</p>
 <ul class="simple">
 <li><p><cite>url_prefix = ‘/’</cite></p></li>
 <li><p><cite>url_name = None</cite></p></li>
 </ul>
-<p>If the url_name is left as None, a URL can be created from the model class name. For example, if a model class is <cite>CustomerOrder</cite> and its primary key is <cite>id</cite>, using a pluralizer, the default URLs will be:</p>
+<p>If the <cite>url_name</cite> is left as None, a URL can be created from the model class name. For example, if a model class is <cite>CustomerOrder</cite> and its primary key is <cite>id</cite>, using a pluralizer, the default URLs will be:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">customer</span><span class="o">-</span><span class="n">orders</span>
 <span class="o">/</span><span class="n">customer</span><span class="o">-</span><span class="n">orders</span><span class="o">/&lt;</span><span class="nb">int</span><span class="p">:</span><span class="nb">id</span><span class="o">&gt;</span>
 </pre></div>
@@ -67,10 +96,10 @@
 </div>
 <div class="section" id="date-related-variables">
 <h3>Date-Related Variables<a class="headerlink" href="#date-related-variables" title="Permalink to this headline">¶</a></h3>
-<p>If your database does support automatic conversion of dates in string form, such as SQLite3, you can ask the ModelResource to do this:</p>
-<ul class="simple">
-<li><p>use_date_conversions = True</p></li>
-</ul>
+<p>If your database does not support automatic conversion of dates in string form, such as SQLite3, you can ask the ModelResource to do this:</p>
+<blockquote>
+<div><p><cite>use_date_conversions = True</cite></p>
+</div></blockquote>
 <p>This variable defaults to False to avoid unnecessary processing, but it is helpful in the right situation.</p>
 </div>
 <div class="section" id="serialization">
@@ -80,6 +109,8 @@
 <li><p>Configure the Model Class serialization: This method would mean that the primary usage of DBBase model classes would be the same within the Flask environment or without as well.</p></li>
 <li><p>Configure the model resource class. This can be done by HTTP method or for all methods.</p></li>
 </ul>
+<p>More detailed informations is available at:
+<a class="reference external" href="https://github.com/sidorof/DBBase">https://github.com/sidorof/DBBase</a></p>
 </div>
 <div class="section" id="model-resource-serial-fields">
 <h3>Model Resource Serial Fields<a class="headerlink" href="#model-resource-serial-fields" title="Permalink to this headline">¶</a></h3>
@@ -92,7 +123,7 @@
     <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
 </div>
-<p>The default serial fields and serial field relations uses what is found from the model class.</p>
+<p>The default serial fields and serial field relations use what is found from the model class.</p>
 <p>Here is an example where both the serial fields and serial field relations are specified. Note that <cite>serial_field_relations</cite> is a dict with keys for each relationship to be specified.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">MyModel</span>
@@ -146,15 +177,19 @@
 <h3>Process Input Functions<a class="headerlink" href="#process-input-functions" title="Permalink to this headline">¶</a></h3>
 <p>Process input functions take the form of a function that can
 process the input data for the HTTP methods.</p>
-<p>The format name for these functions is <cite>process_{method}_input</cite>.</p>
+<p>The format template for these functions is <cite>process_{method}_input</cite>.</p>
 <p>Since HTTP methods have different requirements for input data, the inputs vary according to the method. And, since these functions are inserted into an on-going process, the arguments and returns for the functions are specific. However, the returns follow a common format of <cite>(status, result)</cite>. The status is a True / False indicating that you would like the method to continue with the possibly altered data. <cite>False</cite> indicates that the method should end. A failure must have a tuple of a text message and a response status code that will be made into a return result and returned to the front end.</p>
 <div class="section" id="input-variables">
 <h4>Input Variables<a class="headerlink" href="#input-variables" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><p><cite>kwargs</cite>: as passed into the method</p></li>
 <li><p><cite>data</cite>: the data gleaned from the request in a dictionary form: This is the data prior to deserializations, so the variable names would be in camel case still.</p></li>
-<li><p><cite>query</cite>: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy’s session.query(Model), for example <cite>session.query(Book)</cite>. So an additional filter as may be necessary would be done by <cite>query = query.filter_by(my_var=’test’)</cite>. And finally, this is an unexecuted query that the normal program will execute afterwards.</p></li>
+<li><p><cite>query</cite>: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy’s session.query(Model), for example <cite>session.query(Book)</cite>. So an additional filter as may be necessary would be done by</p></li>
 </ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">my_var</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>And finally, this is an unexecuted query that the normal program will execute afterwards.</p>
 </div>
 <div class="section" id="returns">
 <h4>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h4>
@@ -302,6 +337,7 @@ process the input data for the HTTP methods.</p>
     <span class="k">return</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
 </pre></div>
 </div>
+<p>Next: <a class="reference internal" href="model-collection-resource.html#model-collection-resources"><span class="std std-ref">Model Collection Resources</span></a></p>
 </div>
 </div>
 </div>
@@ -319,8 +355,10 @@ process the input data for the HTTP methods.</p>
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<<<<<<< HEAD
 <li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Model Resources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#class-variables">Class Variables</a><ul>
@@ -328,23 +366,40 @@ process the input data for the HTTP methods.</p>
 <li class="toctree-l3"><a class="reference internal" href="#date-related-variables">Date-Related Variables</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#serialization">Serialization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#model-resource-serial-fields">Model Resource Serial Fields</a></li>
+=======
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="resource-classes.html">Resource Classes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Model Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#class-variables">Class Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-up-variables">Set Up Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#date-related-variables">Date-Related Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#serialization">Serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-resource-serial-fields">Model Resource Serial Fields</a></li>
+>>>>>>> develop
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#model-resource-modifications">Model Resource Modifications</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#process-input-functions">Process Input Functions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#input-variables">Input Variables</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-resource-modifications">Model Resource Modifications</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#process-input-functions">Process Input Functions</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#input-variables">Input Variables</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#returns">Returns</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<<<<<<< HEAD
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
+=======
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+</ul>
+</li>
+>>>>>>> develop
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
@@ -354,8 +409,15 @@ process the input data for the HTTP methods.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+<<<<<<< HEAD
       <li>Previous: <a href="app-register.html" title="previous chapter">Register App</a></li>
       <li>Next: <a href="parent-child-posting.html" title="next chapter">Parent Post - Child Records</a></li>
+=======
+  <li><a href="resource-classes.html">Resource Classes</a><ul>
+      <li>Previous: <a href="resource-classes.html" title="previous chapter">Resource Classes</a></li>
+      <li>Next: <a href="model-collection-resource.html" title="next chapter">Model Collection Resources</a></li>
+  </ul></li>
+>>>>>>> develop
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">

@@ -96,14 +96,6 @@ class DBBaseResource(Resource):
     url_prefix = "/"
 
     url_name = None
-
-    # output params
-    serial_fields = None
-    serial_field_relations = None
-
-    default_sort = None
-    requires_parameter = False
-    fields = None
     use_date_conversions = False
     """
     use_date_conversions can be used if the database, such as SQlite3 does
@@ -111,8 +103,16 @@ class DBBaseResource(Resource):
     time and adherence to a format, it is an optional feature.
     """
 
+    # output params
+    serial_fields = None
+    serial_field_relations = None
+
     before_commit = {}
     after_commit = {}
+
+    default_sort = None
+    requires_parameter = False
+    fields = None
 
     @classmethod
     def get_key_names(cls, formatted=False):
@@ -180,11 +180,14 @@ class DBBaseResource(Resource):
     def get_urls(cls):
         """get_urls
 
-        This function returns something similar to [
-            {url_prefix}/{this_url},
-            {url_prefix}/{this_url}/<int:id>
-        ]
+        This function returns something similar to
+            [
+                {url_prefix}/{this_url},
+                {url_prefix}/{this_url}/<int:id>
+            ]
+
         """
+
         if cls.model_class is None:
             raise ValueError("A model class must be defined")
 
@@ -359,6 +362,7 @@ class DBBaseResource(Resource):
                     serial_field_relations=cls._get_serial_field_relations(
                         method
                     ),
+                    to_camel_case=True,
                 )[foreign_class._class()]
             else:
                 if serial_fields is None:
@@ -370,6 +374,7 @@ class DBBaseResource(Resource):
                     serial_field_relations=cls._get_serial_field_relations(
                         method
                     ),
+                    to_camel_case=True,
                 )[cls.model_class._class()]
 
             outputs["fields"] = doc["properties"]

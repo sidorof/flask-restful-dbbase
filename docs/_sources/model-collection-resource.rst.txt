@@ -80,3 +80,5 @@ Once the query has been processed, the serial fields and relational fields will 
     ]}
 
 ..
+
+Next: :ref:`Meta Resources`

@@ -19,7 +19,7 @@ def save(count, cmd):
 
     spaces = 4
     bash_prefix = '.. code-block:: bash \n'
-    json_prefix = '.. code-block:: json \n'
+    json_prefix = '.. code-block:: JSON \n'
     suffix = '..'
 
     with open(filename.format(count), 'w') as fobj:

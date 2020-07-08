@@ -58,15 +58,19 @@
 <h2>Process Input Functions<a class="headerlink" href="#process-input-functions" title="Permalink to this headline">¶</a></h2>
 <p>Process input functions take the form of a function that can
 process the input data for the HTTP methods.</p>
-<p>The format name for these functions is <cite>process_{method}_input</cite>.</p>
+<p>The format template for these functions is <cite>process_{method}_input</cite>.</p>
 <p>Since HTTP methods have different requirements for input data, the inputs vary according to the method. And, since these functions are inserted into an on-going process, the arguments and returns for the functions are specific. However, the returns follow a common format of <cite>(status, result)</cite>. The status is a True / False indicating that you would like the method to continue with the possibly altered data. <cite>False</cite> indicates that the method should end. A failure must have a tuple of a text message and a response status code that will be made into a return result and returned to the front end.</p>
 <div class="section" id="input-variables">
 <h3>Input Variables<a class="headerlink" href="#input-variables" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><cite>kwargs</cite>: as passed into the method</p></li>
 <li><p><cite>data</cite>: the data gleaned from the request in a dictionary form: This is the data prior to deserializations, so the variable names would be in camel case still.</p></li>
-<li><p><cite>query</cite>: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy’s session.query(Model), for example <cite>session.query(Book)</cite>. So an additional filter as may be necessary would be done by <cite>query = query.filter_by(my_var=’test’)</cite>. And finally, this is an unexecuted query that the normal program will execute afterwards.</p></li>
+<li><p><cite>query</cite>: the SQLAlchemy query that can be modified: This is the Flask-SQLAlchemy version of query, equivalent to the SQLAlchemy’s session.query(Model), for example <cite>session.query(Book)</cite>. So an additional filter as may be necessary would be done by</p></li>
 </ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">my_var</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>And finally, this is an unexecuted query that the normal program will execute afterwards.</p>
 </div>
 <div class="section" id="returns">
 <h3>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h3>
@@ -230,14 +234,20 @@ process the input data for the HTTP methods.</p>
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<<<<<<< HEAD
 <li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
+=======
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resource-classes.html">Resource Classes</a></li>
+>>>>>>> develop
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>

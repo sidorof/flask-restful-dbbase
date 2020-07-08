@@ -2,7 +2,7 @@
 Parent Post - Child Records
 ===========================
 
-Since some kinds of records by their nature are really a set consisting of a parent record and a list of child records. In this section we will look at an example for efficiently handling that.
+Since some kinds of data by their very nature are really a set consisting of a parent record and a list of child records. In this section we will look at an example for efficiently handling that.
 
 Our example is that of an invoice. Suppose an invoice is created with 20 items. If we follow a purely REST approach, we would create a parent invoice followed by another 20 trips to the database for each item. Or, we could implement a collection POST resource for the invoice items and only have two trips. In that case, one trip for the parent and one for the set of invoice items.
 
