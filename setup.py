@@ -18,9 +18,9 @@ AUTHOR = "Donald Smiley"
 AUTHOR_EMAIL = "dsmiley@sidorof.com"
 PYTHON_REQUIRES = ">=3.6"
 ZIP_SAFE=False
-INSTALL_REQUIRES = ["Flask", "Flask-RESTful", "dbbase"]
+INSTALL_REQUIRES = ["Flask", "Flask-RESTful", "Flask-SQLALCHEMY", "DBBase"]
 EXTRAS_REQUIRE = {
-    "dev": "unittest"
+    "dev": ["unittest", "flake8"],
 }
 CLASSIFIERS = [
     'Framework :: Flask',
