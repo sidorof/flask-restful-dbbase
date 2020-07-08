@@ -295,12 +295,10 @@ class TestModelResource(unittest.TestCase):
                 {
                     "message": [
                         {
-                            "today": "Date error: 'wrong': "
-                            "Unknown string format: wrong"
+                            "today": "Date error: 'wrong': Unknown string format: wrong"
                         },
                         {
-                            "now": "Date error: 'wrong': "
-                            "Unknown string format: wrong"
+                            "now": "Date error: 'wrong': Unknown string format: wrong"
                         },
                     ]
                 },
