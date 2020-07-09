@@ -24,7 +24,7 @@ class ModelResource(DBBaseResource):
     url_prefix: the portion of the path leading up to the resource
         For example: /api/v2
 
-    url_path: the url_path defaults to a lower case version of the
+    url_name: the url_name defaults to a lower case version of the
         the model_class name if left as None, but can have an
         explicit name if necessary.
 

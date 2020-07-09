@@ -74,7 +74,6 @@ def test_get_key_names():
     assert AddressResource.get_key_names(formatted=False) == ["id"]
     assert AddressResource.get_key_names(formatted=True) == ["<int:id>"]
 
-
 def test_get_obj_params():
     class UserResource(DBBaseResource):
         model_class = User

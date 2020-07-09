@@ -27,7 +27,7 @@ INSTALL_REQUIRES = [
     "inflect",
 ]
 EXTRAS_REQUIRE = {"dev": ["unittest", "pytest"]}
->>>>>>> develop
+
 CLASSIFIERS = [
     "Framework :: Flask",
     "Environment :: Web Environment",

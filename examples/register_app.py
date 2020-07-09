@@ -147,17 +147,7 @@ class SignInResource(Resource):
 
         data = requests.values()
         username = data.get('username')
-        password =
-SignInResource = create_resource(
-    name="SignInResource",
-    resource_class=ModelResource,
-    model_class=User,
-    methods=["put"],
-    url_prefix="/",
-    url_name="sign-in",
-    class_vars={
-        "before_commit": {"post": update_last_login}}
-)
+        password = data.get('password')
 
 # meta resources
 class RegisterMetaResource(MetaResource):
