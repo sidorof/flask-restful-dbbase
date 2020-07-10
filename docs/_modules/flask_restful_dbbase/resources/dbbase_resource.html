@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.10 documentation</title>
+    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.11 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.11 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -169,20 +169,23 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            key_names (list) : a list of keys is returned</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
-            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">primaries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;expression&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">expression</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">primary_key</span><span class="p">:</span>
+                        <span class="n">primaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">formatted</span><span class="p">:</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="s2">&quot;primary_key&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">format_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">:</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">format_key</span><span class="p">(</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">key</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;primary_key&quot;</span><span class="p">)</span>
-            <span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">primaries</span>
 
         <span class="k">return</span> <span class="n">keys</span></div>
 
@@ -725,14 +728,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id11">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id13">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id15">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id10">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id13">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id15">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id17">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

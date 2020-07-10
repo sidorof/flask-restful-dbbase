@@ -1,3 +1,7 @@
+## (0.1.11) -
+### Changed
+* Corrected and simplified the selection of primary keys in `DBBaseResource.get_key_names`.
+
 ## (0.1.10) -
 ### Changed
 * Ensured that response fields for meta information were in camel case format. Table property fields remain in snake case to be consistent for usage within Python.
