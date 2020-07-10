@@ -126,20 +126,23 @@ class DBBaseResource(Resource):
         Returns:
             key_names (list) : a list of keys is returned
         """
-        columns = cls.model_class.filter_columns(
-            column_props=["primary_key", "type"]
-        )
+        primaries = []
+        for key, value in cls.model_class.__dict__.items():
+            if hasattr(value, "expression"):
+                if isinstance(value.expression, cls.model_class.db.Column):
+                    if value.expression.primary_key:
+                        primaries.append(key)
+
         if formatted:
             keys = []
-            for key, value in columns.items():
-                if "primary_key" in value:
-                    keys.append(cls.format_key(key, value["type"]))
+            for key in primaries:
+                keys.append(cls.format_key(
+                    key,
+                    cls.model_class.db.doc_column(cls.model_class, key)['type']
+                )
+            )
         else:
-            keys = [
-                key
-                for key, value in columns.items()
-                if value.get("primary_key")
-            ]
+            keys = primaries
 
         return keys
 
