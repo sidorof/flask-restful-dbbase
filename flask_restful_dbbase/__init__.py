@@ -6,6 +6,7 @@ from dbbase.model import Model
 from dbbase.column_types import WriteOnlyColumn
 
 from .resources import DBBaseResource, ModelResource, CollectionModelResource
+from .generator import create_resource
 from ._version import __version__
 
 

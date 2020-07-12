@@ -190,7 +190,6 @@ class DBBaseResource(Resource):
             [ {url_prefix}/{this_url}, {url_prefix}/{this_url}/<int:id> ]
 
         """
-
         if cls.model_class is None:
             raise ValueError("A model class must be defined")
 

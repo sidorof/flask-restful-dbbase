@@ -4,12 +4,10 @@ from dbbase import DB
 from flask_restful_dbbase.resources import (
     DBBaseResource,
     ModelResource,
-    CollectionModelResource,
-    MetaResource,
+    CollectionModelResource
 )
 from flask_restful_dbbase.generator import (
-    create_resource,
-    create_meta_resource,
+    create_resource
 )
 
 
@@ -23,7 +21,7 @@ def test_create_resources():
         id = db.Column(db.Integer, primary_key=True)
         description = db.Column(db.String(50), nullable=False)
 
-    # db.create_all()
+    db.create_all()
 
     # no model class
     with pytest.raises(ValueError) as err:
@@ -39,29 +37,9 @@ def test_create_resources():
     )
 
     assert new_resource.__name__ == "BookModelResource"
-
     assert new_resource.model_class == Book
-
-    # check defaults
-    attrs = [
-        "method_decorators",
-        "serial_fields",
-        "serial_field_relations",
-        "use_date_conversions",
-        "process_get_input",
-        "process_post_input",
-        "process_put_input",
-        "process_patch_input",
-        "process_delete_input",
-        "before_commit",
-        "after_commit",
-        "default_sort",
-        "requires_parameter",
-        "fields",
-    ]
-
-    for attr in attrs:
-        assert hasattr(new_resource, attr)
+    assert new_resource.url_prefix == "/"
+    assert new_resource.get_urls() == ['/books', '/books/<int:id>']
 
     for attr in ["get", "post", "put", "patch", "delete"]:
         assert hasattr(new_resource, attr)
@@ -104,38 +82,10 @@ def test_create_resources():
         f"{Book._class()}CollectionModelResource",
         resource_class=CollectionModelResource,
         model_class=Book,
-
     )
 
     assert hasattr(new_collection_resource, "max_page_size")
 
     assert new_collection_resource.model_class == Book
     assert new_collection_resource.url_prefix == '/'
-    assert new_collection_resource.url_name == '/'
-    assert new_collection_resource.get_urls() == ['/book']
-
-    new_meta_resource = create_meta_resource(
-        "NewMetaResource", resource_class=new_resource
-    )
-
-    class StdMetaResource(MetaResource):
-        resource_class = new_collection_resource
-
-    print('StdMetaResource.url_prefix', StdMetaResource.url_prefix)
-    print('StdMetaResource.url_name', StdMetaResource.url_name)
-    print('StdMetaResource.get_urls()', StdMetaResource.get_urls())
-    input("ready")
-    assert new_meta_resource.resource_class == new_resource
-
-    assert new_meta_resource.get_urls() == ["/api/v1/meta/different/single"]
-
-    assert create_meta_resource("NewCollectionMetaResource", new_collection_resource, class_vars={"max_page_size": 500}).max_page_size == 500
-
-    new_collection_meta = create_meta_resource("NewCollectionMetaResource", new_collection_resource)
-
-    print(new_collection_meta.url_prefix)
-    print(new_collection_meta.url_name)
-    print(new_collection_resource.get_urls())
-    input('ready')
-    print(new_collection_meta.get_urls())
-    input('ready')
+    assert new_collection_resource.get_urls() == ['/books']
