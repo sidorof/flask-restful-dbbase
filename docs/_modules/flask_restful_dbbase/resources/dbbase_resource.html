@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.10 documentation</title>
+    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.1.12 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.12 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -169,20 +169,26 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            key_names (list) : a list of keys is returned</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">filter_columns</span><span class="p">(</span>
-            <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">primaries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;expression&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">expression</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="n">primary_key</span><span class="p">:</span>
+                        <span class="n">primaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">formatted</span><span class="p">:</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="s2">&quot;primary_key&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">format_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">:</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">format_key</span><span class="p">(</span>
+                        <span class="n">key</span><span class="p">,</span>
+                        <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">doc_column</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span>
+                            <span class="s2">&quot;type&quot;</span>
+                        <span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">key</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;primary_key&quot;</span><span class="p">)</span>
-            <span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">primaries</span>
 
         <span class="k">return</span> <span class="n">keys</span></div>
 
@@ -224,10 +230,7 @@
         <span class="sd">&quot;&quot;&quot;get_urls</span>
 
 <span class="sd">        This function returns something similar to</span>
-<span class="sd">            [</span>
-<span class="sd">                {url_prefix}/{this_url},</span>
-<span class="sd">                {url_prefix}/{this_url}/&lt;int:id&gt;</span>
-<span class="sd">            ]</span>
+<span class="sd">            [ {url_prefix}/{this_url}, {url_prefix}/{this_url}/&lt;int:id&gt; ]</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -701,7 +704,40 @@
         <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">errors</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">value</span></div>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_item_adjust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function receives a before/after commit</span>
+<span class="sd">        function, item and default status_code</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            func: (func | obj) : either a function or an object.</span>
+<span class="sd">            If it is an object, it must have a method of &#39;run&#39;.</span>
+<span class="sd">            item: (obj) : The object that is being worked on</span>
+<span class="sd">            status_code: (int) : the default status code associated</span>
+<span class="sd">            with the HTTP method.</span>
+<span class="sd">        Return:</span>
+<span class="sd">            (status, result, status_code) : If the status is True, the</span>
+<span class="sd">            processing will continue normally with `result` being the</span>
+<span class="sd">            item that is  processed. The status_code can be changed</span>
+<span class="sd">            or left to the default status code</span>
+<span class="sd">            If the status is False, the result would be a JSON object that</span>
+<span class="sd">            is to be returned to the front-end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;function </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must output a tuple of (status, &quot;</span>
+            <span class="s2">&quot;result, status_code)&quot;</span>
+        <span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -734,14 +770,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id11">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id13">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id15">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.1.12) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id10">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id12">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id15">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id17">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id19">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

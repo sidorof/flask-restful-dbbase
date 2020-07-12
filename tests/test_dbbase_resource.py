@@ -1301,3 +1301,17 @@ def test__all_keys_found():
     # partial fit
     data = {"key1": 1, "extra": True}
     assert DBBaseResource._all_keys_found(key_names, data) == (False, {})
+
+
+def test__item_adjust():
+    def bad_func(self, item, status_code):
+        return "invalid response"
+
+    pytest.raises(
+        ValueError,
+        DBBaseResource._item_adjust,
+        DBBaseResource,
+        bad_func,
+        "nothing",
+        200,
+    )

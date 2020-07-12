@@ -50,5 +50,3 @@ class DBBase(SQLAlchemy):
 
         # add flask_sqlalchemy specific items to stop list
         Model._DEFAULT_SERIAL_STOPLIST.append("query_class")
-
-        self.Model.db = self

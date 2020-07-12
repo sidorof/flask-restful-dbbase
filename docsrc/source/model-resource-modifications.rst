@@ -76,9 +76,7 @@ For example, suppose you want to add a process input function for POST.
         model_class = MyClass
 
         def process_post_input(self, data):
-
             # your magic here
-
             return status, result
 
 ..
@@ -92,8 +90,18 @@ Being able to jump in prior to a commit or just after can be very helpful. Possi
 * Triggering another process to run instead of saving, or run directly after saving.
 * A record could be marked as inactive rather than deleted.
 * A separate job could be created and sent to a queue, the job object returned in place of the original record.
+* A process can be run which diverts to an exit of the HTTP method with a message and status code.
+
 
 The process inputs all had separate names and the input and return variables varied with the HTTP method, while this family of functions are more similar.
+
+These functions must return a status of True to continue to output a data item after adjustments. If a status of False is used, the process will exit the HTTP method with a message and a status code.
+
+.. note::
+
+    By diverting the process to return a message and status code, it is now essentially an RPC.
+
+..
 
 To make the interface a little cleaner a ModelResource before / after commit is organized as a dict. For example:
 
@@ -113,38 +121,16 @@ So your `submit_job` function would be called on POST or PUT, otherwise not.
 
 The format of the before / after functions is similar to the following:
 
-.. code-block:: python
++----------------+-----------------------------------------------------+-------------------------------+
+|                | Args                                                |  Returns a tuple              |
+|                |                                                     +-------------------------------+
+| Method         |                                                     |  status, result, status_code  |
++----------------+------+----------------+-------------+---------------+-------------------------------+
+| before_commit  | self |  your_function |  data item  |  status_code  |   True, item, status_code     |
+| after_commit   |      |                |             |               +-------------------------------+
+|                |      |                |             |               |   False, message, status_code |
++----------------+------+----------------+-------------+---------------+-------------------------------+
 
-
-    def my_before_commit(self, item, status_code):
-        """
-        This function could be before or after, the params are the
-        same.
-
-        Args:
-            item: (obj): This is the data model record
-            status_code: (int) : This will be the default response
-            status code for this method. If it turns out that a
-            different status code makes more sense, it can be
-            changed on the return.
-
-        Returns:
-            item: (obj) : The object that will be returned. Note that
-            it does not have to be the same object that entered. As
-            long as it is DBBase model, the serialization will use the
-            serialization meant the current object.
-
-            status_code: (int) : This would be just pass-through of the
-            default status code, but it could be changed to a 202, for
-            example if it is starting a job.
-
-        """
-
-        # your code runs
-
-        return item, status_code
-
-..
 
 
 

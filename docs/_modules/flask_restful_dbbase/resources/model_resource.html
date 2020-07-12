@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.model_resource &#8212; Flask-RESTful-DBBase 0.1.10 documentation</title>
+    <title>flask_restful_dbbase.resources.model_resource &#8212; Flask-RESTful-DBBase 0.1.12 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -29,7 +29,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.10 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.1.12 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -74,6 +74,16 @@
 <span class="sd">    serial_fields: if left as None, it uses the serial list from</span>
 <span class="sd">        the model class. However, it can be a list of field names</span>
 <span class="sd">        or</span>
+
+<span class="sd">    before_commit: A dict with method keys for placing a function</span>
+<span class="sd">        to run just before committing an item to the database. It</span>
+<span class="sd">        can also divert the method to end the HTTP method early and</span>
+<span class="sd">        return something entirely different than the item being applied.</span>
+
+<span class="sd">    after_commit: A dict with method keys for placing a function</span>
+<span class="sd">        to run just afteer committing an item to the database. It</span>
+<span class="sd">        can also divert the method to end the HTTP method early and</span>
+<span class="sd">        return something entirely different than the item being applied.</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -288,10 +298,13 @@
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_before</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_before</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -303,13 +316,14 @@
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span>
 
         <span class="n">adjust_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">adjust_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_after</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">adjust_after</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_after</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># class, requires a run function</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="n">ser_fields</span><span class="p">,</span> <span class="n">rel_ser_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
 
@@ -394,11 +408,14 @@
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_before</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">adjust_before</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_before</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -417,12 +434,14 @@
             <span class="p">)</span>
 
         <span class="n">adjust_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">adjust_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_after</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">adjust_after</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_after</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># class, requires a run function</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="n">ser_fields</span><span class="p">,</span> <span class="n">rel_ser_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
 
@@ -504,10 +523,13 @@
 
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_before</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_before</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -524,12 +546,14 @@
             <span class="p">)</span>
 
         <span class="n">adjust_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">after_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">adjust_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_after</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">adjust_after</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_after</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># class, requires a run function</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_after</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="n">ser_fields</span><span class="p">,</span> <span class="n">rel_ser_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
 
@@ -591,10 +615,13 @@
 
         <span class="n">adjust_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_commit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FUNC_NAME</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">adjust_before</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">adjust_before</span><span class="p">):</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_adjust</span><span class="p">(</span>
+                <span class="n">adjust_before</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="n">adjust_before</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_code</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">item</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
@@ -644,14 +671,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id11">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id13">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id15">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.1.12) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id10">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id12">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id15">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id17">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id19">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

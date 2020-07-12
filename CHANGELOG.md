@@ -1,3 +1,12 @@
+## (0.1.12) -
+### Changed
+* Removed a redundant line in `DBBase._include_dbbase`.
+* Refactored before/after commit functions in ModelResource. Just as the `process_{method}_input` functions return a status with the payload, these functions now return a status as well as a payload. Prior to this change, the assumption of the process was that there may be changes to a database item, or a database item would be replaced with another, but once an adjustment takes place it all goes to an inevitable conclusion of returning SOME item and a status codde. By adding this, a greater range of functionality with the ModelResource is available, including returning simply a message and a status code. In such a case, a ModelResource could use the serialization / validation services, but essentially act as an RPC if need be.
+
+## (0.1.11) -
+### Changed
+* Corrected and simplified the selection of primary keys in `DBBaseResource.get_key_names`.
+
 ## (0.1.10) -
 ### Changed
 * Ensured that response fields for meta information were in camel case format. Table property fields remain in snake case to be consistent for usage within Python.
