@@ -2,7 +2,7 @@
 Flask-RESTful-DBBase documentation
 ==================================
 
-This package provides datacentric web API resources within the Flask environment.
+This package provides datacentric web API resources within the Flask environment. It is a pragmatic approach, applying REST principles. However, there are hooks for converting HTTP methods to RPCs as well. That enables the serialization and validation services to be used, but frees up methods to return whatever is appropriate for your situation if necessary.
 
 The work that goes into carefully defining the data structures in the database can be reused in all the layers out to the front-end application. Flask-RESTful-DBBase evaluates the model definitions and expresses this understanding in resources in the API via introspection. It is used for several functions:
 
