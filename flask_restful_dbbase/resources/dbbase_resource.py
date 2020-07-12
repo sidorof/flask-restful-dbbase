@@ -136,11 +136,14 @@ class DBBaseResource(Resource):
         if formatted:
             keys = []
             for key in primaries:
-                keys.append(cls.format_key(
-                    key,
-                    cls.model_class.db.doc_column(cls.model_class, key)['type']
+                keys.append(
+                    cls.format_key(
+                        key,
+                        cls.model_class.db.doc_column(cls.model_class, key)[
+                            "type"
+                        ],
+                    )
                 )
-            )
         else:
             keys = primaries
 
@@ -184,10 +187,7 @@ class DBBaseResource(Resource):
         """get_urls
 
         This function returns something similar to
-            [
-                {url_prefix}/{this_url},
-                {url_prefix}/{this_url}/<int:id>
-            ]
+            [ {url_prefix}/{this_url}, {url_prefix}/{this_url}/<int:id> ]
 
         """
 
@@ -662,3 +662,36 @@ class DBBaseResource(Resource):
             return False, errors
         else:
             return True, value
+
+    def _item_adjust(self, func, item, status_code):
+        """
+        This function receives a before/after commit
+        function, item and default status_code
+
+        Args:
+            func: (func | obj) : either a function or an object.
+            If it is an object, it must have a method of 'run'.
+            item: (obj) : The object that is being worked on
+            status_code: (int) : the default status code associated
+            with the HTTP method.
+        Return:
+            (status, result, status_code) : If the status is True, the
+            processing will continue normally with `result` being the
+            item that is  processed. The status_code can be changed
+            or left to the default status code
+            If the status is False, the result would be a JSON object that
+            is to be returned to the front-end.
+        """
+        if callable(func):
+            output = func(self, item, status_code)
+
+        else:
+            output = func.run(self, item, status_code)
+
+        if isinstance(output, tuple) and len(output) == 3:
+            return output
+
+        raise ValueError(
+            f"function {func.__name__} must output a tuple of (status, "
+            "result, status_code)"
+        )

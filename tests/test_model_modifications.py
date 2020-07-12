@@ -471,7 +471,7 @@ class JobCreator(object):
         # job submitted here ->
 
         status_code = 202
-        return job, status_code
+        return True, job, status_code
 
 
 class GenericAdjustment(object):
@@ -480,11 +480,15 @@ class GenericAdjustment(object):
 
     def run(self, resource_self, item, status_code):
         # change status code to teapot
-        return item, 418
+        return True, item, 418
 
 
 def generic_adjustment(resource_self, item, status_code):
-    return item, 418
+    return True, item, 418
+
+
+def generic_diversion(resource_self, item, status_code):
+    return False, {"message": "something else"}, 418
 
 
 class TestModelBeforeAftertResource(unittest.TestCase):
@@ -704,6 +708,65 @@ class TestModelBeforeAftertResource(unittest.TestCase):
 
             self.assertEqual(res.status_code, 418)
 
+        # switch to exit version adjustments
+        a = self.app.view_functions["smallbefore"]
+        a.view_class.before_commit = {
+            "post": generic_diversion,
+            "put": generic_diversion,
+            "patch": generic_diversion,
+            "delete": generic_diversion,
+        }
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+            res = client.post(
+                "/small-befores", data=json.dumps({}), headers=self.headers
+            )
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
+
+        with self.app.test_client() as client:
+            small = self.SmallBefore().save()
+            if self.needs_setup:
+                self.set_db()
+            res = client.put(
+                f"/small-befores/{small.id}",
+                data=json.dumps(small.to_dict()),
+                headers=self.headers,
+            )
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
+
+        with self.app.test_client() as client:
+
+            small = self.SmallBefore().save()
+
+            if self.needs_setup:
+                self.set_db()
+            res = client.patch(
+                f"/small-befores/{small.id}",
+                data=json.dumps(small.to_dict()),
+                headers=self.headers,
+            )
+
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
+
+        with self.app.test_client() as client:
+
+            small = self.SmallBefore().save()
+            if self.needs_setup:
+                self.set_db()
+            res = client.delete(
+                f"/small-befores/{small.id}",
+                data=json.dumps(small.to_dict()),
+                headers=self.headers,
+            )
+
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
+
     def test_all_after_adjusts(self):
         """ test_all_after_adjusts
 
@@ -740,6 +803,50 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             )
 
             self.assertEqual(res.status_code, 418)
+
+        # switch to diversions
+        a = self.app.view_functions["smallafter"]
+        a.view_class.after_commit = {
+            "post": generic_diversion,
+            "put": generic_diversion,
+            "patch": generic_diversion,
+        }
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+            res = client.post(
+                "/small-afters", data=json.dumps({}), headers=self.headers
+            )
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
+
+        with self.app.test_client() as client:
+            small = self.SmallBefore().save()
+            if self.needs_setup:
+                self.set_db()
+            res = client.put(
+                f"/small-afters/{small.id}",
+                data=json.dumps(small.to_dict()),
+                headers=self.headers,
+            )
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
+
+        with self.app.test_client() as client:
+
+            small = self.SmallBefore().save()
+
+            if self.needs_setup:
+                self.set_db()
+            res = client.patch(
+                f"/small-afters/{small.id}",
+                data=json.dumps(small.to_dict()),
+                headers=self.headers,
+            )
+
+            self.assertEqual(res.status_code, 418)
+            self.assertDictEqual(res.get_json(), {"message": "something else"})
 
         # switch to class based adjustments
         a = self.app.view_functions["smallafter"]
@@ -864,7 +971,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
         def disrupt_object(self, item, status_code):
             if item.name == "disrupt_object":
                 item.id = "failure"
-            return item, status_code
+            return True, item, status_code
 
         class Test2Resource(ModelResource):
             model_class = Test2
@@ -948,7 +1055,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
         def disrupt_object(self, item, status_code):
             if item.name == "disrupt_object":
                 item.id = "failure"
-            return item, status_code
+            return True, item, status_code
 
         class Test3Resource(ModelResource):
             model_class = Test3
@@ -1038,7 +1145,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
         def disrupt_object(self, item, status_code):
             if item.name == "disrupt_object":
                 item.id = "failure"
-            return item, status_code
+            return True, item, status_code
 
         class Test3aResource(ModelResource):
             model_class = Test3a

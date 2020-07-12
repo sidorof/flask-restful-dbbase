@@ -16,7 +16,7 @@ def passthrough(self, item, status_code):
 
     For testing before/after commit functions
     """
-    return item, status_code
+    return True, item, status_code
 
 
 def create_models(db):
@@ -1375,7 +1375,7 @@ class TestModelBadDatabase(unittest.TestCase):
         def delete_before_commit(self, item, status_code):
 
             item = None
-            return item, status_code
+            return True, item, status_code
 
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAwayPut
@@ -1445,7 +1445,7 @@ class TestModelBadDatabase(unittest.TestCase):
         def delete_before_commit(self, item, status_code):
 
             item = None
-            return item, status_code
+            return True, item, status_code
 
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAwayPatch
@@ -1487,7 +1487,7 @@ class TestModelBadDatabase(unittest.TestCase):
         def delete_before_commit(self, item, status_code):
 
             item = None
-            return item, status_code
+            return True, item, status_code
 
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAwayDelete
