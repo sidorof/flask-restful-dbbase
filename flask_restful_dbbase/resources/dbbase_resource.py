@@ -93,6 +93,10 @@ class DBBaseResource(Resource):
 
     model_class = None
     model_name = None
+    """
+    The string version of the Model class name. This is set
+    upon initialization.
+    """
     url_prefix = "/"
 
     url_name = None
@@ -113,6 +117,14 @@ class DBBaseResource(Resource):
     default_sort = None
     requires_parameter = False
     fields = None
+
+    def __init__(self):
+        if self.model_class is None:
+            msg = "A model class must be set for this resource to function."
+            raise ValueError(msg)
+        self.model_name = self.model_class._class()
+
+        super().__init__()
 
     @classmethod
     def get_key_names(cls, formatted=False):
@@ -236,7 +248,7 @@ class DBBaseResource(Resource):
             doc["methods"] = {}
             # this is done to force order without OrderedDict
             for method in method_list:
-                if hasattr(cls, method):
+                if hasattr(cls, method) and getattr(cls, method) is not None:
                     doc["methods"][method] = cls._meta_method(method)
             doc["table"] = db.doc_table(cls.model_class)
 

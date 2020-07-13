@@ -4,11 +4,9 @@ from dbbase import DB
 from flask_restful_dbbase.resources import (
     DBBaseResource,
     ModelResource,
-    CollectionModelResource
+    CollectionModelResource,
 )
-from flask_restful_dbbase.generator import (
-    create_resource
-)
+from flask_restful_dbbase.generator import create_resource
 
 
 def test_create_resources():
@@ -39,7 +37,7 @@ def test_create_resources():
     assert new_resource.__name__ == "BookModelResource"
     assert new_resource.model_class == Book
     assert new_resource.url_prefix == "/"
-    assert new_resource.get_urls() == ['/books', '/books/<int:id>']
+    assert new_resource.get_urls() == ["/books", "/books/<int:id>"]
 
     for attr in ["get", "post", "put", "patch", "delete"]:
         assert hasattr(new_resource, attr)
@@ -77,6 +75,19 @@ def test_create_resources():
     for cvar, value in class_vars.items():
         assert getattr(new_resource, cvar) == value
 
+    PostOnly = create_resource(
+        "PostOnly",
+        resource_class=ModelResource,
+        model_class=Book,
+        methods=["post"],
+    )
+
+    assert hasattr(PostOnly, "get") is False
+    assert hasattr(PostOnly, "put") is False
+    assert hasattr(PostOnly, "patch") is False
+    assert hasattr(PostOnly, "delete") is False
+    assert PostOnly.methods == set(["POST"])
+
     # test collection
     new_collection_resource = create_resource(
         f"{Book._class()}CollectionModelResource",
@@ -87,5 +98,5 @@ def test_create_resources():
     assert hasattr(new_collection_resource, "max_page_size")
 
     assert new_collection_resource.model_class == Book
-    assert new_collection_resource.url_prefix == '/'
-    assert new_collection_resource.get_urls() == ['/books']
+    assert new_collection_resource.url_prefix == "/"
+    assert new_collection_resource.get_urls() == ["/books"]

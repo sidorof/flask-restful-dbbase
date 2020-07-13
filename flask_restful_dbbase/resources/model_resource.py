@@ -45,24 +45,11 @@ class ModelResource(DBBaseResource):
 
     """
 
-    model_name = None
-    """
-    The string version of the Model class name. This is set
-    upon initialization.
-    """
     process_get_input = None
     process_post_input = None
     process_put_input = None
     process_patch_input = None
     process_delete_input = None
-
-    def __init__(self):
-        if self.model_class is None:
-            msg = "A model class must be set for this resource to function."
-            raise ValueError(msg)
-        self.model_name = self.model_class._class()
-
-        super().__init__()
 
     def get(self, **kwargs):
         """
