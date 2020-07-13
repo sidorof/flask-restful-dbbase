@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
+    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="meta-resource.html" title="Meta Resources"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -58,40 +58,136 @@
 <li><p>Specify a model_class to use.</p></li>
 <li><p>Specify which methods to implement. If there is a <cite>process_{method}_input</cite> function in your prototype resource, it will be included.</p></li>
 <li><p>You can set <cite>url_prefix</cite> and <cite>url_name</cite> if necessary.</p></li>
-<li><p>You can overwrite any of the class variables to customize further your new resource by including a dict of class variables.</p></li>
+<li><p>You can overwrite any of the class variables to customize your new resource further by including a dict of class variables.</p></li>
 <li><p>Finally, the new resource will be created.</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MyResource</span> <span class="o">=</span> <span class="n">create_resource</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyResource&quot;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PostOnlyResource</span> <span class="o">=</span> <span class="n">create_resource</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;PostOnlyResource&quot;</span><span class="p">,</span>
     <span class="n">resource_class</span><span class="o">=</span><span class="n">ModelResource</span><span class="p">,</span>
-    <span class="n">model_class</span><span class="o">=</span><span class="n">MyModel</span><span class="p">,</span>
-    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">],</span>
-    <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
-    <span class="n">url_name</span><span class="o">=</span><span class="s2">&quot;custom-action&quot;</span><span class="p">,</span>
+    <span class="n">model_class</span><span class="o">=</span><span class="n">Whatever</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;post&#39;</span><span class="p">],</span>
+    <span class="n">url_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">url_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">class_vars</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;process_post_input&quot;</span><span class="p">:</span> <span class="n">custom_input_processing</span><span class="p">,</span>
-        <span class="s2">&quot;after_commit&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">special_function</span>
+        <span class="s2">&quot;after_commmit&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">my_procedure</span>
         <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>The above will create <cite>MyResource</cite> with only the POST method, which can then be added to the api just as any resource.</p>
 </div>
-<div class="section" id="caveat">
-<h2>Caveat<a class="headerlink" href="#caveat" title="Permalink to this headline">¶</a></h2>
-<p>When using a package, there can be tendency to try to do <em>everything</em> with it. Sometimes it is simply easier do it another way. As a general guideline for using these resources, some following conditions might be considered:</p>
+<div class="section" id="suggested-uses">
+<h2>Suggested Uses<a class="headerlink" href="#suggested-uses" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Does the method benefit from automatic enforcement of primary keys in the URL? If it is a problem not a benefit, the regular Flask-RESTful Resource class might be a better choice.</p></li>
-<li><p>Is a connection to a database only minor portion of the work that is done? Maybe there is no benefit to a <cite>model_class</cite> central to a resource.</p></li>
-<li><p>Do you struggle to define the problem within the context of Flask-RESTful-DBBase, but you know it could be done more simply outside of it? Do it that other way.</p></li>
+<li><p><strong>/register:</strong> POST using a User class model. A confirmation email is sent. A message is returned with instructions in place of the posted user data.</p></li>
+<li><p><strong>/sign-in:</strong> POST using a User class model. User preferences information with JWT tokens is returned.</p></li>
+<li><p>A command is run that uses deserialization / validation services but goes on to execute the command.</p></li>
 </ul>
-<p>The beauty of Flask in part flows from being able to mix and match capabilities from all sorts of extensions, so it may be that Flask-RESTful-DBBase can handle the portions of the puzzle that fit without getting in the way of other approaches better suited to that portion of the system.</p>
 </div>
-<div class="section" id="further">
-<h2>Further<a class="headerlink" href="#further" title="Permalink to this headline">¶</a></h2>
-<p>An example of this kind of usage is available in <a class="reference internal" href="app-register.html#register-app"><span class="std std-ref">Register App</span></a></p>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>As before, the code for this example is found in the examples section as</p>
+<div class="default docutils container">
+<p>post_only_resource &lt;<a class="reference external" href="https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/post_only_resource.py">https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/post_only_resource.py</a>&gt;</p>
+</div>
+<p>To give a concrete example, we will create a resource limited to a POST method. The following shows an example of the usual initialization with the exception of the <cite>generator.create_resource</cite> program. This program accepts a source resource. From it <cite>create_resource</cite> will generate a resource in a custom configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase</span> <span class="kn">import</span> <span class="n">DBBase</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.generator</span> <span class="kn">import</span> <span class="n">create_resource</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///:memory:&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_TRACK_MODIFICATIONS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">DBBase</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The table created is minimal for this example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AModel</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;amodel&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">num_variable</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We will divert processing of a POST to exit just after a commit to the database. To that end, the following is a minimal <cite>after_commit</cite> function that will execute.</p>
+<p>The sign that a normal return of the posted data does not happen can be seen at the return. The return tuple starts with a False.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">after_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This will be used in an after_commit function.</span>
+
+<span class="sd">    In this case, the process is diverted to a</span>
+<span class="sd">    message, new status code and the method exits with</span>
+<span class="sd">    this message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># processing takes place here</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This is no longer a REST resource. We can do anything.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="mi">419</span>
+</pre></div>
+</div>
+<p>Having defined our exit function, we can now create the resource itself. The following shows that creation. The parameters give some flexibility of output.</p>
+<ul class="simple">
+<li><p>The source resource class is ModelResource in this case, although it could be a subclassed resource.</p></li>
+<li><p>Only the POST method is implemented.</p></li>
+<li><p>Like any ModelResource, the url_prefix and url_name can be set explcitly.</p></li>
+<li><p>Finally, the <cite>class_vars</cite> provides a means to set any attribute of the new class. In this case we will use that feature to set the <cite>after_commit</cite> function created above.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PostOnlyResource</span> <span class="o">=</span> <span class="n">create_resource</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;PostOnlyResource&quot;</span><span class="p">,</span>
+    <span class="n">resource_class</span><span class="o">=</span><span class="n">ModelResource</span><span class="p">,</span>
+    <span class="n">model_class</span><span class="o">=</span><span class="n">AModel</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">],</span>
+    <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="n">url_name</span><span class="o">=</span><span class="s2">&quot;a-model-command&quot;</span><span class="p">,</span>
+    <span class="n">class_vars</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;after_commit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">after_commit</span><span class="p">},},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The following shows the addition of the resources and startup of the app.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">PostOnlyResource</span><span class="p">,</span> <span class="o">*</span><span class="n">PostOnlyResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-the-api">
+<h2>Using the API<a class="headerlink" href="#using-the-api" title="Permalink to this headline">¶</a></h2>
+<p>We POST data to the URL. Data deserialization and validation takes place as usual. And, because this is an after_commit function, it is saved to the database. The result shows the non-REST response to the entry.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an entry</span>
+curl http://localhost:5000/a-model-command <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{&quot;description&quot;: &quot;A test&quot;, &quot;num_variable&quot;: 42}&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This is no longer a REST resource. We can do anything.&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A test&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="implications">
+<h2>Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h2>
+<p>Once the output from a resource can be anything, a meta resource for the resource will not know what you have created. There are ways to mitigate that through providing documentation hooks to the modification functions used with the resource, but that has not been implemented.</p>
 </div>
 </div>
 
@@ -108,24 +204,35 @@
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
-<li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Limited Method Resources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#create-resource">Create Resource</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#caveat">Caveat</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#further">Further</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#suggested-uses">Suggested Uses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-api">Using the API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implications">Implications</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id13">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

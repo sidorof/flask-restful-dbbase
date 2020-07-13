@@ -17,7 +17,7 @@ As before, the code for this example is found in the examples section as
 
 .. container:: default
 
-    owner_app_v2 <https://sidorof.github.io/flask-restful-dbbase/examples/owner_app_v2.py>
+    owner_app_v2 <https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/owner_app_v2.py>
 ..
 
 

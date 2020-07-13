@@ -43,17 +43,11 @@ This resource class by default instantiates a URL at:
    app-simple.rst
    app-owner-v1.rst
    app-owner-v2.rst
-<<<<<<< HEAD
-   app-register.rst
    model-resource.rst
    parent-child-posting.rst
    model-collection-resource.rst
    meta-resource.rst
    limited-method-resources.rst
-=======
-   parent-child-posting.rst
-   resource-classes.rst
->>>>>>> develop
    examples.rst
    api.rst
    testing.rst

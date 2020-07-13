@@ -8,11 +8,11 @@ Our example is that of an invoice. Suppose an invoice is created with 20 items. 
 
 With Flask-RESTful-DBBase, we will do it in one trip in the following example.
 
-As before the code for this example is found in the examples section as
+As before, the code for this example is found in the examples section as
 
 .. container:: default
 
-    invoice_app <https://sidorof.github.io/flask-restful-dbbase/examples/invoice_app.py>
+    invoice_app <https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/invoice_app.py>
 ..
 
 

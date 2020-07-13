@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>User Guide &#8212; Flask-RESTful-DBBase 0.1.12 documentation</title>
+    <title>User Guide &#8212; Flask-RESTful-DBBase 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -57,6 +57,7 @@
 <li><p>Simple modification functions that can work in concert with Flask-RESTful <cite>method_decorators</cite> to implement more complex abilities with minimal changes. <a class="reference internal" href="app-owner-v1.html#simple-owner-app"><span class="std std-ref">Simple Owner App</span></a></p></li>
 <li><p>An example of diverting a post process to a message queue and returning the job data. <a class="reference internal" href="app-owner-v2.html#simple-owner-app-revised"><span class="std std-ref">Simple Owner App Revised</span></a></p></li>
 <li><p>An example of posting parent data and including child data and saving multiple round trips from the front-end. <a class="reference internal" href="parent-child-posting.html#parent-post-child-records"><span class="std std-ref">Parent Post - Child Records</span></a></p></li>
+<li><p>An example of creating a POST-only resource that diverts output from the REST response to a customized message and response status code. <a class="reference internal" href="limited-method-resources.html#limited-method-resources"><span class="std std-ref">Limited Method Resources</span></a></p></li>
 </ul>
 </div>
 <div class="section" id="a-first-look">
@@ -70,6 +71,10 @@
 <li><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.CollectionModelResource.html#flask_restful_dbbase.resources.CollectionModelResource" title="flask_restful_dbbase.resources.CollectionModelResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollectionModelResource</span></code></a> – This class implements a GET for collections. The other methods, being less common for collections, have been left off to avoid activating an unwanted (surprise) capability.</p></li>
 <li><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource" title="flask_restful_dbbase.resources.MetaResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaResource</span></code></a> – This class implements a GET that documents the capabilities of a resource class.</p></li>
 </ul>
+<p>The code for this example is found in the examples section as</p>
+<div class="default docutils container">
+<p>owner_app_v1 &lt;<a class="reference external" href="https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/simple_app.py">https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/simple_app.py</a>&gt;</p>
+</div>
 <div class="section" id="initialize-the-app-and-models">
 <h3>Initialize the App and Models<a class="headerlink" href="#initialize-the-app-and-models" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
@@ -166,11 +171,14 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BookCollection</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Book</span>
 
+
 <span class="k">class</span> <span class="nc">BookResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Book</span>
 
+
 <span class="k">class</span> <span class="nc">AuthorCollection</span><span class="p">(</span><span class="n">CollectionModelResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Author</span>
+
 
 <span class="k">class</span> <span class="nc">AuthorResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">Author</span>
@@ -191,11 +199,14 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BookMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">BookCollection</span>
 
+
 <span class="k">class</span> <span class="nc">BookMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">BookResource</span>
 
+
 <span class="k">class</span> <span class="nc">AuthorMetaCollection</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">AuthorCollection</span>
+
 
 <span class="k">class</span> <span class="nc">AuthorMeta</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">AuthorResource</span>
@@ -918,31 +929,25 @@ curl -g http://localhost:5000/meta/books/single
 <li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
-<<<<<<< HEAD
-<li class="toctree-l1"><a class="reference internal" href="app-register.html">Register App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
-=======
-<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
-<li class="toctree-l1"><a class="reference internal" href="resource-classes.html">Resource Classes</a></li>
->>>>>>> develop
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.1.12) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.0) -</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.1.11) -</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.1.10) -</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.1.9) -</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.1.8) -</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id12">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id15">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id17">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id19">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id13">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

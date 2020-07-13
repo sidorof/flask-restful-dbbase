@@ -13,6 +13,14 @@ Flask-RESTful Resource subclasses implement this functionality.
 * :class:`~flask_restful_dbbase.resources.CollectionModelResource` -- This class implements a GET for collections. The other methods, being less common for collections, have been left off to avoid activating an unwanted (surprise) capability.
 * :class:`~flask_restful_dbbase.resources.MetaResource` -- This class implements a GET that documents the capabilities of a resource class.
 
+The code for this example is found in the examples section as
+
+.. container:: default
+
+    owner_app_v1 <https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/simple_app.py>
+
+..
+
 
 Initialize the App and Models
 -----------------------------

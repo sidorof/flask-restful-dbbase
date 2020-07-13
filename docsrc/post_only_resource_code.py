@@ -1,9 +1,9 @@
-# register_app_code.py
+# post_only_resource_code.py
 import subprocess
 
-source_file = '../examples/register_app.py'
+source_file = '../examples/post_only_resource.py'
 
-filename = "source/register_app_code_{:02d}.rst"
+filename = "source/post_only__code_{:02d}.rst"
 all_lines = []
 count = 0
 
@@ -42,14 +42,10 @@ def find_block(start, end):
     return ''.join(temp)
 
 locations = [
-    ["# initialize", "# define users"],
-    ["# define users", "# tokens"],
-    ["# tokens", "# before/after commits"],
-    ["# before/after commits", "# create register resource"],
-    ["# create register resource", "# ConfirmResource creation"],
-    ["# ConfirmResource creation", "# create SignIn resource"],
-    ["# create SignIn resource", "# meta resources"],
-    ["# meta resources", "# add the resources"],
+    ["# initialize", "# define table"],
+    ["# define table", "# before/after commits"],
+    ["# before/after commits", "# create a post-only resource"],
+    ["# create a post-only resource", "# add the resources"],
     ["# add the resources", None]
 ]
 
