@@ -27,6 +27,7 @@ This resource class by default instantiates a URL at:
     /books
     /books/<int:id>
 ..
+
 - URLs are pluralized by default, but can be customized, relocated, or replaced completely.
 - The primary key(s) are automatically derived from the underlying model.
 - Serialization / deserialization, validation and conversion, services flow from introspection of the data model. Specifying output fields is straight-forward and can include / exclude relationship data.
@@ -40,14 +41,7 @@ This resource class by default instantiates a URL at:
 
    installation.rst
    user_guide.rst
-   app-simple.rst
-   app-owner-v1.rst
-   app-owner-v2.rst
-   model-resource.rst
-   parent-child-posting.rst
-   model-collection-resource.rst
-   meta-resource.rst
-   limited-method-resources.rst
+   resource-classes.rst
    examples.rst
    api.rst
    testing.rst
@@ -55,9 +49,9 @@ This resource class by default instantiates a URL at:
    changelog.rst
 
 
+
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

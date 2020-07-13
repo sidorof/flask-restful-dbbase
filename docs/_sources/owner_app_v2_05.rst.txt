@@ -7,7 +7,7 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
         "model_class": "Job",
@@ -30,6 +30,20 @@
                 },
                 "responses": {
                     "fields": {
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
+                        "orderId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "order.id",
+                            "info": {}
+                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
@@ -37,36 +51,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "owner_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "order_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "order.id",
-                            "info": {}
-                        },
-                        "started_at": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finished_at": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -76,6 +61,21 @@
                                 "is_clause_element": false,
                                 "is_callable": false,
                                 "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
                             },
                             "info": {}
                         },
@@ -92,7 +92,7 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "owner_id": {
+                                    "ownerId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
@@ -104,7 +104,7 @@
                                         "nullable": false,
                                         "info": {}
                                     },
-                                    "ordered_at": {
+                                    "orderedAt": {
                                         "type": "date-time",
                                         "nullable": true,
                                         "default": {
@@ -116,7 +116,7 @@
                                         },
                                         "info": {}
                                     },
-                                    "status_id": {
+                                    "statusId": {
                                         "type": "integer",
                                         "format": "int8",
                                         "nullable": true,
@@ -192,6 +192,20 @@
                 },
                 "responses": {
                     "fields": {
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
+                        "orderId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "order.id",
+                            "info": {}
+                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
@@ -199,36 +213,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "owner_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "order_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "order.id",
-                            "info": {}
-                        },
-                        "started_at": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finished_at": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -238,6 +223,21 @@
                                 "is_clause_element": false,
                                 "is_callable": false,
                                 "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
                             },
                             "info": {}
                         },
@@ -254,7 +254,7 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "owner_id": {
+                                    "ownerId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
@@ -266,7 +266,7 @@
                                         "nullable": false,
                                         "info": {}
                                     },
-                                    "ordered_at": {
+                                    "orderedAt": {
                                         "type": "date-time",
                                         "nullable": true,
                                         "default": {
@@ -278,7 +278,7 @@
                                         },
                                         "info": {}
                                     },
-                                    "status_id": {
+                                    "statusId": {
                                         "type": "integer",
                                         "format": "int8",
                                         "nullable": true,
@@ -355,6 +355,20 @@
                 },
                 "responses": {
                     "fields": {
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
+                        "orderId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "order.id",
+                            "info": {}
+                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
@@ -362,36 +376,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "owner_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "order_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "order.id",
-                            "info": {}
-                        },
-                        "started_at": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finished_at": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -401,6 +386,21 @@
                                 "is_clause_element": false,
                                 "is_callable": false,
                                 "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
                             },
                             "info": {}
                         },
@@ -417,7 +417,7 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "owner_id": {
+                                    "ownerId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
@@ -429,7 +429,7 @@
                                         "nullable": false,
                                         "info": {}
                                     },
-                                    "ordered_at": {
+                                    "orderedAt": {
                                         "type": "date-time",
                                         "nullable": true,
                                         "default": {
@@ -441,7 +441,7 @@
                                         },
                                         "info": {}
                                     },
-                                    "status_id": {
+                                    "statusId": {
                                         "type": "integer",
                                         "format": "int8",
                                         "nullable": true,
@@ -518,6 +518,20 @@
                 },
                 "responses": {
                     "fields": {
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
+                        "orderId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "order.id",
+                            "info": {}
+                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
@@ -525,36 +539,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "owner_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "order_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "order.id",
-                            "info": {}
-                        },
-                        "started_at": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finished_at": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -564,6 +549,21 @@
                                 "is_clause_element": false,
                                 "is_callable": false,
                                 "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
                             },
                             "info": {}
                         },
@@ -580,7 +580,7 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "owner_id": {
+                                    "ownerId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
@@ -592,7 +592,7 @@
                                         "nullable": false,
                                         "info": {}
                                     },
-                                    "ordered_at": {
+                                    "orderedAt": {
                                         "type": "date-time",
                                         "nullable": true,
                                         "default": {
@@ -604,7 +604,7 @@
                                         },
                                         "info": {}
                                     },
-                                    "status_id": {
+                                    "statusId": {
                                         "type": "integer",
                                         "format": "int8",
                                         "nullable": true,

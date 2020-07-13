@@ -29,6 +29,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
@@ -44,7 +47,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
     -H <span class="s2">&quot;Authorization: User:1&quot;</span>
 </pre></div>
 </div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;model_class&quot;</span><span class="p">:</span> <span class="s2">&quot;Order&quot;</span><span class="p">,</span>
     <span class="nt">&quot;url_prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/v2&quot;</span><span class="p">,</span>
     <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/api/v2/orders&quot;</span><span class="p">,</span>
@@ -65,26 +68,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;orderedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -96,7 +80,21 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="p">},</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -110,7 +108,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
                             <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span>
@@ -122,21 +120,21 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                                     <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;order_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;orderId&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                                     <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;order.id&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;started_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                                     <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -146,12 +144,12 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                                     <span class="p">},</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;finished_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;finishedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -166,6 +164,11 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -218,6 +221,64 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;orderId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;order.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;for_update&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;arg&quot;</span><span class="p">:</span> <span class="s2">&quot;db.func.now()&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;reflected&quot;</span><span class="p">:</span> <span class="kc">false</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;finishedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;for_update&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;arg&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_clause_element&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -229,7 +290,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;started_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -239,7 +300,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="p">},</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -304,6 +365,64 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;orderId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;order.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;for_update&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;arg&quot;</span><span class="p">:</span> <span class="s2">&quot;db.func.now()&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;reflected&quot;</span><span class="p">:</span> <span class="kc">false</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;finishedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;for_update&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;arg&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_clause_element&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -315,7 +434,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;started_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -325,7 +444,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="p">},</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -390,30 +509,69 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;orderId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;order.id&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;for_update&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;arg&quot;</span><span class="p">:</span> <span class="s2">&quot;db.func.now()&quot;</span><span class="p">,</span>
+                                    <span class="nt">&quot;reflected&quot;</span><span class="p">:</span> <span class="kc">false</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;finishedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                                <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="nt">&quot;for_update&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;arg&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_clause_element&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_callable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                                    <span class="nt">&quot;is_scalar&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                                <span class="p">},</span>
+                                <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;fields&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;ordered_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;orderedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -425,7 +583,21 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="p">},</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -439,7 +611,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                         <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
                             <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span>
@@ -451,21 +623,21 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;owner_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;ownerId&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                                     <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;user.id&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;order_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;orderId&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                                     <span class="nt">&quot;foreign_key&quot;</span><span class="p">:</span> <span class="s2">&quot;order.id&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;started_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;startedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                                     <span class="nt">&quot;server_default&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -475,12 +647,12 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                                     <span class="p">},</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;finished_at&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;finishedAt&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
                                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                                 <span class="p">},</span>
-                                <span class="nt">&quot;status_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;statusId&quot;</span><span class="p">:</span> <span class="p">{</span>
                                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int8&quot;</span><span class="p">,</span>
                                     <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -495,6 +667,11 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                        <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -565,7 +742,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                 <span class="p">},</span>
                 <span class="nt">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;readOnly&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                     <span class="nt">&quot;relationship&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;Job&quot;</span><span class="p">,</span>
@@ -646,6 +823,7 @@ curl http://localhost:5000/api/v2/meta/orders/single <span class="se">\</span>
 <li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resource-classes.html">Resource Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
