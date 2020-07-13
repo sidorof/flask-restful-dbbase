@@ -149,6 +149,6 @@ Order Meta Resource Information
 
 Order Meta Collection Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. include:: owner_app_v1_06.rst
+.. include:: owner_app_v1_07.rst
 
 Next: :ref:`Simple Owner App Revised`

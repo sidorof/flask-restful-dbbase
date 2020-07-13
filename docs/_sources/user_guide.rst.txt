@@ -17,5 +17,7 @@ The capabilities are presented with a few simple apps designed to highlight the 
 - An example of creating a POST-only resource that diverts output from the REST response to a customized message and response status code. :ref:`Limited Method Resources`
 
 .. include:: app-simple.rst
-
-Next: :ref:`Simple Owner App`
+.. include:: app-owner-v1.rst
+.. include:: app-owner-v2.rst
+.. include:: parent-child-posting.rst
+.. include:: limited-method-resources.rst

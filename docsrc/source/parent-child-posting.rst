@@ -1,6 +1,6 @@
-===========================
+---------------------------
 Parent Post - Child Records
-===========================
+---------------------------
 
 Since some kinds of data by their very nature are really a set consisting of a parent record and a list of child records. In this section we will look at an example for efficiently handling that.
 

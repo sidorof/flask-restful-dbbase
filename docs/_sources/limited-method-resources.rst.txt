@@ -1,6 +1,6 @@
-========================
+---------------------------
 Limited Method Resources
-========================
+---------------------------
 Sometimes a pure REST approach does not fit the problem. For example, suppose a URL primarily represents an action. If the problem still interacts with the database in some fashion, it may be appropriate to create a resource that is limited in the methods that it exposes.
 
 Create Resource

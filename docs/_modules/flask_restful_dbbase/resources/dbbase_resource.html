@@ -29,6 +29,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
@@ -54,7 +57,7 @@
 <span class="kn">from</span> <span class="nn">dbbase.utils</span> <span class="kn">import</span> <span class="n">xlate</span>
 
 
-<div class="viewcode-block" id="DBBaseResource"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.html#flask_restful_dbbase.resources.DBBaseResource">[docs]</a><span class="k">class</span> <span class="nc">DBBaseResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+<div class="viewcode-block" id="DBBaseResource"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource">[docs]</a><span class="k">class</span> <span class="nc">DBBaseResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    DBBaseResource Class</span>
 
@@ -90,7 +93,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        resource_self: (obj) : This is the self of the resource.</span>
 <span class="sd">            This provides access to the resource itself.</span>
-<span class="sd">        item: (obj) : This is SQLAlchemy record.</span>
+<span class="sd">        item: (obj) : This is the SQLAlchemy object.</span>
 <span class="sd">        status_code (int) : If due to the processing that status_code</span>
 <span class="sd">            should change, you can change it here. Otherwise, simply</span>
 <span class="sd">            return it.</span>
@@ -169,7 +172,7 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="DBBaseResource.get_key_names"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_key_names.html#flask_restful_dbbase.resources.DBBaseResource.get_key_names">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DBBaseResource.get_key_names"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.get_key_names">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_key_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get_key_names</span>
 
@@ -204,7 +207,7 @@
 
         <span class="k">return</span> <span class="n">keys</span></div>
 
-<div class="viewcode-block" id="DBBaseResource.get_obj_params"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_obj_params.html#flask_restful_dbbase.resources.DBBaseResource.get_obj_params">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DBBaseResource.get_obj_params"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.get_obj_params">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_obj_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;get_obj_params</span>
 
@@ -219,7 +222,7 @@
             <span class="bp">cls</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
         <span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="DBBaseResource.format_key"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.format_key.html#flask_restful_dbbase.resources.DBBaseResource.format_key">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DBBaseResource.format_key"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.format_key">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">format_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function returns the portion of the URL that embodies the key.</span>
@@ -237,7 +240,7 @@
 
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;string:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
-<div class="viewcode-block" id="DBBaseResource.get_urls"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_urls.html#flask_restful_dbbase.resources.DBBaseResource.get_urls">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DBBaseResource.get_urls"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.get_urls">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_urls</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;get_urls</span>
 
@@ -263,7 +266,7 @@
                     <span class="k">break</span>
         <span class="k">return</span> <span class="n">urls</span></div>
 
-<div class="viewcode-block" id="DBBaseResource.get_meta"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.get_meta.html#flask_restful_dbbase.resources.DBBaseResource.get_meta">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DBBaseResource.get_meta"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.get_meta">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function returns the settings for the resource.</span>
@@ -309,7 +312,7 @@
                 <span class="p">)</span>
         <span class="k">return</span> <span class="n">doc</span></div>
 
-<div class="viewcode-block" id="DBBaseResource.is_collection"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.is_collection.html#flask_restful_dbbase.resources.DBBaseResource.is_collection">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DBBaseResource.is_collection"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.is_collection">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">is_collection</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function returns True if identified as a collection resource.</span>
@@ -545,7 +548,7 @@
                 <span class="mi">500</span><span class="p">,</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="DBBaseResource.create_url"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.create_url.html#flask_restful_dbbase.resources.DBBaseResource.create_url">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DBBaseResource.create_url"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.create_url">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_url</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; create_url</span>
 
@@ -571,7 +574,7 @@
 
         <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url_prefix</span><span class="p">,</span> <span class="n">url_name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DBBaseResource.screen_data"><a class="viewcode-back" href="../../../_generated/flask_restful_dbbase.resources.DBBaseResource.screen_data.html#flask_restful_dbbase.resources.DBBaseResource.screen_data">[docs]</a>    <span class="k">def</span> <span class="nf">screen_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">,</span> <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DBBaseResource.screen_data"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource.screen_data">[docs]</a>    <span class="k">def</span> <span class="nf">screen_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">,</span> <span class="n">skip_missing_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assumes data is deserialized</span>
 
@@ -762,14 +765,7 @@
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../app-simple.html">A First Look</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v1.html">Simple Owner App</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../app-owner-v2.html">Simple Owner App Revised</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../model-resource.html">Model Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../parent-child-posting.html">Parent Post - Child Records</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../model-collection-resource.html">Model Collection Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../meta-resource.html">Meta Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../limited-method-resources.html">Limited Method Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resource-classes.html">Resource Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>

@@ -47,7 +47,7 @@ class DBBaseResource(Resource):
     Args:
         resource_self: (obj) : This is the self of the resource.
             This provides access to the resource itself.
-        item: (obj) : This is SQLAlchemy record.
+        item: (obj) : This is the SQLAlchemy object.
         status_code (int) : If due to the processing that status_code
             should change, you can change it here. Otherwise, simply
             return it.

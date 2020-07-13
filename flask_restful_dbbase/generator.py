@@ -25,24 +25,24 @@ def create_resource(
 
     Args:
         name: (str) : This will be the name stored with the new
-        class.
+            class.
 
         resource_class: (obj) : This is the ModelResource class that
-        will be used as the basis of the new class.
+            will be used as the basis of the new class.
 
         methods: (list) : This the list of HTTP methods that should
-        be transferred to the new class.
+            be transferred to the new class.
 
         url_prefix: (str) : This is url_prefix that can be used in place of
-        the default url_prefix that comes with the resource class.
+            the default url_prefix that comes with the resource class.
 
         url_name: (str) : This the url_name that can be used in place
-        of the default url_name that comes with the resource.
+            of the default url_name that comes with the resource.
 
         class_vars: (dict) : This is a dictionary of variables and
-        values that will be transferred to the new resource. These
-        are set in place last, so it is here that additional customization
-        of the new resource can be made.
+            values that will be transferred to the new resource. These
+            are set in place last, so it is here that additional
+            customization of the new resource can be made.
 
     Returns:
         (obj) : The new resource class

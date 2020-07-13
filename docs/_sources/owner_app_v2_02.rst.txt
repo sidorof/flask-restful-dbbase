@@ -7,34 +7,34 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
         "Order": [
             {
+                "orderedAt": "2020-07-13 14:20:37",
+                "ownerId": 1,
+                "id": 1,
+                "statusId": 0,
                 "jobs": [
                     {
-                        "startedAt": "2020-06-27 00:40:46",
-                        "orderId": 1,
-                        "finishedAt": null,
                         "ownerId": 1,
+                        "orderId": 1,
+                        "id": 1,
                         "statusId": 0,
-                        "id": 1
+                        "finishedAt": null,
+                        "startedAt": "2020-07-13 21:20:37"
                     },
                     {
-                        "startedAt": "2020-06-27 00:40:46",
-                        "orderId": 1,
-                        "finishedAt": null,
                         "ownerId": 1,
+                        "orderId": 1,
+                        "id": 2,
                         "statusId": 0,
-                        "id": 2
+                        "finishedAt": null,
+                        "startedAt": "2020-07-13 21:20:37"
                     }
                 ],
-                "description": "to do different stuff",
-                "orderedAt": "2020-06-26 17:40:46",
-                "ownerId": 1,
-                "statusId": 0,
-                "id": 1
+                "description": "to do different stuff"
             }
         ]
     }

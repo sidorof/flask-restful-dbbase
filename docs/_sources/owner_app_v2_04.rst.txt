@@ -7,7 +7,7 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
         "model_class": "Order",
@@ -30,26 +30,7 @@
                 },
                 "responses": {
                     "fields": {
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "owner_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "ordered_at": {
+                        "orderedAt": {
                             "type": "date-time",
                             "nullable": true,
                             "default": {
@@ -61,7 +42,21 @@
                             },
                             "info": {}
                         },
-                        "status_id": {
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -75,7 +70,7 @@
                             "info": {}
                         },
                         "jobs": {
-                            "readOnly": true,
+                            "readOnly": false,
                             "relationship": {
                                 "type": "list",
                                 "entity": "Job",
@@ -87,21 +82,21 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "owner_id": {
+                                    "ownerId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
                                         "foreign_key": "user.id",
                                         "info": {}
                                     },
-                                    "order_id": {
+                                    "orderId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
                                         "foreign_key": "order.id",
                                         "info": {}
                                     },
-                                    "started_at": {
+                                    "startedAt": {
                                         "type": "date-time",
                                         "nullable": false,
                                         "server_default": {
@@ -111,12 +106,12 @@
                                         },
                                         "info": {}
                                     },
-                                    "finished_at": {
+                                    "finishedAt": {
                                         "type": "date-time",
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "status_id": {
+                                    "statusId": {
                                         "type": "integer",
                                         "format": "int8",
                                         "nullable": true,
@@ -131,6 +126,11 @@
                                     }
                                 }
                             }
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
+                            "info": {}
                         }
                     }
                 }
@@ -183,6 +183,64 @@
                             "is_scalar": true
                         },
                         "info": {}
+                    },
+                    "jobs": {
+                        "readOnly": false,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Job",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": true,
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "ownerId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "user.id",
+                                    "info": {}
+                                },
+                                "orderId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "order.id",
+                                    "info": {}
+                                },
+                                "startedAt": {
+                                    "type": "date-time",
+                                    "nullable": false,
+                                    "server_default": {
+                                        "for_update": false,
+                                        "arg": "db.func.now()",
+                                        "reflected": false
+                                    },
+                                    "info": {}
+                                },
+                                "finishedAt": {
+                                    "type": "date-time",
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "statusId": {
+                                    "type": "integer",
+                                    "format": "int8",
+                                    "nullable": true,
+                                    "default": {
+                                        "for_update": false,
+                                        "arg": 0,
+                                        "is_clause_element": false,
+                                        "is_callable": false,
+                                        "is_scalar": true
+                                    },
+                                    "info": {}
+                                }
+                            }
+                        }
                     }
                 },
                 "responses": {
@@ -194,7 +252,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "started_at": {
+                        "startedAt": {
                             "type": "date-time",
                             "nullable": false,
                             "server_default": {
@@ -204,7 +262,7 @@
                             },
                             "info": {}
                         },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -269,6 +327,64 @@
                             "is_scalar": true
                         },
                         "info": {}
+                    },
+                    "jobs": {
+                        "readOnly": false,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Job",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": true,
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "ownerId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "user.id",
+                                    "info": {}
+                                },
+                                "orderId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "order.id",
+                                    "info": {}
+                                },
+                                "startedAt": {
+                                    "type": "date-time",
+                                    "nullable": false,
+                                    "server_default": {
+                                        "for_update": false,
+                                        "arg": "db.func.now()",
+                                        "reflected": false
+                                    },
+                                    "info": {}
+                                },
+                                "finishedAt": {
+                                    "type": "date-time",
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "statusId": {
+                                    "type": "integer",
+                                    "format": "int8",
+                                    "nullable": true,
+                                    "default": {
+                                        "for_update": false,
+                                        "arg": 0,
+                                        "is_clause_element": false,
+                                        "is_callable": false,
+                                        "is_scalar": true
+                                    },
+                                    "info": {}
+                                }
+                            }
+                        }
                     }
                 },
                 "responses": {
@@ -280,7 +396,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "started_at": {
+                        "startedAt": {
                             "type": "date-time",
                             "nullable": false,
                             "server_default": {
@@ -290,7 +406,7 @@
                             },
                             "info": {}
                         },
-                        "status_id": {
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -355,30 +471,69 @@
                             "is_scalar": true
                         },
                         "info": {}
+                    },
+                    "jobs": {
+                        "readOnly": false,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Job",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": true,
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "ownerId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "user.id",
+                                    "info": {}
+                                },
+                                "orderId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "order.id",
+                                    "info": {}
+                                },
+                                "startedAt": {
+                                    "type": "date-time",
+                                    "nullable": false,
+                                    "server_default": {
+                                        "for_update": false,
+                                        "arg": "db.func.now()",
+                                        "reflected": false
+                                    },
+                                    "info": {}
+                                },
+                                "finishedAt": {
+                                    "type": "date-time",
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "statusId": {
+                                    "type": "integer",
+                                    "format": "int8",
+                                    "nullable": true,
+                                    "default": {
+                                        "for_update": false,
+                                        "arg": 0,
+                                        "is_clause_element": false,
+                                        "is_callable": false,
+                                        "is_scalar": true
+                                    },
+                                    "info": {}
+                                }
+                            }
+                        }
                     }
                 },
                 "responses": {
                     "fields": {
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "owner_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "ordered_at": {
+                        "orderedAt": {
                             "type": "date-time",
                             "nullable": true,
                             "default": {
@@ -390,7 +545,21 @@
                             },
                             "info": {}
                         },
-                        "status_id": {
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "statusId": {
                             "type": "integer",
                             "format": "int8",
                             "nullable": true,
@@ -404,7 +573,7 @@
                             "info": {}
                         },
                         "jobs": {
-                            "readOnly": true,
+                            "readOnly": false,
                             "relationship": {
                                 "type": "list",
                                 "entity": "Job",
@@ -416,21 +585,21 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "owner_id": {
+                                    "ownerId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
                                         "foreign_key": "user.id",
                                         "info": {}
                                     },
-                                    "order_id": {
+                                    "orderId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
                                         "foreign_key": "order.id",
                                         "info": {}
                                     },
-                                    "started_at": {
+                                    "startedAt": {
                                         "type": "date-time",
                                         "nullable": false,
                                         "server_default": {
@@ -440,12 +609,12 @@
                                         },
                                         "info": {}
                                     },
-                                    "finished_at": {
+                                    "finishedAt": {
                                         "type": "date-time",
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "status_id": {
+                                    "statusId": {
                                         "type": "integer",
                                         "format": "int8",
                                         "nullable": true,
@@ -460,6 +629,11 @@
                                     }
                                 }
                             }
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
+                            "info": {}
                         }
                     }
                 }
@@ -530,7 +704,7 @@
                         "info": {}
                     },
                     "jobs": {
-                        "readOnly": true,
+                        "readOnly": false,
                         "relationship": {
                             "type": "list",
                             "entity": "Job",

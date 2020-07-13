@@ -13,6 +13,7 @@ This section is a reference for classes and functions of **Flask-RESTful-DBBase*
 
    DBBase
 
+
 .. rubric:: Resources
 
 .. currentmodule:: flask_restful_dbbase.resources
@@ -25,3 +26,14 @@ This section is a reference for classes and functions of **Flask-RESTful-DBBase*
    CollectionModelResource
    MetaResource
    DBBaseResource
+
+.. .ref:: modules.rst
+
+.. rubric:: Generator
+
+.. currentmodule:: flask_restful_dbbase.generator
+.. autosummary::
+    :toctree: _generated
+    :nosignatures
+
+   create_resource

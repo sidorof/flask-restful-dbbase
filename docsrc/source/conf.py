@@ -1,9 +1,11 @@
+import os
 import sys
 from datetime import date
 import flask_restful_dbbase
 
 sys.path.append('../../examples')
-
+sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../'))
 
 project = 'Flask-RESTful-DBBase'
 copyright = f'{date.today().year}, Don Smiley'
