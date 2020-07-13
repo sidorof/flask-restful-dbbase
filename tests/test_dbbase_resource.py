@@ -528,10 +528,18 @@ def test_screen_data():
     Coverage from other tests except for
     date related.
     """
+    db = DB(config=":memory:")
+
+    class AModel(db.Model):
+        __tablename__ = "amodel"
+        id = db.Column(db.Integer, primary_key=True)
+        today = db.Column(db.Date)
+
     data = {"today": "2020-3-4"}
     obj_params = {"today": {"type": "date"}}
 
     class TestResource(DBBaseResource):
+        model_class = AModel
         use_date_conversions = True
 
     assert TestResource().screen_data(data, obj_params) == (
@@ -1302,3 +1310,17 @@ def test__all_keys_found():
     # partial fit
     data = {"key1": 1, "extra": True}
     assert DBBaseResource._all_keys_found(key_names, data) == (False, {})
+
+
+def test__item_adjust():
+    def bad_func(self, item, status_code):
+        return "invalid response"
+
+    pytest.raises(
+        ValueError,
+        DBBaseResource._item_adjust,
+        DBBaseResource,
+        bad_func,
+        "nothing",
+        200,
+    )

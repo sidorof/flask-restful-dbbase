@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Register App &#8212; Flask-RESTful-DBBase 0.1.7 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Resources" href="model-resource.html" />
+    <link rel="prev" title="Simple Owner App Revised" href="app-owner-v2.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="model-resource.html" title="Model Resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="app-owner-v2.html" title="Simple Owner App Revised"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.7 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="register-app">
+<h1>Register App<a class="headerlink" href="#register-app" title="Permalink to this headline">¶</a></h1>
+<p>The examples shown so far illustrate methods that take advantage of REST oriented resources that encorporate a full list of methods with automatic validation. Some problems do not require that, and may get in the way of solving the problem at hand.</p>
+<p>In this section we will look at a common approach to registering users, confirming a sign-up and enabling logging in to a system within the context of using this package’s resources.</p>
+<div class="section" id="the-sequence">
+<h2>The Sequence<a class="headerlink" href="#the-sequence" title="Permalink to this headline">¶</a></h2>
+<p>A common sequence of steps take place for a registering a new user.</p>
+<ul class="simple">
+<li><p>A front-end form receives data such as a username and email and  POSTs to /register.</p></li>
+<li><p>The post process at <cite>/register</cite> creates a user record that is marked as unconfirmed. A message is sent to a process to create an email to the new user’s email address to confirm the registration.</p></li>
+<li><p>The user receives the email from the system and clicks on the link, which is GET <cite>/confirm/&lt;token&gt;</cite>.</p></li>
+<li><p>The token is decoded and confirmed (or not) and the user is marked as having been confirmed.</p></li>
+<li><p>The user can login into the system as a confirmed user.</p></li>
+</ul>
+</div>
+<div class="section" id="required-resources">
+<h2>Required Resources<a class="headerlink" href="#required-resources" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>POST /register:</strong> A resource that implements POST, but nothing else. It can receive the user data, create a user record, and send a message to queue. To accomplish this, we will use a function called <cite>create_resource</cite> that is part of Flask-RESTful-DBBase. With it, we can create a ModelResource that has just the POST method and tweak it a little bit with an <cite>after_commit</cite> function.</p></li>
+<li><p><strong>GET /confirm/&lt;token&gt;:</strong> A resource that implements a GET, but with the confirmation token. Once the confirmation is decoded, it then uses a user query to get the user record and update the confirmation. It is better to drop back to a more generic Flask-RESTful Resource for this resource. We will discuss this further below.</p></li>
+<li><p><strong>POST /sign-in:</strong> A resource that implements only a POST as before. With whatever authentication approach is used, it can be triggered in the <cite>after_commit</cite> function as well.</p></li>
+</ul>
+<div class="section" id="initialize">
+<h3>Initialize<a class="headerlink" href="#initialize" title="Permalink to this headline">¶</a></h3>
+<p>Initialization of the app includes some helper functions. We will use <cite>URLSafeTimedSerializer</cite> from itsdangerous to make a token that expires after limited time. To faciliate the use of tokens a modification has been made to the app configuration as well. And, we include a function <cite>create_resource</cite> for creation of our custom resources.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
+
+<span class="kn">from</span> <span class="nn">itsdangerous</span> <span class="kn">import</span> <span class="n">URLSafeTimedSerializer</span>
+
+<span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Api</span><span class="p">,</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase</span> <span class="kn">import</span> <span class="n">DBBase</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.resources</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ModelResource</span><span class="p">,</span>
+    <span class="n">MetaResource</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.generator</span> <span class="kn">import</span> <span class="n">create_resource</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///:memory:&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_TRACK_MODIFICATIONS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;this is secret&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECURITY_PASSWORD_SALT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;this is the salt&quot;</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">DBBase</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="user-model">
+<h3>User Model<a class="headerlink" href="#user-model" title="Permalink to this headline">¶</a></h3>
+<p>The user model has some standard fields. The user will not be able to sign in until the user record is marked as <em>active</em>. This occurs upon confirmation of the account. Additionally, every time that the user logs into the account, the <cite>last_login</cite> will be updated.</p>
+<p>We are ignoring any encryption scheme for the password for now. Any actual implementation would require it.</p>
+<p>Finally, <cite>SERIAL_FIELDS</cite> is set as the default for returning user information. By the way, since the <cite>password</cite> column is set as <cite>WriteOnlyColumn</cite>, it would not be included in serial fields in any case.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">WriteOnlyColumn</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">is_staff</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_account_current</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">date_joined</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">last_login</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">SERIAL_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">]</span>
+
+
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-expiring-tokens">
+<h3>Create Expiring Tokens<a class="headerlink" href="#create-expiring-tokens" title="Permalink to this headline">¶</a></h3>
+<p>The machinery for encoding and decoding tokens is found in the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">encode_token</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">URLSafeTimedSerializer</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECURITY_PASSWORD_SALT&#39;</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">expiration</span><span class="o">=</span><span class="mi">3600</span><span class="p">):</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">URLSafeTimedSerializer</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">token</span><span class="p">,</span>
+            <span class="n">salt</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECURITY_PASSWORD_SALT&#39;</span><span class="p">],</span>
+            <span class="n">max_age</span><span class="o">=</span><span class="n">expiration</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">email</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="before-after-commits">
+<h3>Before / After Commits<a class="headerlink" href="#before-after-commits" title="Permalink to this headline">¶</a></h3>
+<p>When the user registers, just after the commit to the database, an <cite>after_commit</cite> will run that creates the token and we can see a notation where the command for the email would be to a message queue. We will not implement this, just point out where it takes place.</p>
+<p>When the user signs in to the system there will be an update to the user record indicating that sign-in time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">register_confirm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This will be used in an after_commit function.</span>
+<span class="sd">    It always receives an item and the default response status code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># use the default status_code for response</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">encode_token</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;the token: </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2"> would be included in a welcome email&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># change the status code to something appropriate</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Problem sending email&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">error</span><span class="p">,</span> <span class="mi">400</span>
+
+<span class="k">def</span> <span class="nf">update_last_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function runs in a before commit and updates the user</span>
+<span class="sd">    record with the current date.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">last_login</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-register-resource">
+<h3>Create Register Resource<a class="headerlink" href="#create-register-resource" title="Permalink to this headline">¶</a></h3>
+<p>Using the <cite>create_resource</cite> function we can create the Register resource with only the <cite>post</cite> method. Using a prototype resource as the basis with a few parameters we can create the RegisterResource class. The <cite>class_vars</cite> parameter is a location where we can add the customization for the <cite>after_commit</cite> process.</p>
+<p>By using this process we have the advantages of deserialization and creation of the user record without the unwanted HTML methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RegisterResource</span> <span class="o">=</span> <span class="n">create_resource</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RegisterResource&quot;</span><span class="p">,</span>
+    <span class="n">resource_class</span><span class="o">=</span><span class="n">ModelResource</span><span class="p">,</span>
+    <span class="n">model_class</span><span class="o">=</span><span class="n">User</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">],</span>
+    <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="n">url_name</span><span class="o">=</span><span class="s2">&quot;register&quot;</span><span class="p">,</span>
+    <span class="n">class_vars</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;after_commit&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">register_confirm</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-confirmresource">
+<h3>Create ConfirmResource<a class="headerlink" href="#create-confirmresource" title="Permalink to this headline">¶</a></h3>
+<p>The confirmation resource represents an instance where the datacentric resources that we have focused on are not the right tool for the job. By design a <cite>ModelResource</cite> finds the primary keys in a GET url from the key(s) of the model class used. With our confirmation token being used as the key, that would not work easily. Second, a model resource usually returns a representation of the data model being used, but a single message would do. It would reasonable for the front-end to redirect to a sign-in.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ConfirmResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This resource is best without ModelResource.</span>
+
+<span class="sd">    * It uses the User model, but does not enforce the User.id</span>
+<span class="sd">    to be part of the URL.</span>
+<span class="sd">    * The confirm token is ephemeral, no need to save it.</span>
+<span class="sd">    * It is easier to simply do the user query directly.</span>
+<span class="sd">    * It does not need to return user information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">confirm_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Confirmation token has either expired or is invalid&quot;</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">401</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="c1"># front end would then redirect to sign-in</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome to ________!&quot;</span><span class="p">},</span> <span class="mi">200</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This email is not valid&quot;</span><span class="p">},</span> <span class="mi">401</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-signinresource">
+<h3>Create SignInResource<a class="headerlink" href="#create-signinresource" title="Permalink to this headline">¶</a></h3>
+<p>The SignInResource can be created with the <cite>create_resource</cite> function. As with the RegisterResource, we customize with the <cite>before_commit</cite> function that we created above. And as before, only the POST method is implemented.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SignInResource</span> <span class="o">=</span> <span class="n">create_resource</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;SignInResource&quot;</span><span class="p">,</span>
+    <span class="n">resource_class</span><span class="o">=</span><span class="n">ModelResource</span><span class="p">,</span>
+    <span class="n">model_class</span><span class="o">=</span><span class="n">User</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">],</span>
+    <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="n">url_name</span><span class="o">=</span><span class="s2">&quot;sign-in&quot;</span><span class="p">,</span>
+    <span class="n">class_vars</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;before_commit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">update_last_login</span><span class="p">}}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-metaresources">
+<h3>Create MetaResources<a class="headerlink" href="#create-metaresources" title="Permalink to this headline">¶</a></h3>
+<p>Two meta resources can be made, and the ConfirmResource is out of scope for Flask-RESTful-DBBase documentation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RegisterMetaResource</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">RegisterResource</span>
+
+<span class="k">class</span> <span class="nc">SignInMetaResource</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">SignInResource</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-resources-to-the-api">
+<h3>Add Resources to the API<a class="headerlink" href="#add-resources-to-the-api" title="Permalink to this headline">¶</a></h3>
+<p>Note that ConfirmResource must use an explicit URL.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">RegisterResource</span><span class="p">,</span> <span class="o">*</span><span class="n">RegisterResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">SignInResource</span><span class="p">,</span> <span class="o">*</span><span class="n">SignInResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">ConfirmResource</span><span class="p">,</span> <span class="s1">&#39;/confirm/&lt;token&gt;&#39;</span><span class="p">)</span>
+
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">RegisterMetaResource</span><span class="p">,</span> <span class="o">*</span><span class="n">RegisterMetaResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">SignInMetaResource</span><span class="p">,</span> <span class="o">*</span><span class="n">SignInMetaResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="use-the-api">
+<h2>Use the API<a class="headerlink" href="#use-the-api" title="Permalink to this headline">¶</a></h2>
+<p>Register a new user.
+show confirm</p>
+<p>get with confirm</p>
+<p>Sign-in</p>
+<div class="section" id="post-without-authentication">
+<h3>Post without authentication<a class="headerlink" href="#post-without-authentication" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># post an order, but no authentication</span>
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Unauthorized User&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="post-an-order-wrong-login">
+<h3>Post An Order, Wrong Login<a class="headerlink" href="#post-an-order-wrong-login" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># post an order, but the wrong user</span>
+curl http://localhost:5000/orders <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+    -H <span class="s2">&quot;Authorization: User:2&quot;</span> <span class="se">\</span>
+    -d <span class="s1">&#39;{&quot;ownerId&quot;: 1, &quot;description&quot;: &quot;to do stuff&quot;}&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;The user id does not match the owner id&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="index.html">
+  <img class="logo" src="_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Register App</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-sequence">The Sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#required-resources">Required Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initialize">Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-model">User Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-expiring-tokens">Create Expiring Tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#before-after-commits">Before / After Commits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-register-resource">Create Register Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-confirmresource">Create ConfirmResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-signinresource">Create SignInResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-metaresources">Create MetaResources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-resources-to-the-api">Add Resources to the API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#use-the-api">Use the API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#post-without-authentication">Post without authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#post-an-order-wrong-login">Post An Order, Wrong Login</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="app-owner-v2.html" title="previous chapter">Simple Owner App Revised</a></li>
+      <li>Next: <a href="model-resource.html" title="next chapter">Model Resources</a></li>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/app-register.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

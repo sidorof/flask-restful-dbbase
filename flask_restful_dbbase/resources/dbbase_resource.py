@@ -93,6 +93,10 @@ class DBBaseResource(Resource):
 
     model_class = None
     model_name = None
+    """
+    The string version of the Model class name. This is set
+    upon initialization.
+    """
     url_prefix = "/"
 
     url_name = None
@@ -113,6 +117,14 @@ class DBBaseResource(Resource):
     default_sort = None
     requires_parameter = False
     fields = None
+
+    def __init__(self):
+        if self.model_class is None:
+            msg = "A model class must be set for this resource to function."
+            raise ValueError(msg)
+        self.model_name = self.model_class._class()
+
+        super().__init__()
 
     @classmethod
     def get_key_names(cls, formatted=False):
@@ -136,11 +148,14 @@ class DBBaseResource(Resource):
         if formatted:
             keys = []
             for key in primaries:
-                keys.append(cls.format_key(
-                    key,
-                    cls.model_class.db.doc_column(cls.model_class, key)['type']
+                keys.append(
+                    cls.format_key(
+                        key,
+                        cls.model_class.db.doc_column(cls.model_class, key)[
+                            "type"
+                        ],
+                    )
                 )
-            )
         else:
             keys = primaries
 
@@ -184,13 +199,9 @@ class DBBaseResource(Resource):
         """get_urls
 
         This function returns something similar to
-            [
-                {url_prefix}/{this_url},
-                {url_prefix}/{this_url}/<int:id>
-            ]
+            [ {url_prefix}/{this_url}, {url_prefix}/{this_url}/<int:id> ]
 
         """
-
         if cls.model_class is None:
             raise ValueError("A model class must be defined")
 
@@ -237,7 +248,7 @@ class DBBaseResource(Resource):
             doc["methods"] = {}
             # this is done to force order without OrderedDict
             for method in method_list:
-                if hasattr(cls, method):
+                if hasattr(cls, method) and getattr(cls, method) is not None:
                     doc["methods"][method] = cls._meta_method(method)
             doc["table"] = db.doc_table(cls.model_class)
 
@@ -369,8 +380,7 @@ class DBBaseResource(Resource):
                 )[foreign_class._class()]
             else:
                 if serial_fields is None:
-                    if cls.model_class.SERIAL_FIELDS is not None:
-                        serial_fields = cls.model_class.get_serial_fields()
+                    serial_fields = cls.model_class.get_serial_fields()
 
                 doc = db.doc_table(
                     cls.model_class,
@@ -662,3 +672,36 @@ class DBBaseResource(Resource):
             return False, errors
         else:
             return True, value
+
+    def _item_adjust(self, func, item, status_code):
+        """
+        This function receives a before/after commit
+        function, item and default status_code
+
+        Args:
+            func: (func | obj) : either a function or an object.
+            If it is an object, it must have a method of 'run'.
+            item: (obj) : The object that is being worked on
+            status_code: (int) : the default status code associated
+            with the HTTP method.
+        Return:
+            (status, result, status_code) : If the status is True, the
+            processing will continue normally with `result` being the
+            item that is  processed. The status_code can be changed
+            or left to the default status code
+            If the status is False, the result would be a JSON object that
+            is to be returned to the front-end.
+        """
+        if callable(func):
+            output = func(self, item, status_code)
+
+        else:
+            output = func.run(self, item, status_code)
+
+        if isinstance(output, tuple) and len(output) == 3:
+            return output
+
+        raise ValueError(
+            f"function {func.__name__} must output a tuple of (status, "
+            "result, status_code)"
+        )

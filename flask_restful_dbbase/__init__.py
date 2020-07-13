@@ -6,6 +6,7 @@ from dbbase.model import Model
 from dbbase.column_types import WriteOnlyColumn
 
 from .resources import DBBaseResource, ModelResource, CollectionModelResource
+from .generator import create_resource
 from ._version import __version__
 
 
@@ -50,5 +51,3 @@ class DBBase(SQLAlchemy):
 
         # add flask_sqlalchemy specific items to stop list
         Model._DEFAULT_SERIAL_STOPLIST.append("query_class")
-
-        self.Model.db = self

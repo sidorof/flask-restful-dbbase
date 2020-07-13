@@ -224,6 +224,8 @@ def create_job(self, order, status_code):
         order: (obj) : The order that is to be processed.
         status_code: (int) :
     Returns:
+        return_status: (bool) : True to coninue,
+            False  to return just a message
         job: (obj) : The job that is created.
         status_code: (int) : The new response status
         code.
@@ -233,7 +235,7 @@ def create_job(self, order, status_code):
     status_code = 202
     # this is where you send the job to queue
 
-    return job, status_code
+    return True, job, status_code
 
 
 # new order resource

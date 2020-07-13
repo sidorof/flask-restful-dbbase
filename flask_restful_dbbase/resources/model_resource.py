@@ -24,7 +24,7 @@ class ModelResource(DBBaseResource):
     url_prefix: the portion of the path leading up to the resource
         For example: /api/v2
 
-    url_path: the url_path defaults to a lower case version of the
+    url_name: the url_name defaults to a lower case version of the
         the model_class name if left as None, but can have an
         explicit name if necessary.
 
@@ -32,27 +32,24 @@ class ModelResource(DBBaseResource):
         the model class. However, it can be a list of field names
         or
 
+    before_commit: A dict with method keys for placing a function
+        to run just before committing an item to the database. It
+        can also divert the method to end the HTTP method early and
+        return something entirely different than the item being applied.
+
+    after_commit: A dict with method keys for placing a function
+        to run just afteer committing an item to the database. It
+        can also divert the method to end the HTTP method early and
+        return something entirely different than the item being applied.
+
 
     """
 
-    model_name = None
-    """
-    The string version of the Model class name. This is set
-    upon initialization.
-    """
     process_get_input = None
     process_post_input = None
     process_put_input = None
     process_patch_input = None
     process_delete_input = None
-
-    def __init__(self):
-        if self.model_class is None:
-            msg = "A model class must be set for this resource to function."
-            raise ValueError(msg)
-        self.model_name = self.model_class._class()
-
-        super().__init__()
 
     def get(self, **kwargs):
         """
@@ -245,10 +242,13 @@ class ModelResource(DBBaseResource):
         adjust_before = self.before_commit.get(FUNC_NAME)
 
         if adjust_before is not None:
-            if callable(adjust_before):
-                item, status_code = adjust_before(self, item, status_code)
+            status, result, status_code = self._item_adjust(
+                adjust_before, item, status_code
+            )
+            if status:
+                item = result
             else:
-                item, status_code = adjust_before.run(self, item, status_code)
+                return result, status_code
 
         try:
             item.save()
@@ -260,13 +260,14 @@ class ModelResource(DBBaseResource):
             return {"message": return_msg}, 500
 
         adjust_after = self.after_commit.get(FUNC_NAME)
-
-        if adjust_after is not None:
-            if callable(adjust_after):
-                item, status_code = adjust_after(self, item, status_code)
+        if adjust_after:
+            status, result, status_code = self._item_adjust(
+                adjust_after, item, status_code
+            )
+            if status:
+                item = result
             else:
-                # class, requires a run function
-                item, status_code = adjust_after.run(self, item, status_code)
+                return result, status_code
 
         ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
 
@@ -351,11 +352,14 @@ class ModelResource(DBBaseResource):
                 setattr(item, key, value)
 
         adjust_before = self.before_commit.get(FUNC_NAME)
-        if adjust_before is not None:
-            if callable(adjust_before):
-                item, status_code = adjust_before(self, item, status_code)
+        if adjust_before:
+            status, result, status_code = self._item_adjust(
+                adjust_before, item, status_code
+            )
+            if status:
+                item = result
             else:
-                item, status_code = adjust_before.run(self, item, status_code)
+                return result, status_code
 
         try:
             item.save()
@@ -374,12 +378,14 @@ class ModelResource(DBBaseResource):
             )
 
         adjust_after = self.after_commit.get(FUNC_NAME)
-        if adjust_after is not None:
-            if callable(adjust_after):
-                item, status_code = adjust_after(self, item, status_code)
+        if adjust_after:
+            status, result, status_code = self._item_adjust(
+                adjust_after, item, status_code
+            )
+            if status:
+                item = result
             else:
-                # class, requires a run function
-                item, status_code = adjust_after.run(self, item, status_code)
+                return result, status_code
 
         ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
 
@@ -461,10 +467,13 @@ class ModelResource(DBBaseResource):
 
         adjust_before = self.before_commit.get(FUNC_NAME)
         if adjust_before is not None:
-            if callable(adjust_before):
-                item, status_code = adjust_before(self, item, status_code)
+            status, result, status_code = self._item_adjust(
+                adjust_before, item, status_code
+            )
+            if status:
+                item = result
             else:
-                item, status_code = adjust_before.run(self, item, status_code)
+                return result, status_code
 
         try:
             item.save()
@@ -481,12 +490,14 @@ class ModelResource(DBBaseResource):
             )
 
         adjust_after = self.after_commit.get(FUNC_NAME)
-        if adjust_after is not None:
-            if callable(adjust_after):
-                item, status_code = adjust_after(self, item, status_code)
+        if adjust_after:
+            status, result, status_code = self._item_adjust(
+                adjust_after, item, status_code
+            )
+            if status:
+                item = result
             else:
-                # class, requires a run function
-                item, status_code = adjust_after.run(self, item, status_code)
+                return result, status_code
 
         ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
 
@@ -548,10 +559,13 @@ class ModelResource(DBBaseResource):
 
         adjust_before = self.before_commit.get(FUNC_NAME)
         if adjust_before is not None:
-            if callable(adjust_before):
-                item, status_code = adjust_before(self, item, status_code)
+            status, result, status_code = self._item_adjust(
+                adjust_before, item, status_code
+            )
+            if status:
+                item = result
             else:
-                item, status_code = adjust_before.run(self, item, status_code)
+                return result, status_code
 
         try:
             item.delete()

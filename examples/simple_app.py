@@ -115,11 +115,14 @@ author = Author(first_name="Steven", last_name="Skiena").save()
 class BookCollection(CollectionModelResource):
     model_class = Book
 
+
 class BookResource(ModelResource):
     model_class = Book
 
+
 class AuthorCollection(CollectionModelResource):
     model_class = Author
+
 
 class AuthorResource(ModelResource):
     model_class = Author
@@ -129,14 +132,18 @@ class AuthorResource(ModelResource):
 class BookMetaCollection(MetaResource):
     resource_class = BookCollection
 
+
 class BookMeta(MetaResource):
     resource_class = BookResource
+
 
 class AuthorMetaCollection(MetaResource):
     resource_class = AuthorCollection
 
+
 class AuthorMeta(MetaResource):
     resource_class = AuthorResource
+
 
 # end create_resources
 

@@ -31,11 +31,12 @@ We will control
 - changing the response returned to the user
 
 
-As before the code for this example is found in the examples section as
+As before, the code for this example is found in the examples section as
 
 .. container:: default
 
-    owner_app_v1 <https://sidorof.github.io/flask-restful-dbbase/examples/owner_app_v1.py>
+    owner_app_v1 <https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/owner_app_v1.py>
+
 ..
 
 Initiate the App and Models

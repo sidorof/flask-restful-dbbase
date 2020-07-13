@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Parent Post - Child Records &#8212; Flask-RESTful-DBBase 0.1.11 documentation</title>
+    <title>Parent Post - Child Records &#8212; Flask-RESTful-DBBase 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -15,8 +15,8 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Resource Classes" href="resource-classes.html" />
-    <link rel="prev" title="Simple Owner App Revised" href="app-owner-v2.html" />
+    <link rel="next" title="Model Collection Resources" href="model-collection-resource.html" />
+    <link rel="prev" title="Model Resources" href="model-resource.html" />
      
     
     <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -32,12 +32,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="resource-classes.html" title="Resource Classes"
+          <a href="model-collection-resource.html" title="Model Collection Resources"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="app-owner-v2.html" title="Simple Owner App Revised"
+          <a href="model-resource.html" title="Model Resources"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.1.11 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -51,9 +51,9 @@
 <p>Since some kinds of data by their very nature are really a set consisting of a parent record and a list of child records. In this section we will look at an example for efficiently handling that.</p>
 <p>Our example is that of an invoice. Suppose an invoice is created with 20 items. If we follow a purely REST approach, we would create a parent invoice followed by another 20 trips to the database for each item. Or, we could implement a collection POST resource for the invoice items and only have two trips. In that case, one trip for the parent and one for the set of invoice items.</p>
 <p>With Flask-RESTful-DBBase, we will do it in one trip in the following example.</p>
-<p>As before the code for this example is found in the examples section as</p>
+<p>As before, the code for this example is found in the examples section as</p>
 <div class="default docutils container">
-<p>invoice_app &lt;<a class="reference external" href="https://sidorof.github.io/flask-restful-dbbase/examples/invoice_app.py">https://sidorof.github.io/flask-restful-dbbase/examples/invoice_app.py</a>&gt;</p>
+<p>invoice_app &lt;<a class="reference external" href="https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/invoice_app.py">https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/invoice_app.py</a>&gt;</p>
 </div>
 <div class="section" id="create-the-database-models">
 <h2>Create the database models<a class="headerlink" href="#create-the-database-models" title="Permalink to this headline">¶</a></h2>
@@ -401,6 +401,7 @@ curl http://localhost:5000/meta/invoices/single?method<span class="o">=</span>po
 <li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-resource.html">Model Resources</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Parent Post - Child Records</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#create-the-database-models">Create the database models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-the-invoice-resource">Create the Invoice Resource</a></li>
@@ -415,26 +416,29 @@ curl http://localhost:5000/meta/invoices/single?method<span class="o">=</span>po
 <li class="toctree-l2"><a class="reference internal" href="#caveat">Caveat</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="resource-classes.html">Resource Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id13">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id15">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id17">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id13">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="app-owner-v2.html" title="previous chapter">Simple Owner App Revised</a></li>
-      <li>Next: <a href="resource-classes.html" title="next chapter">Resource Classes</a></li>
+      <li>Previous: <a href="model-resource.html" title="previous chapter">Model Resources</a></li>
+      <li>Next: <a href="model-collection-resource.html" title="next chapter">Model Collection Resources</a></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">

@@ -1,0 +1,17 @@
+.. code-block:: bash 
+    
+    # user receives an email with a URL that has
+    # this completely random code
+    curl http://localhost:5000/confirm?ImlhbV91c2VyQGV4YW1wbGUuY29tIg.XwJCuw.kEmfntt9mWYjzXb2SRP3uM2Ompk \
+        -H "Content-Type: application/json"
+    
+..
+
+.. code-block:: json 
+
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+    <title>404 Not Found</title>
+    <h1>Not Found</h1>
+    <p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+..
