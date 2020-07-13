@@ -49,31 +49,37 @@ def create_resource(
     """
     params = {}
     if model_class is not None:
-        params['model_class'] = model_class
+        params["model_class"] = model_class
     if url_prefix is not None:
-        params['url_prefix'] = url_prefix
+        params["url_prefix"] = url_prefix
     if url_prefix is not None:
-        params['url_name'] = url_name
+        params["url_name"] = url_name
 
-    class_dict = resource_class.__dict__.copy()
-
+    # accumulate changes from subclassing
+    # follow subclassing order
+    class_dict = {}
+    idx = resource_class.mro().index(DBBaseResource)
+    for i in range(idx - 1, -1, -1):
+        cls = resource_class.mro()[i]
+        class_dict.update(cls.__dict__)
     if methods is not None:
         # create stop list
-        stop_method_list = ['get', 'post', 'put', 'patch', 'delete']
+        stop_method_list = ["get", "post", "put", "patch", "delete"]
         for method in methods:
             if method in stop_method_list:
                 stop_method_list.remove(method)
 
         for method in stop_method_list:
-            class_dict.pop(method)
-            class_dict.pop(f"process_{method}_input")
-
-        class_dict['methods'] = set([method.upper() for method in methods])
+            del class_dict[method]
+            del class_dict[f"process_{method}_input"]
+        class_dict["methods"] = set([method.upper() for method in methods])
 
     class_dict.update(params)
+
     if class_vars is not None:
         class_dict.update(class_vars)
-    new_class = type(name, (resource_class,), class_dict,)
+
+    new_class = type(name, (DBBaseResource,), class_dict,)
 
     # required model check
     if new_class.model_class is None:
