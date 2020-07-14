@@ -15,8 +15,8 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Parent Post - Child Records" href="parent-child-posting.html" />
-    <link rel="prev" title="Simple Owner App Revised" href="app-owner-v2.html" />
+    <link rel="next" title="Model Collection Resources" href="model-collection-resource.html" />
+    <link rel="prev" title="Resource Classes" href="resource-classes.html" />
      
     
     <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -35,12 +35,13 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="parent-child-posting.html" title="Parent Post - Child Records"
+          <a href="model-collection-resource.html" title="Model Collection Resources"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="app-owner-v2.html" title="Simple Owner App Revised"
+          <a href="resource-classes.html" title="Resource Classes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="resource-classes.html" accesskey="U">Resource Classes</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -351,32 +352,30 @@ after_commit</p></td>
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="app-simple.html">A First Look</a></li>
-<li class="toctree-l1"><a class="reference internal" href="app-owner-v1.html">Simple Owner App</a></li>
-<li class="toctree-l1"><a class="reference internal" href="app-owner-v2.html">Simple Owner App Revised</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Resources</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#class-variables">Class Variables</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#set-up-variables">Set Up Variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#date-related-variables">Date-Related Variables</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#serialization">Serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#model-resource-serial-fields">Model Resource Serial Fields</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="resource-classes.html">Resource Classes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Model Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#class-variables">Class Variables</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-up-variables">Set Up Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#date-related-variables">Date-Related Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#serialization">Serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-resource-serial-fields">Model Resource Serial Fields</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#model-resource-modifications">Model Resource Modifications</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#process-input-functions">Process Input Functions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#input-variables">Input Variables</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-resource-modifications">Model Resource Modifications</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#process-input-functions">Process Input Functions</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#input-variables">Input Variables</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#returns">Returns</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adjustments-before-or-after-commits">Adjustments Before or After Commits</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="parent-child-posting.html">Parent Post - Child Records</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="limited-method-resources.html">Limited Method Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model-collection-resource.html">Model Collection Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meta-resource.html">Meta Resources</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
@@ -395,8 +394,10 @@ after_commit</p></td>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="app-owner-v2.html" title="previous chapter">Simple Owner App Revised</a></li>
-      <li>Next: <a href="parent-child-posting.html" title="next chapter">Parent Post - Child Records</a></li>
+  <li><a href="resource-classes.html">Resource Classes</a><ul>
+      <li>Previous: <a href="resource-classes.html" title="previous chapter">Resource Classes</a></li>
+      <li>Next: <a href="model-collection-resource.html" title="next chapter">Model Collection Resources</a></li>
+  </ul></li>
   </ul></li>
 </ul>
   <div role="note" aria-label="source link">

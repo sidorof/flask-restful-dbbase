@@ -37,8 +37,14 @@ The `create_resource` function can create a resource with a custom configuration
 Suggested Uses
 --------------
 * **/register:** POST using a User class model. A confirmation email is sent. A message is returned with instructions in place of the posted user data.
-* **/sign-in:** POST using a User class model. User preferences information with JWT tokens is returned.
 * A command is run that uses deserialization / validation services but goes on to execute the command.
+
+.. note::
+
+    One thing to consider regarding these alterations is the degree of change wanted from a REST format. For example, a POST method with REST excludes posting an existing data item. Flask-RESTful-DBBase automatically verifies that there is no existing record as a benefit.
+
+    If that is not suitable for the application, another alternative would be to create a resource from the proto resource, DBBaseResource. With it are functions for screening data, etc., and you could create your own POST method.
+
 
 
 Example

@@ -4094,9 +4094,13 @@ curl http://localhost:5000/meta/invoices/single?method<span class="o">=</span>po
 <h3>Suggested Uses<a class="headerlink" href="#suggested-uses" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><strong>/register:</strong> POST using a User class model. A confirmation email is sent. A message is returned with instructions in place of the posted user data.</p></li>
-<li><p><strong>/sign-in:</strong> POST using a User class model. User preferences information with JWT tokens is returned.</p></li>
 <li><p>A command is run that uses deserialization / validation services but goes on to execute the command.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One thing to consider regarding these alterations is the degree of change wanted from a REST format. For example, a POST method with REST excludes posting an existing data item. Flask-RESTful-DBBase automatically verifies that there is no existing record as a benefit.</p>
+<p>If that is not suitable for the application, another alternative would be to create a resource from the proto resource, DBBaseResource. With it are functions for screening data, etc., and you could create your own POST method.</p>
+</div>
 </div>
 <div class="section" id="example">
 <h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
