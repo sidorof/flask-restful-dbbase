@@ -4,6 +4,8 @@ Meta Resources
 
 Meta resources can help document API model resources, covering input variables, output variables and a thorough description of the underlying model that informs the resource.
 
+Filtering for meta documents is available as well.
+
 Creation
 --------
 
@@ -38,5 +40,43 @@ GET Method
 ----------
 The meta resource just uses a GET method for the source of information. Because of the volume of information produced, there is an option for limiting the query to a single method, such as:
 
-    `/meta/books/single?method=post`
+.. code-block:: python
 
+    /meta/books/single?method=post
+
+..
+Filtering
+---------
+By adding a filter to the query, the information can be
+sliced back to a manageable level. This is particularly useful for using on an adhoc basis.
+
+.. code-block:: python
+
+    /meta/products/single?method=get&filter=table
+
+..
+
+The above returns the contents of the GET method along with
+details of the underlying table.
+
+.. code-block:: python
+
+    /meta/products/single?method=get&filter=table
+
+..
+
+The request below returns just the inputs available for post.
+
+.. code-block:: python
+
+    /meta/products/single?method=post&filter=input
+
+..
+
+The request below returns the inputs plus the filenames associated with method decorators available for post.
+
+.. code-block:: python
+
+    /meta/products/single?method=post&filter=input,requirements
+
+..
