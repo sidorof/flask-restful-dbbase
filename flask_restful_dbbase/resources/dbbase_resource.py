@@ -328,7 +328,7 @@ class DBBaseResource(Resource):
         if portion:
             for key in method_dict.keys():
                 if key not in portion:
-                    del mmethod_dict[key]
+                    del method_dict[key]
 
         return method_dict
 
