@@ -46,17 +46,24 @@ class MetaResource(Resource):
         Args:
             method: (str) : can specify only a specific method of the resource
             to be documented, such as get or put.
+            filter: (str) : the details of the table
 
         Returns:
             meta: (json) : The documentation
         """
         method = request.values.get("method", None)
+        portion = request.values.get("filter", None)
+        if portion is not None:
+            portion = [item.strip() in portion.split(',')]
 
         if method is not None:
             method = method.lower()
 
         try:
-            return self.resource_class.get_meta(method), 200
+            return (
+                self.resource_class.get_meta(method, portion),
+                200
+            )
         except Exception as err:
             msg = err.args[0]
 

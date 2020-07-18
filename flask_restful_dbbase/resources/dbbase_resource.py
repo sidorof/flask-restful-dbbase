@@ -221,7 +221,7 @@ class DBBaseResource(Resource):
         return urls
 
     @classmethod
-    def get_meta(cls, method=None):
+    def get_meta(cls, method=None, portion=None):
         """
         This function returns the settings for the resource.
 
@@ -249,21 +249,18 @@ class DBBaseResource(Resource):
             # this is done to force order without OrderedDict
             for method in method_list:
                 if hasattr(cls, method) and getattr(cls, method) is not None:
-                    doc["methods"][method] = cls._meta_method(method)
+                    doc["methods"][method] = cls._meta_method(method, portion)
             doc["table"] = db.doc_table(cls.model_class)
 
         else:
             # just the method
-            # if method not in method_list:
-            # methods = str(cls.model_class.methods).lower()
-            # raise ValueError(
-            # f'Support methods for this resource are: {methods}')
             if hasattr(cls, method):
-                doc = {"method": {method: cls._meta_method(method)}}
+                doc = {"method": {method: cls._meta_method(method, portion)}}
             else:
                 raise ValueError(
                     f"Method '{method}' is not found for this resource"
                 )
+
         return doc
 
     @classmethod
@@ -275,12 +272,14 @@ class DBBaseResource(Resource):
         return hasattr(cls, "max_page_size")
 
     @classmethod
-    def _meta_method(cls, method):
+    def _meta_method(cls, method, portion):
         """
         This function builds the dict meta data object for a specific method.
 
         Args:
             method: (str) : The method to be documented.
+            portion: (str) : If only a poriion, such as inputs or
+            response is needed.
         """
         db = cls.model_class.db
 
@@ -325,6 +324,12 @@ class DBBaseResource(Resource):
             )
 
         method_dict["responses"] = cls._meta_method_response(method)
+
+        if portion:
+            for key in method_dict.keys():
+                if key not in portion:
+                    del mmethod_dict[key]
+
         return method_dict
 
     @classmethod
