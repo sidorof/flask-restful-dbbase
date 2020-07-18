@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.CollectionModelResource.get_meta &#8212; Flask-RESTful-DBBase 0.2.0 documentation</title>
+    <title>flask_restful_dbbase.resources.CollectionModelResource.get_meta &#8212; Flask-RESTful-DBBase 0.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.2.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.2.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -45,11 +45,17 @@
 <h1>flask_restful_dbbase.resources.CollectionModelResource.get_meta<a class="headerlink" href="#flask-restful-dbbase-resources-collectionmodelresource-get-meta" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="flask_restful_dbbase.resources.CollectionModelResource.get_meta">
-<em class="property">classmethod </em><code class="sig-prename descclassname">CollectionModelResource.</code><code class="sig-name descname">get_meta</code><span class="sig-paren">(</span><em class="sig-param">method=None</em><span class="sig-paren">)</span><a class="headerlink" href="#flask_restful_dbbase.resources.CollectionModelResource.get_meta" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-prename descclassname">CollectionModelResource.</code><code class="sig-name descname">get_meta</code><span class="sig-paren">(</span><em class="sig-param">method=None</em>, <em class="sig-param">non_method_portions=None</em>, <em class="sig-param">portion=None</em><span class="sig-paren">)</span><a class="headerlink" href="#flask_restful_dbbase.resources.CollectionModelResource.get_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the settings for the resource.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>method</strong> – (str : None) : choices are get/post/put/patch/delete.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – (str : None) : choices are get/post/put/patch/delete.</p></li>
+<li><p><strong>non_method_portions</strong> – (list : None) : a list of non-method
+elements to be included</p></li>
+<li><p><strong>portion</strong> – (list : None) : a list of method related elements to
+be included</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><em>meta_data (dict)</em> – A dict with the resource characteristics.
@@ -81,16 +87,17 @@ interacting with an API.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id2">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id4">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id6">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id8">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id10">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id13">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id16">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id18">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id20">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id2">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id4">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id6">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id8">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id10">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id12">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id15">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id18">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id20">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id22">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

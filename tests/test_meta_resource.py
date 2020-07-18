@@ -685,6 +685,221 @@ class TestMetaModelResource(unittest.TestCase):
                 },
             )
 
+            # with non-method elements -- table only
+            res = client.get(
+                "/meta/products/single?filter=table", headers=self.headers
+            )
+
+            self.assertEqual(res.status_code, 200)
+
+            self.assertDictEqual(
+                res.get_json(),
+                {
+                    "table": {
+                        "Product": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "maxLength": 200,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "vendor_id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "vendor_part_number": {
+                                    "type": "string",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "last_ordered": {
+                                    "type": "date-time",
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "active": {
+                                    "type": "integer",
+                                    "format": "int8",
+                                    "nullable": True,
+                                    "default": {
+                                        "for_update": False,
+                                        "arg": False,
+                                    },
+                                    "info": {},
+                                },
+                            },
+                            "xml": "Product",
+                        }
+                    }
+                },
+            )
+
+            # with non-method elements with method
+            res = client.get(
+                "/meta/products/single?method=get&filter=table",
+                headers=self.headers,
+            )
+
+            self.assertEqual(res.status_code, 200)
+
+            self.assertDictEqual(
+                res.get_json(),
+                {
+                    "method": {
+                        "get": {
+                            "url": "/products/<int:id>",
+                            "requirements": [],
+                            "input": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                }
+                            },
+                            "responses": {
+                                "fields": {
+                                    "vendorPartNumber": {
+                                        "type": "string",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "vendorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "active": {
+                                        "type": "integer",
+                                        "format": "int8",
+                                        "nullable": True,
+                                        "default": {
+                                            "for_update": False,
+                                            "arg": False,
+                                        },
+                                        "info": {},
+                                    },
+                                    "lastOrdered": {
+                                        "type": "date-time",
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "maxLength": 200,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    "table": {
+                        "Product": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "maxLength": 50,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "maxLength": 200,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "vendor_id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "vendor_part_number": {
+                                    "type": "string",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "last_ordered": {
+                                    "type": "date-time",
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "active": {
+                                    "type": "integer",
+                                    "format": "int8",
+                                    "nullable": True,
+                                    "default": {
+                                        "for_update": False,
+                                        "arg": False,
+                                    },
+                                    "info": {},
+                                },
+                            },
+                            "xml": "Product",
+                        }
+                    },
+                },
+            )
+
+            # with non-method elements --
+            #   model_class, url_prefix, url
+            # url is both method and non-method, url more specific
+            #   for method
+            res = client.get(
+                "/meta/products/single?method=get&filter=model_class, url_prefix, url",
+                headers=self.headers,
+            )
+            self.assertEqual(res.status_code, 200)
+            self.assertDictEqual(
+                res.get_json(),
+                {
+                    "method": {"get": {"url": "/products/<int:id>"}},
+                    "model_class": "Product",
+                    "url_prefix": "/",
+                },
+            )
+
     def test_get_with_bad_method(self):
 
         with self.app.test_client() as client:

@@ -221,12 +221,16 @@ class DBBaseResource(Resource):
         return urls
 
     @classmethod
-    def get_meta(cls, method=None):
+    def get_meta(cls, method=None, non_method_portions=None, portion=None):
         """
         This function returns the settings for the resource.
 
         Args:
             method: (str : None) : choices are get/post/put/patch/delete.
+            non_method_portions: (list : None) : a list of non-method
+                elements to be included
+            portion: (list : None) : a list of method related elements to
+                be included
 
         Returns:
             meta_data (dict) : A dict with the resource characteristics.
@@ -239,31 +243,53 @@ class DBBaseResource(Resource):
         """
         db = cls.model_class.db
         method_list = ["get", "post", "put", "patch", "delete"]
+
         if method is None:
-            doc = {
-                "model_class": cls.model_class._class(),
-                "url_prefix": cls.url_prefix,
-                "url": cls.create_url(),
-            }
+            doc = {}
+            doc["model_class"] = cls.model_class._class()
+            doc["url_prefix"] = cls.url_prefix
+            doc["url"] = cls.create_url()
+
             doc["methods"] = {}
             # this is done to force order without OrderedDict
-            for method in method_list:
-                if hasattr(cls, method) and getattr(cls, method) is not None:
-                    doc["methods"][method] = cls._meta_method(method)
-            doc["table"] = db.doc_table(cls.model_class)
+            for _method in method_list:
+                if hasattr(cls, _method) and getattr(cls, _method) is not None:
+                    doc["methods"][_method] = cls._meta_method(
+                        _method, portion
+                    )
+            if non_method_portions is not None:
+                if "table" in non_method_portions:
+                    doc["table"] = db.doc_table(cls.model_class)
+            else:
+                doc["table"] = db.doc_table(cls.model_class)
 
         else:
             # just the method
-            # if method not in method_list:
-            # methods = str(cls.model_class.methods).lower()
-            # raise ValueError(
-            # f'Support methods for this resource are: {methods}')
             if hasattr(cls, method):
-                doc = {"method": {method: cls._meta_method(method)}}
+                doc = {"method": {method: cls._meta_method(method, portion)}}
             else:
                 raise ValueError(
                     f"Method '{method}' is not found for this resource"
                 )
+
+            # add other portions only if in non_method_portions
+            if non_method_portions:
+                # add in individually
+                if "model_class" in non_method_portions:
+                    doc["model_class"] = cls.model_class._class()
+                if "url_prefix" in non_method_portions:
+                    doc["url_prefix"] = cls.url_prefix
+
+                if "table" in non_method_portions:
+                    doc["table"] = db.doc_table(cls.model_class)
+
+        if method is None and non_method_portions is not None:
+            new_dict = {}
+            for part in non_method_portions:
+                new_dict[part] = doc[part]
+
+            doc = new_dict
+
         return doc
 
     @classmethod
@@ -275,12 +301,14 @@ class DBBaseResource(Resource):
         return hasattr(cls, "max_page_size")
 
     @classmethod
-    def _meta_method(cls, method):
+    def _meta_method(cls, method, portion):
         """
         This function builds the dict meta data object for a specific method.
 
         Args:
             method: (str) : The method to be documented.
+            portion: (str) : If only a poriion, such as inputs or
+            response is needed.
         """
         db = cls.model_class.db
 
@@ -325,6 +353,14 @@ class DBBaseResource(Resource):
             )
 
         method_dict["responses"] = cls._meta_method_response(method)
+
+        if portion:
+            new_dict = {}
+            for key in method_dict.keys():
+                if key in portion:
+                    new_dict[key] = method_dict[key]
+            method_dict = new_dict
+
         return method_dict
 
     @classmethod
