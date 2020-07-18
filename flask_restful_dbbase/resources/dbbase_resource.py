@@ -254,9 +254,11 @@ class DBBaseResource(Resource):
             # this is done to force order without OrderedDict
             for _method in method_list:
                 if hasattr(cls, _method) and getattr(cls, _method) is not None:
-                    doc["methods"][_method] = cls._meta_method(_method, portion)
+                    doc["methods"][_method] = cls._meta_method(
+                        _method, portion
+                    )
             if non_method_portions is not None:
-                if 'table' in non_method_portions:
+                if "table" in non_method_portions:
                     doc["table"] = db.doc_table(cls.model_class)
             else:
                 doc["table"] = db.doc_table(cls.model_class)
@@ -273,12 +275,12 @@ class DBBaseResource(Resource):
             # add other portions only if in non_method_portions
             if non_method_portions:
                 # add in individually
-                if 'model_class' in non_method_portions:
+                if "model_class" in non_method_portions:
                     doc["model_class"] = cls.model_class._class()
-                if 'url_prefix' in non_method_portions:
+                if "url_prefix" in non_method_portions:
                     doc["url_prefix"] = cls.url_prefix
 
-                if 'table' in non_method_portions:
+                if "table" in non_method_portions:
                     doc["table"] = db.doc_table(cls.model_class)
 
         if method is None and non_method_portions is not None:

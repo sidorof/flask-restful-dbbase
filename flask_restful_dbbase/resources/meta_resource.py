@@ -56,7 +56,11 @@ class MetaResource(Resource):
 
         # split in method filtering
         non_method_elements = [
-            "model_class", "url_prefix", "url_name", "table"]
+            "model_class",
+            "url_prefix",
+            "url_name",
+            "table",
+        ]
 
         non_method_portions = None
         if portion is not None:
@@ -73,8 +77,9 @@ class MetaResource(Resource):
         try:
             return (
                 self.resource_class.get_meta(
-                    method, non_method_portions, portion),
-                200
+                    method, non_method_portions, portion
+                ),
+                200,
             )
 
         except Exception as err:
