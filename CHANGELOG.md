@@ -1,3 +1,21 @@
+## (0.2.1) -
+
+### Added
+* Add filtering for meta information. Meta information is very thorough. If the point of the meta information is to be able
+to look up a section to see what happens in that spot, then being to filter the meta info cuts down significantly on the volume.
+
+    `/meta/products/single?method=get&filter=table`
+
+The above returns the contents of the get method along with
+details of the underlying table.
+
+    `/meta/products/single?method=get&filter=table`
+
+The request below returns just the inputs available for post.
+
+    `/meta/products/single?method=post&filter=input`
+
+
 ## (0.2.0) -
 This version breaks previous before / after commmit functions in ModelResource. By requiring a status flag as output from the functions it opens resources to be more easily used beyond simply REST functions.
 
