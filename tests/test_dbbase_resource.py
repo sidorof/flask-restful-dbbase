@@ -862,7 +862,7 @@ def test__meta_method():
         def get(self):
             pass
 
-    assert BookResource._meta_method("get") == {
+    assert BookResource._meta_method("get", portion=None) == {
         "url": "/books/<int:id>",
         "requirements": ["my_decorator"],
         "input": {
@@ -941,7 +941,7 @@ def test__meta_method():
         },
     }
 
-    assert BookResource._meta_method("post") == {
+    assert BookResource._meta_method("post", portion=None) == {
         "requirements": [],
         "input": {
             "id": {
@@ -1004,7 +1004,7 @@ def test__meta_method():
 
     assert AuthorCollection.is_collection() is True
 
-    assert AuthorCollection._meta_method("get") == {
+    assert AuthorCollection._meta_method("get", portion=None) == {
         "url": "/authors",
         "requirements": [],
         "query_string": {
@@ -1115,7 +1115,8 @@ def test__meta_method_muliple_keys():
         def get(self):
             pass
 
-    assert MultKeyResource._meta_method("get") == {
+    assert MultKeyResource._meta_method(
+        "get", portion=None) == {
         "url": "/mult-keys/<string:key1><int:key2>",
         "requirements": [],
         "input": [
@@ -1155,6 +1156,31 @@ def test__meta_method_muliple_keys():
                 },
             }
         },
+    }
+
+    # test portion
+    assert MultKeyResource._meta_method(
+        "get", portion=["input", "requirements"]) == {
+        "requirements": [],
+        "input": [
+            {
+                "key1": {
+                    "type": "string",
+                    "primary_key": True,
+                    "nullable": False,
+                    "info": {},
+                }
+            },
+            {
+                "key2": {
+                    "type": "integer",
+                    "format": "int32",
+                    "primary_key": True,
+                    "nullable": False,
+                    "info": {},
+                }
+            },
+        ],
     }
 
 
