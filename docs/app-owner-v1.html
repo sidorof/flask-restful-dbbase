@@ -64,6 +64,15 @@
 <li><p>altering the flow of processing</p></li>
 <li><p>changing the response returned to the user</p></li>
 </ul>
+<p>We will subclass the ModelResource and CollectionResource and add a few entries to limit access to the right parties. With new subclassed resources we will have a basis for creating a set of resources that enforce privacy of the users information.</p>
+<p>Our result will be clean code, such as the following;</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OrderResource</span><span class="p">(</span><span class="n">OwnerResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
+
+<span class="k">class</span> <span class="nc">OrderCollection</span><span class="p">(</span><span class="n">OwnerCollectionResource</span><span class="p">):</span>
+    <span class="n">model_class</span> <span class="o">=</span> <span class="n">Order</span>
+</pre></div>
+</div>
 <p>As before, the code for this example is found in the examples section as</p>
 <div class="default docutils container">
 <p>owner_app_v1 &lt;<a class="reference external" href="https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/owner_app_v1.py">https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/owner_app_v1.py</a>&gt;</p>

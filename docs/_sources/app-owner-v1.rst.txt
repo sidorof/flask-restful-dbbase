@@ -30,6 +30,18 @@ We will control
 - altering the flow of processing
 - changing the response returned to the user
 
+We will subclass the ModelResource and CollectionResource and add a few entries to limit access to the right parties. With new subclassed resources we will have a basis for creating a set of resources that enforce privacy of the users information.
+
+Our result will be clean code, such as the following;
+
+.. code-block:: python
+
+    class OrderResource(OwnerResource):
+        model_class = Order
+
+    class OrderCollection(OwnerCollectionResource):
+        model_class = Order
+..
 
 As before, the code for this example is found in the examples section as
 
