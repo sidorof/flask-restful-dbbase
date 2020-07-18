@@ -54,7 +54,7 @@ class MetaResource(Resource):
         method = request.values.get("method", None)
         portion = request.values.get("filter", None)
         if portion is not None:
-            portion = [item.strip() in portion.split(',')]
+            portion = [item.strip() for item in portion.split(',')]
 
         if method is not None:
             method = method.lower()
