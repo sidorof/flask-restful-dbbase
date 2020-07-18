@@ -54,16 +54,13 @@ class MetaResource(Resource):
         method = request.values.get("method", None)
         portion = request.values.get("filter", None)
         if portion is not None:
-            portion = [item.strip() for item in portion.split(',')]
+            portion = [item.strip() for item in portion.split(",")]
 
         if method is not None:
             method = method.lower()
 
         try:
-            return (
-                self.resource_class.get_meta(method, portion),
-                200
-            )
+            return (self.resource_class.get_meta(method, portion), 200)
         except Exception as err:
             msg = err.args[0]
 

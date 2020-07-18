@@ -326,9 +326,11 @@ class DBBaseResource(Resource):
         method_dict["responses"] = cls._meta_method_response(method)
 
         if portion:
+            new_dict = {}
             for key in method_dict.keys():
-                if key not in portion:
-                    del method_dict[key]
+                if key in portion:
+                    new_dict[key] = method_dict[key]
+            method_dict = new_dict
 
         return method_dict
 
