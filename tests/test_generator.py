@@ -2,7 +2,6 @@
 import pytest
 from dbbase import DB
 from flask_restful_dbbase.resources import (
-    DBBaseResource,
     ModelResource,
     CollectionModelResource,
 )
