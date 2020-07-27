@@ -243,11 +243,10 @@ class DBBaseResource(Resource):
         """
         db = cls.model_class.db
         method_list = ["get", "post", "put", "patch", "delete"]
-
         if method is None:
             doc = {}
-            doc["model_class"] = cls.model_class._class()
-            doc["url_prefix"] = cls.url_prefix
+            doc["modelClass"] = cls.model_class._class()
+            doc["urlPrefix"] = cls.url_prefix
             doc["url"] = cls.create_url()
 
             doc["methods"] = {}
@@ -275,10 +274,10 @@ class DBBaseResource(Resource):
             # add other portions only if in non_method_portions
             if non_method_portions:
                 # add in individually
-                if "model_class" in non_method_portions:
-                    doc["model_class"] = cls.model_class._class()
-                if "url_prefix" in non_method_portions:
-                    doc["url_prefix"] = cls.url_prefix
+                if "modelClass" in non_method_portions:
+                    doc["modelClass"] = cls.model_class._class()
+                if "urlPrefix" in non_method_portions:
+                    doc["urlPrefix"] = cls.url_prefix
 
                 if "table" in non_method_portions:
                     doc["table"] = db.doc_table(cls.model_class)

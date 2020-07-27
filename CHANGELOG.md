@@ -1,3 +1,10 @@
+## (0.2.2) -
+
+### Changed
++   Changed meta information `url_part` to simply `url`.
+*   Changed flag for creating a url for meta information for a collection. It previously uses issubclass to identify a collection model resource. However, that fails when using the `generator.create_resource` function due to a reduced mro stack. It now keys off the `is_collection` function.
+*   Changed meta information keys to better conform to JavaScript standards, since it is more likely to be used in that environment. `url_prefix` -> `urlPrefix`, etc.
+
 ## (0.2.1) -
 
 ### Added

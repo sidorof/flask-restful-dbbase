@@ -8,7 +8,7 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
         "message": "The user id does not match the owner id"

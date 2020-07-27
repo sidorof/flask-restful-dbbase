@@ -575,8 +575,8 @@ def test_get_meta():
             pass
 
     assert BookResource.get_meta() == {
-        "model_class": "Book",
-        "url_prefix": "/",
+        "modelClass": "Book",
+        "urlPrefix": "/",
         "url": "/books",
         "methods": {
             "get": {

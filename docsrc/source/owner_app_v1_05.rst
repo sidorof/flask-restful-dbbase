@@ -7,16 +7,16 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
         "Order": [
             {
+                "id": 1,
+                "orderedAt": "2020-07-26 17:29:54",
                 "description": "to do stuff",
                 "statusId": 0,
-                "ownerId": 1,
-                "orderedAt": "2020-07-06 10:30:33",
-                "id": 1
+                "ownerId": 1
             }
         ]
     }

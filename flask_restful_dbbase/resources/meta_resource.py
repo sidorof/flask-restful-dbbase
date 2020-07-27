@@ -56,9 +56,8 @@ class MetaResource(Resource):
 
         # split in method filtering
         non_method_elements = [
-            "model_class",
-            "url_prefix",
-            "url_name",
+            "modelClass",
+            "urlPrefix",
             "table",
         ]
 
@@ -126,7 +125,7 @@ class MetaResource(Resource):
             # replace root
             resource_url[0] = "/"
 
-            if issubclass(cls.resource_class, CollectionModelResource):
+            if cls.resource_class.is_collection():
                 resource_url.append("collection")
             else:
                 resource_url.append("single")

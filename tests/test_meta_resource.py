@@ -167,8 +167,8 @@ class TestMetaModelResource(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "model_class": "Product",
-                    "url_prefix": "/",
+                    "modelClass": "Product",
+                    "urlPrefix": "/",
                     "url": "/products",
                     "methods": {
                         "get": {
@@ -883,11 +883,11 @@ class TestMetaModelResource(unittest.TestCase):
             )
 
             # with non-method elements --
-            #   model_class, url_prefix, url
+            #   modelClass, urlPrefix, url
             # url is both method and non-method, url more specific
             #   for method
             res = client.get(
-                "/meta/products/single?method=get&filter=model_class, url_prefix, url",
+                "/meta/products/single?method=get&filter=modelClass, urlPrefix, url",
                 headers=self.headers,
             )
             self.assertEqual(res.status_code, 200)
@@ -895,8 +895,8 @@ class TestMetaModelResource(unittest.TestCase):
                 res.get_json(),
                 {
                     "method": {"get": {"url": "/products/<int:id>"}},
-                    "model_class": "Product",
-                    "url_prefix": "/",
+                    "modelClass": "Product",
+                    "urlPrefix": "/",
                 },
             )
 

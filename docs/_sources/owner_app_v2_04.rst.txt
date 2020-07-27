@@ -10,8 +10,8 @@
 .. code-block:: JSON 
 
     {
-        "model_class": "Order",
-        "url_prefix": "/api/v2",
+        "modelClass": "Order",
+        "urlPrefix": "/api/v2",
         "url": "/api/v2/orders",
         "methods": {
             "get": {
@@ -54,19 +54,6 @@
                             "format": "int32",
                             "primary_key": true,
                             "nullable": true,
-                            "info": {}
-                        },
-                        "statusId": {
-                            "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
                             "info": {}
                         },
                         "jobs": {
@@ -126,6 +113,19 @@
                                     }
                                 }
                             }
+                        },
+                        "statusId": {
+                            "type": "integer",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
+                            "info": {}
                         },
                         "description": {
                             "type": "string",
@@ -559,19 +559,6 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "statusId": {
-                            "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
-                            "info": {}
-                        },
                         "jobs": {
                             "readOnly": false,
                             "relationship": {
@@ -629,6 +616,19 @@
                                     }
                                 }
                             }
+                        },
+                        "statusId": {
+                            "type": "integer",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
+                            "info": {}
                         },
                         "description": {
                             "type": "string",
