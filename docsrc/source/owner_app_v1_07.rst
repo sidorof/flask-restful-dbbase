@@ -7,11 +7,11 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
-        "model_class": "Order",
-        "url_prefix": "/",
+        "modelClass": "Order",
+        "urlPrefix": "/",
         "url": "/orders",
         "methods": {
             "get": {
@@ -74,18 +74,6 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "ownerId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
                         "orderedAt": {
                             "type": "date-time",
                             "nullable": true,
@@ -96,6 +84,11 @@
                                 "is_callable": true,
                                 "is_scalar": false
                             },
+                            "info": {}
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "statusId": {
@@ -109,6 +102,13 @@
                                 "is_callable": false,
                                 "is_scalar": true
                             },
+                            "info": {}
+                        },
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
                             "info": {}
                         }
                     }
