@@ -1,3 +1,7 @@
+## (0.2.3) -
+### Changed
+*   Changed key `query_string` to `queryString` in meta info to be more consistent with JavaScript standards for its intended use.
+
 ## (0.2.2) -
 
 ### Changed
