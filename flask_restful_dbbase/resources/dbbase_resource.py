@@ -331,7 +331,7 @@ class DBBaseResource(Resource):
                         and "readOnly" not in col_props
                     ]
                 )
-                method_dict["query_string"] = tmp
+                method_dict["queryString"] = tmp
             else:
                 keys = cls.get_key_names()
                 if len(keys) > 1:
