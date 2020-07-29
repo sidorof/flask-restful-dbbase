@@ -1007,7 +1007,7 @@ def test__meta_method():
     assert AuthorCollection._meta_method("get", portion=None) == {
         "url": "/authors",
         "requirements": [],
-        "query_string": {
+        "queryString": {
             "id": {
                 "type": "integer",
                 "format": "int32",

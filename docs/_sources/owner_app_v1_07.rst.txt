@@ -19,7 +19,7 @@
                 "requirements": [
                     "mock_jwt_required"
                 ],
-                "query_string": {
+                "queryString": {
                     "id": {
                         "type": "integer",
                         "format": "int32",

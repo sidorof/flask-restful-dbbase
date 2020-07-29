@@ -12,34 +12,34 @@
     {
         "Job": [
             {
-                "ownerId": 1,
-                "id": 1,
-                "order": {
-                    "orderedAt": "2020-07-26 17:30:09",
-                    "ownerId": 1,
-                    "id": 1,
-                    "statusId": 0,
-                    "description": "to do different stuff"
-                },
-                "startedAt": "2020-07-27 00:30:09",
-                "statusId": 0,
+                "orderId": 1,
                 "finishedAt": null,
-                "orderId": 1
+                "statusId": 0,
+                "startedAt": "2020-07-29 21:41:59",
+                "order": {
+                    "orderedAt": "2020-07-29 14:41:59",
+                    "statusId": 0,
+                    "description": "to do different stuff",
+                    "ownerId": 1,
+                    "id": 1
+                },
+                "ownerId": 1,
+                "id": 1
             },
             {
-                "ownerId": 1,
-                "id": 2,
-                "order": {
-                    "orderedAt": "2020-07-26 17:30:09",
-                    "ownerId": 1,
-                    "id": 1,
-                    "statusId": 0,
-                    "description": "to do different stuff"
-                },
-                "startedAt": "2020-07-27 00:30:09",
-                "statusId": 0,
+                "orderId": 1,
                 "finishedAt": null,
-                "orderId": 1
+                "statusId": 0,
+                "startedAt": "2020-07-29 21:41:59",
+                "order": {
+                    "orderedAt": "2020-07-29 14:41:59",
+                    "statusId": 0,
+                    "description": "to do different stuff",
+                    "ownerId": 1,
+                    "id": 1
+                },
+                "ownerId": 1,
+                "id": 2
             }
         ]
     }

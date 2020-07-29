@@ -42,18 +42,22 @@
                             },
                             "info": {}
                         },
-                        "ownerId": {
+                        "statusId": {
                             "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "jobs": {
@@ -114,22 +118,18 @@
                                 }
                             }
                         },
-                        "statusId": {
+                        "ownerId": {
                             "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
                             "info": {}
                         }
                     }
@@ -545,18 +545,22 @@
                             },
                             "info": {}
                         },
-                        "ownerId": {
+                        "statusId": {
                             "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "user.id",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
                             "info": {}
                         },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
                             "info": {}
                         },
                         "jobs": {
@@ -617,22 +621,18 @@
                                 }
                             }
                         },
-                        "statusId": {
+                        "ownerId": {
                             "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
                             "info": {}
                         }
                     }
