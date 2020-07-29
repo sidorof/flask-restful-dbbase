@@ -13,10 +13,10 @@
         "Order": [
             {
                 "id": 1,
-                "statusId": 0,
+                "orderedAt": "2020-07-29 14:41:48",
                 "description": "to do stuff",
-                "ownerId": 1,
-                "orderedAt": "2020-07-29 14:30:44"
+                "statusId": 0,
+                "ownerId": 1
             }
         ]
     }

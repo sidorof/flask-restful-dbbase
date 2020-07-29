@@ -73,19 +73,6 @@
                 },
                 "responses": {
                     "fields": {
-                        "userId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
                         "invoiceItems": {
                             "readOnly": false,
                             "relationship": {
@@ -125,9 +112,22 @@
                                 }
                             }
                         },
+                        "userId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "info": {}
+                        },
                         "invoiceDate": {
                             "type": "date",
                             "nullable": false,
+                            "info": {}
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
                             "info": {}
                         }
                     }

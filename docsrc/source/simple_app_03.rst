@@ -12,81 +12,81 @@
         "Book": [
             {
                 "title": "The Cell: A Molecular Approach, 3rd edition",
-                "isbn": "0-87893-214-3",
-                "pubYear": 2004,
-                "id": 1,
                 "author": {
-                    "lastName": "Cooper",
+                    "firstName": "Geoffrey",
                     "id": 1,
-                    "fullName": "Geoffrey Cooper",
-                    "firstName": "Geoffrey"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper"
                 },
-                "authorId": 1
+                "isbn": "0-87893-214-3",
+                "id": 1,
+                "authorId": 1,
+                "pubYear": 2004
             },
             {
                 "title": "The Cell: A Molecular Approach, 4th edition",
-                "isbn": "978-0878932191",
-                "pubYear": 2006,
-                "id": 2,
                 "author": {
-                    "lastName": "Cooper",
+                    "firstName": "Geoffrey",
                     "id": 1,
-                    "fullName": "Geoffrey Cooper",
-                    "firstName": "Geoffrey"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper"
                 },
-                "authorId": 1
+                "isbn": "978-0878932191",
+                "id": 2,
+                "authorId": 1,
+                "pubYear": 2006
             },
             {
                 "title": "The Cell: A Molecular Approach, 7th edition",
-                "isbn": "978-1605352909",
-                "pubYear": 2015,
-                "id": 3,
                 "author": {
-                    "lastName": "Cooper",
+                    "firstName": "Geoffrey",
                     "id": 1,
-                    "fullName": "Geoffrey Cooper",
-                    "firstName": "Geoffrey"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper"
                 },
-                "authorId": 1
+                "isbn": "978-1605352909",
+                "id": 3,
+                "authorId": 1,
+                "pubYear": 2015
             },
             {
                 "title": "The Cell: A Molecular Approach, 9th edition",
-                "isbn": "978-1605357072",
-                "pubYear": 2018,
-                "id": 4,
                 "author": {
-                    "lastName": "Cooper",
+                    "firstName": "Geoffrey",
                     "id": 1,
-                    "fullName": "Geoffrey Cooper",
-                    "firstName": "Geoffrey"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper"
                 },
-                "authorId": 1
+                "isbn": "978-1605357072",
+                "id": 4,
+                "authorId": 1,
+                "pubYear": 2018
             },
             {
                 "title": "Manufacturing Engineering & Technology (7th Edition)",
-                "isbn": "978-0133128741",
-                "pubYear": 2013,
-                "id": 5,
                 "author": {
-                    "lastName": "Kalpakjian",
+                    "firstName": "Serope",
                     "id": 2,
-                    "fullName": "Serope Kalpakjian",
-                    "firstName": "Serope"
+                    "lastName": "Kalpakjian",
+                    "fullName": "Serope Kalpakjian"
                 },
-                "authorId": 2
+                "isbn": "978-0133128741",
+                "id": 5,
+                "authorId": 2,
+                "pubYear": 2013
             },
             {
                 "title": "The Algorithm Design Manual",
-                "isbn": "0-387-94860-0",
-                "pubYear": 1997,
-                "id": 6,
                 "author": {
-                    "lastName": "Skiena",
+                    "firstName": "Steven",
                     "id": 3,
-                    "fullName": "Steven Skiena",
-                    "firstName": "Steven"
+                    "lastName": "Skiena",
+                    "fullName": "Steven Skiena"
                 },
-                "authorId": 3
+                "isbn": "0-387-94860-0",
+                "id": 6,
+                "authorId": 3,
+                "pubYear": 1997
             }
         ]
     }

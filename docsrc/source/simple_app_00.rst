@@ -10,16 +10,16 @@
 
     {
         "title": "The Cell: A Molecular Approach, 3rd edition",
-        "isbn": "0-87893-214-3",
-        "pubYear": 2004,
-        "id": 1,
         "author": {
-            "lastName": "Cooper",
+            "firstName": "Geoffrey",
             "id": 1,
-            "fullName": "Geoffrey Cooper",
-            "firstName": "Geoffrey"
+            "lastName": "Cooper",
+            "fullName": "Geoffrey Cooper"
         },
-        "authorId": 1
+        "isbn": "0-87893-214-3",
+        "id": 1,
+        "authorId": 1,
+        "pubYear": 2004
     }
 
 ..

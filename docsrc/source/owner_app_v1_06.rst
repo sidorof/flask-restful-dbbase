@@ -37,6 +37,23 @@
                             "nullable": true,
                             "info": {}
                         },
+                        "orderedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": "datetime.now",
+                                "is_clause_element": false,
+                                "is_callable": true,
+                                "is_scalar": false
+                            },
+                            "info": {}
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
+                            "info": {}
+                        },
                         "statusId": {
                             "type": "integer",
                             "format": "int8",
@@ -50,28 +67,11 @@
                             },
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
                         "ownerId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": false,
                             "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "orderedAt": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": "datetime.now",
-                                "is_clause_element": false,
-                                "is_callable": true,
-                                "is_scalar": false
-                            },
                             "info": {}
                         }
                     }
@@ -136,6 +136,23 @@
                             "nullable": true,
                             "info": {}
                         },
+                        "orderedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": "datetime.now",
+                                "is_clause_element": false,
+                                "is_callable": true,
+                                "is_scalar": false
+                            },
+                            "info": {}
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
+                            "info": {}
+                        },
                         "statusId": {
                             "type": "integer",
                             "format": "int8",
@@ -149,28 +166,11 @@
                             },
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
                         "ownerId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": false,
                             "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "orderedAt": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": "datetime.now",
-                                "is_clause_element": false,
-                                "is_callable": true,
-                                "is_scalar": false
-                            },
                             "info": {}
                         }
                     }
@@ -236,6 +236,23 @@
                             "nullable": true,
                             "info": {}
                         },
+                        "orderedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": "datetime.now",
+                                "is_clause_element": false,
+                                "is_callable": true,
+                                "is_scalar": false
+                            },
+                            "info": {}
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
+                            "info": {}
+                        },
                         "statusId": {
                             "type": "integer",
                             "format": "int8",
@@ -249,28 +266,11 @@
                             },
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
                         "ownerId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": false,
                             "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "orderedAt": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": "datetime.now",
-                                "is_clause_element": false,
-                                "is_callable": true,
-                                "is_scalar": false
-                            },
                             "info": {}
                         }
                     }
@@ -336,6 +336,23 @@
                             "nullable": true,
                             "info": {}
                         },
+                        "orderedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": "datetime.now",
+                                "is_clause_element": false,
+                                "is_callable": true,
+                                "is_scalar": false
+                            },
+                            "info": {}
+                        },
+                        "description": {
+                            "type": "string",
+                            "nullable": false,
+                            "info": {}
+                        },
                         "statusId": {
                             "type": "integer",
                             "format": "int8",
@@ -349,28 +366,11 @@
                             },
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
-                            "info": {}
-                        },
                         "ownerId": {
                             "type": "integer",
                             "format": "int32",
                             "nullable": false,
                             "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "orderedAt": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": "datetime.now",
-                                "is_clause_element": false,
-                                "is_callable": true,
-                                "is_scalar": false
-                            },
                             "info": {}
                         }
                     }

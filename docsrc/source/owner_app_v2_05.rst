@@ -37,6 +37,34 @@
                             "foreign_key": "order.id",
                             "info": {}
                         },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "statusId": {
+                            "type": "integer",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
+                            },
+                            "info": {}
+                        },
                         "order": {
                             "readOnly": true,
                             "relationship": {
@@ -97,38 +125,10 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "statusId": {
-                            "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
-                            "info": {}
-                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
                             "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "startedAt": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finishedAt": {
-                            "type": "date-time",
                             "nullable": true,
                             "info": {}
                         }
@@ -199,6 +199,34 @@
                             "foreign_key": "order.id",
                             "info": {}
                         },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "statusId": {
+                            "type": "integer",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
+                            },
+                            "info": {}
+                        },
                         "order": {
                             "readOnly": true,
                             "relationship": {
@@ -259,38 +287,10 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "statusId": {
-                            "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
-                            "info": {}
-                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
                             "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "startedAt": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finishedAt": {
-                            "type": "date-time",
                             "nullable": true,
                             "info": {}
                         }
@@ -362,6 +362,34 @@
                             "foreign_key": "order.id",
                             "info": {}
                         },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "statusId": {
+                            "type": "integer",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
+                            },
+                            "info": {}
+                        },
                         "order": {
                             "readOnly": true,
                             "relationship": {
@@ -422,38 +450,10 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "statusId": {
-                            "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
-                            "info": {}
-                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
                             "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "startedAt": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finishedAt": {
-                            "type": "date-time",
                             "nullable": true,
                             "info": {}
                         }
@@ -525,6 +525,34 @@
                             "foreign_key": "order.id",
                             "info": {}
                         },
+                        "finishedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "info": {}
+                        },
+                        "statusId": {
+                            "type": "integer",
+                            "format": "int8",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": 0,
+                                "is_clause_element": false,
+                                "is_callable": false,
+                                "is_scalar": true
+                            },
+                            "info": {}
+                        },
+                        "startedAt": {
+                            "type": "date-time",
+                            "nullable": false,
+                            "server_default": {
+                                "for_update": false,
+                                "arg": "db.func.now()",
+                                "reflected": false
+                            },
+                            "info": {}
+                        },
                         "order": {
                             "readOnly": true,
                             "relationship": {
@@ -585,38 +613,10 @@
                             "foreign_key": "user.id",
                             "info": {}
                         },
-                        "statusId": {
-                            "type": "integer",
-                            "format": "int8",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": 0,
-                                "is_clause_element": false,
-                                "is_callable": false,
-                                "is_scalar": true
-                            },
-                            "info": {}
-                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
                             "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "startedAt": {
-                            "type": "date-time",
-                            "nullable": false,
-                            "server_default": {
-                                "for_update": false,
-                                "arg": "db.func.now()",
-                                "reflected": false
-                            },
-                            "info": {}
-                        },
-                        "finishedAt": {
-                            "type": "date-time",
                             "nullable": true,
                             "info": {}
                         }
