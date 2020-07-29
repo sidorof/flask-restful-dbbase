@@ -5,7 +5,7 @@
         -H "Content-Type: application/json" \
         -d '{
       "userId": 1,
-      "invoiceDate": "2020-07-05",
+      "invoiceDate": "2020-07-29",
       "invoiceItems": [
         {
           "partCode": "111",
@@ -22,28 +22,28 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
-        "id": 1,
         "userId": 1,
+        "id": 1,
         "invoiceItems": [
             {
-                "units": 1,
-                "invoiceId": 1,
-                "partCode": "111",
                 "id": 1,
-                "unitPrice": 20.0
+                "units": 1,
+                "unitPrice": 20.0,
+                "invoiceId": 1,
+                "partCode": "111"
             },
             {
-                "units": 5,
-                "invoiceId": 1,
-                "partCode": "222",
                 "id": 2,
-                "unitPrice": 15.0
+                "units": 5,
+                "unitPrice": 15.0,
+                "invoiceId": 1,
+                "partCode": "222"
             }
         ],
-        "invoiceDate": "2020-07-05"
+        "invoiceDate": "2020-07-29"
     }
 
 ..

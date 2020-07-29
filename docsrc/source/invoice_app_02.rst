@@ -6,7 +6,7 @@
     
 ..
 
-.. code-block:: json 
+.. code-block:: JSON 
 
     {
         "method": {
@@ -73,6 +73,12 @@
                 },
                 "responses": {
                     "fields": {
+                        "userId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "info": {}
+                        },
                         "id": {
                             "type": "integer",
                             "format": "int32",
@@ -80,18 +86,7 @@
                             "nullable": true,
                             "info": {}
                         },
-                        "user_id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "invoice_date": {
-                            "type": "date",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "invoice_items": {
+                        "invoiceItems": {
                             "readOnly": false,
                             "relationship": {
                                 "type": "list",
@@ -104,14 +99,14 @@
                                         "nullable": true,
                                         "info": {}
                                     },
-                                    "invoice_id": {
+                                    "invoiceId": {
                                         "type": "integer",
                                         "format": "int32",
                                         "nullable": false,
                                         "foreign_key": "invoice.id",
                                         "info": {}
                                     },
-                                    "part_code": {
+                                    "partCode": {
                                         "type": "string",
                                         "nullable": false,
                                         "info": {}
@@ -122,13 +117,18 @@
                                         "nullable": false,
                                         "info": {}
                                     },
-                                    "unit_price": {
+                                    "unitPrice": {
                                         "type": "float",
                                         "nullable": false,
                                         "info": {}
                                     }
                                 }
                             }
+                        },
+                        "invoiceDate": {
+                            "type": "date",
+                            "nullable": false,
+                            "info": {}
                         }
                     }
                 }

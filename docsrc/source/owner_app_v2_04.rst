@@ -30,30 +30,9 @@
                 },
                 "responses": {
                     "fields": {
-                        "orderedAt": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": "datetime.now",
-                                "is_clause_element": false,
-                                "is_callable": true,
-                                "is_scalar": false
-                            },
-                            "info": {}
-                        },
-                        "ownerId": {
-                            "type": "integer",
-                            "format": "int32",
+                        "description": {
+                            "type": "string",
                             "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
                             "info": {}
                         },
                         "jobs": {
@@ -114,6 +93,13 @@
                                 }
                             }
                         },
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
                         "statusId": {
                             "type": "integer",
                             "format": "int8",
@@ -127,9 +113,23 @@
                             },
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
+                        "orderedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": "datetime.now",
+                                "is_clause_element": false,
+                                "is_callable": true,
+                                "is_scalar": false
+                            },
+                            "info": {}
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
                             "info": {}
                         }
                     }
@@ -533,30 +533,9 @@
                 },
                 "responses": {
                     "fields": {
-                        "orderedAt": {
-                            "type": "date-time",
-                            "nullable": true,
-                            "default": {
-                                "for_update": false,
-                                "arg": "datetime.now",
-                                "is_clause_element": false,
-                                "is_callable": true,
-                                "is_scalar": false
-                            },
-                            "info": {}
-                        },
-                        "ownerId": {
-                            "type": "integer",
-                            "format": "int32",
+                        "description": {
+                            "type": "string",
                             "nullable": false,
-                            "foreign_key": "user.id",
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
                             "info": {}
                         },
                         "jobs": {
@@ -617,6 +596,13 @@
                                 }
                             }
                         },
+                        "ownerId": {
+                            "type": "integer",
+                            "format": "int32",
+                            "nullable": false,
+                            "foreign_key": "user.id",
+                            "info": {}
+                        },
                         "statusId": {
                             "type": "integer",
                             "format": "int8",
@@ -630,9 +616,23 @@
                             },
                             "info": {}
                         },
-                        "description": {
-                            "type": "string",
-                            "nullable": false,
+                        "orderedAt": {
+                            "type": "date-time",
+                            "nullable": true,
+                            "default": {
+                                "for_update": false,
+                                "arg": "datetime.now",
+                                "is_clause_element": false,
+                                "is_callable": true,
+                                "is_scalar": false
+                            },
+                            "info": {}
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": true,
+                            "nullable": true,
                             "info": {}
                         }
                     }
