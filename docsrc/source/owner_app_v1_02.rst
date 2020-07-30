@@ -11,11 +11,11 @@
 .. code-block:: JSON 
 
     {
-        "id": 1,
-        "orderedAt": "2020-07-29 14:41:48",
-        "description": "to do stuff",
         "statusId": 0,
-        "ownerId": 1
+        "id": 1,
+        "ownerId": 1,
+        "description": "to do stuff",
+        "orderedAt": "2020-07-30 15:30:02"
     }
 
 ..

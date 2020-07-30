@@ -11,82 +11,82 @@
     {
         "Book": [
             {
-                "title": "The Cell: A Molecular Approach, 3rd edition",
-                "author": {
-                    "firstName": "Geoffrey",
-                    "id": 1,
-                    "lastName": "Cooper",
-                    "fullName": "Geoffrey Cooper"
-                },
-                "isbn": "0-87893-214-3",
+                "pubYear": 2004,
+                "authorId": 1,
                 "id": 1,
-                "authorId": 1,
-                "pubYear": 2004
-            },
-            {
-                "title": "The Cell: A Molecular Approach, 4th edition",
                 "author": {
-                    "firstName": "Geoffrey",
-                    "id": 1,
                     "lastName": "Cooper",
+                    "id": 1,
+                    "firstName": "Geoffrey",
                     "fullName": "Geoffrey Cooper"
                 },
-                "isbn": "978-0878932191",
+                "title": "The Cell: A Molecular Approach, 3rd edition",
+                "isbn": "0-87893-214-3"
+            },
+            {
+                "pubYear": 2006,
+                "authorId": 1,
                 "id": 2,
-                "authorId": 1,
-                "pubYear": 2006
-            },
-            {
-                "title": "The Cell: A Molecular Approach, 7th edition",
                 "author": {
-                    "firstName": "Geoffrey",
-                    "id": 1,
                     "lastName": "Cooper",
+                    "id": 1,
+                    "firstName": "Geoffrey",
                     "fullName": "Geoffrey Cooper"
                 },
-                "isbn": "978-1605352909",
+                "title": "The Cell: A Molecular Approach, 4th edition",
+                "isbn": "978-0878932191"
+            },
+            {
+                "pubYear": 2015,
+                "authorId": 1,
                 "id": 3,
-                "authorId": 1,
-                "pubYear": 2015
-            },
-            {
-                "title": "The Cell: A Molecular Approach, 9th edition",
                 "author": {
-                    "firstName": "Geoffrey",
-                    "id": 1,
                     "lastName": "Cooper",
+                    "id": 1,
+                    "firstName": "Geoffrey",
                     "fullName": "Geoffrey Cooper"
                 },
-                "isbn": "978-1605357072",
-                "id": 4,
-                "authorId": 1,
-                "pubYear": 2018
+                "title": "The Cell: A Molecular Approach, 7th edition",
+                "isbn": "978-1605352909"
             },
             {
-                "title": "Manufacturing Engineering & Technology (7th Edition)",
+                "pubYear": 2018,
+                "authorId": 1,
+                "id": 4,
                 "author": {
-                    "firstName": "Serope",
-                    "id": 2,
+                    "lastName": "Cooper",
+                    "id": 1,
+                    "firstName": "Geoffrey",
+                    "fullName": "Geoffrey Cooper"
+                },
+                "title": "The Cell: A Molecular Approach, 9th edition",
+                "isbn": "978-1605357072"
+            },
+            {
+                "pubYear": 2013,
+                "authorId": 2,
+                "id": 5,
+                "author": {
                     "lastName": "Kalpakjian",
+                    "id": 2,
+                    "firstName": "Serope",
                     "fullName": "Serope Kalpakjian"
                 },
-                "isbn": "978-0133128741",
-                "id": 5,
-                "authorId": 2,
-                "pubYear": 2013
+                "title": "Manufacturing Engineering & Technology (7th Edition)",
+                "isbn": "978-0133128741"
             },
             {
-                "title": "The Algorithm Design Manual",
+                "pubYear": 1997,
+                "authorId": 3,
+                "id": 6,
                 "author": {
-                    "firstName": "Steven",
-                    "id": 3,
                     "lastName": "Skiena",
+                    "id": 3,
+                    "firstName": "Steven",
                     "fullName": "Steven Skiena"
                 },
-                "isbn": "0-387-94860-0",
-                "id": 6,
-                "authorId": 3,
-                "pubYear": 1997
+                "title": "The Algorithm Design Manual",
+                "isbn": "0-387-94860-0"
             }
         ]
     }

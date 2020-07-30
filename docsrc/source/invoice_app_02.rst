@@ -112,14 +112,14 @@
                                 }
                             }
                         },
-                        "userId": {
-                            "type": "integer",
-                            "format": "int32",
+                        "invoiceDate": {
+                            "type": "date",
                             "nullable": false,
                             "info": {}
                         },
-                        "invoiceDate": {
-                            "type": "date",
+                        "userId": {
+                            "type": "integer",
+                            "format": "int32",
                             "nullable": false,
                             "info": {}
                         },
