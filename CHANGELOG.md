@@ -1,3 +1,7 @@
+## (0.2.4) -
+### Changed
+*   More work on query inputs in meta info. Removed extraneous properties from queries. Now it includes only type, format, maxLength, properties needed to understand the kind of data for filtering queries.
+
 ## (0.2.3) -
 ### Changed
 *   Changed key `query_string` to `queryString` in meta info to be more consistent with JavaScript standards for its intended use.

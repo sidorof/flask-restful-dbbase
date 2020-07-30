@@ -1011,21 +1011,14 @@ def test__meta_method():
             "id": {
                 "type": "integer",
                 "format": "int32",
-                "primary_key": True,
-                "nullable": False,
-                "info": {},
             },
             "first_name": {
                 "type": "string",
-                "maxLength": 50,
-                "nullable": False,
-                "info": {},
+                "maxLength": 50
             },
             "last_name": {
                 "type": "string",
-                "maxLength": 50,
-                "nullable": False,
-                "info": {},
+                "maxLength": 50
             },
         },
         "responses": {
