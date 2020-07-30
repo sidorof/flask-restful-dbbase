@@ -323,14 +323,18 @@ class DBBaseResource(Resource):
         if method in ["get", "delete"]:
             if cls.is_collection():
                 obj_params = cls.get_obj_params()
-                tmp = dict(
-                    [
-                        [key, col_props]
-                        for key, col_props in obj_params.items()
-                        if "relationship" not in col_props
+                tmp = {}
+                for key, col_props in obj_params.items():
+                    if (
+                        "relationship" not in col_props
                         and "readOnly" not in col_props
-                    ]
-                )
+                    ):
+                        tmp[key] = {"type": col_props["type"]}
+                    if "format" in col_props:
+                        tmp[key]["format"] = col_props["format"]
+                    if "maxLength" in col_props:
+                        tmp[key]["maxLength"] = col_props["maxLength"]
+
                 method_dict["queryString"] = tmp
             else:
                 keys = cls.get_key_names()
