@@ -7,9 +7,9 @@ limited to only POST.
 from flask import Flask
 from flask_restful import Api
 from flask_restful_dbbase import DBBase
-from flask_restful_dbbase.resources import ModelResource
+from flask_restful_dbbase.resources import ModelResource, MetaResource
 from flask_restful_dbbase.generator import create_resource
-
+from flask_restful_dbbase.utils import MetaDoc
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
@@ -60,8 +60,23 @@ PostOnlyResource = create_resource(
     class_vars={"after_commit": {"post": after_commit},},
 )
 
+# configure meta data to not show the default
+# response associated with a POST.
+meta_doc = MetaDoc(
+    after_commit={"post": "This now returns a custom message"},
+    excludes=["post"],
+)
+PostOnlyResource.meta_doc = meta_doc
+
+
+class PostOnlyMetaResource(MetaResource):
+    resource_class = PostOnlyResource
+
+
 # add the resources
 api.add_resource(PostOnlyResource, *PostOnlyResource.get_urls())
+
+api.add_resource(PostOnlyMetaResource, *PostOnlyMetaResource.get_urls())
 
 
 if __name__ == "__main__":
