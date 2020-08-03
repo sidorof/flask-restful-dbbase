@@ -28,6 +28,7 @@ class MetaResource(Resource):
 
     Both the url_prefix and url_name come into play only upon initial
     configuration.
+
     """
 
     resource_class = None
