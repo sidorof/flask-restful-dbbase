@@ -10,6 +10,8 @@ import inflect
 from flask_restful import Resource
 from dbbase.utils import xlate
 
+from ..utils import MetaDoc
+
 
 class DBBaseResource(Resource):
     """
@@ -89,6 +91,10 @@ class DBBaseResource(Resource):
             status_code = 202
             return job, status_code
 
+    meta_doc: This set of attributes is designed to supplement meta
+    information automatically generated. It uses the MetaDoc class
+    found in utils.
+
     """
 
     model_class = None
@@ -117,6 +123,8 @@ class DBBaseResource(Resource):
     default_sort = None
     requires_parameter = False
     fields = None
+
+    meta_doc = MetaDoc()
 
     def __init__(self):
         if self.model_class is None:
@@ -355,7 +363,21 @@ class DBBaseResource(Resource):
                 column_props=["!readOnly"], to_camel_case=True,
             )
 
-        method_dict["responses"] = cls._meta_method_response(method)
+        # check for extra documentation
+        input_func = f"process_{method}_input"
+        if getattr(cls.meta_doc, input_func):
+            key = xlate(input_func, camel_case=True)
+            method_dict[key] = getattr(cls.meta_doc, input_func)
+
+        if method in cls.meta_doc._before_commit:
+            method_dict["beforeCommit"] = cls.meta_doc._before_commit[method]
+
+        if method in cls.meta_doc._after_commit:
+            method_dict["afterCommit"] = cls.meta_doc._after_commit[method]
+
+        # check excludes
+        if method not in cls.meta_doc.excludes:
+            method_dict["responses"] = cls._meta_method_response(method)
 
         if portion:
             new_dict = {}

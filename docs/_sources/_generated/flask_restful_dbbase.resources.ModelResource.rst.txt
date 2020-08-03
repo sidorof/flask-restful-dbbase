@@ -56,6 +56,7 @@ ModelResource
       ~ModelResource.decorators
       ~ModelResource.default_sort
       ~ModelResource.fields
+      ~ModelResource.meta_doc
       ~ModelResource.method_decorators
       ~ModelResource.methods
       ~ModelResource.model_class

@@ -3,7 +3,7 @@ import pytest
 from datetime import date, datetime
 from dbbase import DB
 from flask_restful_dbbase.resources import DBBaseResource
-
+from flask_restful_dbbase.utils import MetaDoc
 from .models.user_address import User, Address
 
 
@@ -1008,18 +1008,9 @@ def test__meta_method():
         "url": "/authors",
         "requirements": [],
         "queryString": {
-            "id": {
-                "type": "integer",
-                "format": "int32",
-            },
-            "first_name": {
-                "type": "string",
-                "maxLength": 50
-            },
-            "last_name": {
-                "type": "string",
-                "maxLength": 50
-            },
+            "id": {"type": "integer", "format": "int32",},
+            "first_name": {"type": "string", "maxLength": 50},
+            "last_name": {"type": "string", "maxLength": 50},
         },
         "responses": {
             "fields": {
@@ -1343,3 +1334,559 @@ def test__item_adjust():
         "nothing",
         200,
     )
+
+
+def test_input_processing():
+
+    meta_doc = MetaDoc()
+
+    meta_doc.process_get_input = "This doc is for process_get_input."
+    meta_doc.process_post_input = "This doc is for process_get_post."
+    meta_doc.process_put_input = "This doc is for process_put_input."
+    meta_doc.process_patch_input = "This doc is for process_patch_input."
+    meta_doc.process_delete_input = "This doc is for process_delete_input."
+
+    for method in ("post", "put", "patch", "delete"):
+        meta_doc.before_commit(
+            method, f"This doc is for before_commit in {method}"
+        )
+
+    for method in ("post", "put", "patch", "delete"):
+        meta_doc.after_commit(
+            method, f"This doc is for after_commit in {method}"
+        )
+
+    meta_doc.excludes.add("post")
+
+    db10 = DB(config=":memory:")
+    Author, Book, author, book = create_models(db10)
+
+    class TestResource(DBBaseResource):
+        model_class = Author
+
+        def get():
+            pass
+
+        def post():
+            pass
+
+        def put():
+            pass
+
+        def patch():
+            pass
+
+        def delete():
+            pass
+
+    assert isinstance(TestResource.meta_doc, MetaDoc)
+    TestResource.meta_doc = meta_doc
+
+    assert TestResource.get_meta() == {
+        "modelClass": "Author",
+        "urlPrefix": "/",
+        "url": "/authors",
+        "methods": {
+            "get": {
+                "url": "/authors/<int:id>",
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    }
+                },
+                "processGetInput": "This doc is for process_get_input.",
+                "responses": {
+                    "fields": {
+                        "firstName": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": True,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "books": {
+                            "readOnly": False,
+                            "relationship": {
+                                "type": "list",
+                                "entity": "Book",
+                                "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                },
+                            },
+                        },
+                        "fullName": {"readOnly": True},
+                        "lastName": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                    }
+                },
+            },
+            "post": {
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "books": {
+                        "readOnly": False,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Book",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "pubYear": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "authorId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "foreign_key": "author.id",
+                                    "info": {},
+                                },
+                            },
+                        },
+                    },
+                },
+                "processPostInput": "This doc is for process_get_post.",
+                "beforeCommit": "This doc is for before_commit in post",
+                "afterCommit": "This doc is for after_commit in post",
+            },
+            "put": {
+                "url": "/authors/<int:id>",
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "books": {
+                        "readOnly": False,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Book",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "pubYear": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "authorId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "foreign_key": "author.id",
+                                    "info": {},
+                                },
+                            },
+                        },
+                    },
+                },
+                "processPutInput": "This doc is for process_put_input.",
+                "beforeCommit": "This doc is for before_commit in put",
+                "afterCommit": "This doc is for after_commit in put",
+                "responses": {
+                    "fields": {
+                        "firstName": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": True,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "books": {
+                            "readOnly": False,
+                            "relationship": {
+                                "type": "list",
+                                "entity": "Book",
+                                "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                },
+                            },
+                        },
+                        "fullName": {"readOnly": True},
+                        "lastName": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                    }
+                },
+            },
+            "patch": {
+                "url": "/authors/<int:id>",
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "books": {
+                        "readOnly": False,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Book",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "pubYear": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "authorId": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "foreign_key": "author.id",
+                                    "info": {},
+                                },
+                            },
+                        },
+                    },
+                },
+                "processPatchInput": "This doc is for process_patch_input.",
+                "beforeCommit": "This doc is for before_commit in patch",
+                "afterCommit": "This doc is for after_commit in patch",
+                "responses": {
+                    "fields": {
+                        "firstName": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "primary_key": True,
+                            "nullable": False,
+                            "info": {},
+                        },
+                        "books": {
+                            "readOnly": False,
+                            "relationship": {
+                                "type": "list",
+                                "entity": "Book",
+                                "fields": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                },
+                            },
+                        },
+                        "fullName": {"readOnly": True},
+                        "lastName": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "nullable": False,
+                            "info": {},
+                        },
+                    }
+                },
+            },
+            "delete": {
+                "url": "/authors/<int:id>",
+                "requirements": [],
+                "input": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    }
+                },
+                "processDeleteInput": "This doc is for process_delete_input.",
+                "beforeCommit": "This doc is for before_commit in delete",
+                "afterCommit": "This doc is for after_commit in delete",
+                "responses": {},
+            },
+        },
+        "table": {
+            "Author": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": True,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "nullable": False,
+                        "info": {},
+                    },
+                    "full_name": {"readOnly": True},
+                    "books": {
+                        "readOnly": False,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "Book",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": True,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "isbn": {
+                                    "type": "string",
+                                    "maxLength": 20,
+                                    "nullable": True,
+                                    "info": {},
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "maxLength": 100,
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "pub_year": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "info": {},
+                                },
+                                "author_id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": False,
+                                    "foreign_key": "author.id",
+                                    "info": {},
+                                },
+                            },
+                        },
+                    },
+                },
+                "xml": "Author",
+            }
+        },
+    }

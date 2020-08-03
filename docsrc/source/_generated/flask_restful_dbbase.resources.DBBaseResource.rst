@@ -46,6 +46,7 @@ DBBaseResource
       ~DBBaseResource.decorators
       ~DBBaseResource.default_sort
       ~DBBaseResource.fields
+      ~DBBaseResource.meta_doc
       ~DBBaseResource.method_decorators
       ~DBBaseResource.methods
       ~DBBaseResource.model_class

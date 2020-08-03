@@ -59,6 +59,8 @@ As before, the code for this example is found in the examples section as
 
 To give a concrete example, we will create a resource limited to a POST method. The following shows an example of the usual initialization with the exception of the `generator.create_resource` program. This program accepts a source resource. From it `create_resource` will generate a resource in a custom configuration.
 
+There are two additional features imported, `create_resource` and `MetaDoc`.
+
 .. include:: post_only__code_00.rst
 
 The table created is minimal for this example.
@@ -80,9 +82,14 @@ Having defined our exit function, we can now create the resource itself. The fol
 
 .. include:: post_only__code_03.rst
 
-The following shows the addition of the resources and startup of the app.
+Because we have caused the resource to give output outside of a standard REST response, meta information associated with this method does not fit the new reality. To accommodate this, we will use a new feature, the `meta_doc` attribute. This is an instance of the `MetaDoc` found in `utils.py`. It presents a structure to place documentation for functions, and also a flag to exclude the standard responses when it is not relevant.
 
 .. include:: post_only__code_04.rst
+
+
+The following shows the addition of the resources and startup of the app.
+
+.. include:: post_only__code_05.rst
 
 
 Using the API
@@ -92,6 +99,6 @@ We POST data to the URL. Data deserialization and validation takes place as usua
 
 .. include:: post_only_00.rst
 
-Implications
-------------
-Once the output from a resource can be anything, a meta resource for the resource will not know what you have created. There are ways to mitigate that through providing documentation hooks to the modification functions used with the resource, but that has not been implemented.
+Generating the meta information can reflect that the usual output has been replaced with our new message.
+
+.. include:: post_only_01.rst
