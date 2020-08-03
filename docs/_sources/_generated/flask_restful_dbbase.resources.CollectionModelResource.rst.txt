@@ -49,6 +49,7 @@ CollectionModelResource
       ~CollectionModelResource.default_sort
       ~CollectionModelResource.fields
       ~CollectionModelResource.max_page_size
+      ~CollectionModelResource.meta_doc
       ~CollectionModelResource.method_decorators
       ~CollectionModelResource.methods
       ~CollectionModelResource.model_class

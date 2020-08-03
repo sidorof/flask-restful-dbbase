@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.2.4 documentation</title>
+    <title>flask_restful_dbbase.resources.dbbase_resource &#8212; Flask-RESTful-DBBase 0.2.5 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.2.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.2.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -55,6 +55,8 @@
 
 <span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Resource</span>
 <span class="kn">from</span> <span class="nn">dbbase.utils</span> <span class="kn">import</span> <span class="n">xlate</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">MetaDoc</span>
 
 
 <div class="viewcode-block" id="DBBaseResource"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.DBBaseResource">[docs]</a><span class="k">class</span> <span class="nc">DBBaseResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
@@ -135,6 +137,10 @@
 <span class="sd">            status_code = 202</span>
 <span class="sd">            return job, status_code</span>
 
+<span class="sd">    meta_doc: This set of attributes is designed to supplement meta</span>
+<span class="sd">    information automatically generated. It uses the MetaDoc class</span>
+<span class="sd">    found in utils.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_class</span> <span class="o">=</span> <span class="kc">None</span>
@@ -163,6 +169,8 @@
     <span class="n">default_sort</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">requires_parameter</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">fields</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">meta_doc</span> <span class="o">=</span> <span class="n">MetaDoc</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -401,7 +409,21 @@
                 <span class="n">column_props</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;!readOnly&quot;</span><span class="p">],</span> <span class="n">to_camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method_response</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="c1"># check for extra documentation</span>
+        <span class="n">input_func</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;process_</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">_input&quot;</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="p">,</span> <span class="n">input_func</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">input_func</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">method_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="p">,</span> <span class="n">input_func</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="o">.</span><span class="n">_before_commit</span><span class="p">:</span>
+            <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;beforeCommit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="o">.</span><span class="n">_before_commit</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="o">.</span><span class="n">_after_commit</span><span class="p">:</span>
+            <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;afterCommit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="o">.</span><span class="n">_after_commit</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+
+        <span class="c1"># check excludes</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">meta_doc</span><span class="o">.</span><span class="n">excludes</span><span class="p">:</span>
+            <span class="n">method_dict</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_meta_method_response</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">portion</span><span class="p">:</span>
             <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -809,20 +831,21 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.2.4) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.2.3) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.2.2) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.2.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id7">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id10">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id12">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id14">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id16">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id18">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id21">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id24">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id26">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id28">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id9">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id12">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id14">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id16">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id18">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id20">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id23">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id26">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id28">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id30">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

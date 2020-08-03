@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>User Guide &#8212; Flask-RESTful-DBBase 0.2.4 documentation</title>
+    <title>User Guide &#8212; Flask-RESTful-DBBase 0.2.5 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -4092,12 +4092,13 @@ curl http://localhost:5000/meta/invoices/single?method<span class="o">=</span>po
 <p>post_only_resource &lt;<a class="reference external" href="https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/post_only_resource.py">https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/post_only_resource.py</a>&gt;</p>
 </div>
 <p>To give a concrete example, we will create a resource limited to a POST method. The following shows an example of the usual initialization with the exception of the <cite>generator.create_resource</cite> program. This program accepts a source resource. From it <cite>create_resource</cite> will generate a resource in a custom configuration.</p>
+<p>There are two additional features imported, <cite>create_resource</cite> and <cite>MetaDoc</cite>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
 <span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span> <span class="nn">flask_restful_dbbase</span> <span class="kn">import</span> <span class="n">DBBase</span>
-<span class="kn">from</span> <span class="nn">flask_restful_dbbase.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span><span class="p">,</span> <span class="n">MetaResource</span>
 <span class="kn">from</span> <span class="nn">flask_restful_dbbase.generator</span> <span class="kn">import</span> <span class="n">create_resource</span>
-
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.utils</span> <span class="kn">import</span> <span class="n">MetaDoc</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///:memory:&quot;</span>
@@ -4156,8 +4157,24 @@ curl http://localhost:5000/meta/invoices/single?method<span class="o">=</span>po
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>Because we have caused the resource to give output outside of a standard REST response, meta information associated with this method does not fit the new reality. To accommodate this, we will use a new feature, the <cite>meta_doc</cite> attribute. This is an instance of the <cite>MetaDoc</cite> found in <cite>utils.py</cite>. It presents a structure to place documentation for functions, and also a flag to exclude the standard responses when it is not relevant.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># response associated with a POST.</span>
+<span class="n">meta_doc</span> <span class="o">=</span> <span class="n">MetaDoc</span><span class="p">(</span>
+    <span class="n">after_commit</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="s2">&quot;This now returns a custom message&quot;</span>
+    <span class="p">},</span>
+    <span class="n">excludes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">PostOnlyResource</span><span class="o">.</span><span class="n">meta_doc</span> <span class="o">=</span> <span class="n">meta_doc</span>
+
+<span class="k">class</span> <span class="nc">PostOnlyMetaResource</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">PostOnlyResource</span>
+</pre></div>
+</div>
 <p>The following shows the addition of the resources and startup of the app.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">PostOnlyResource</span><span class="p">,</span> <span class="o">*</span><span class="n">PostOnlyResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+
+<span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">PostOnlyMetaResource</span><span class="p">,</span> <span class="o">*</span><span class="n">PostOnlyMetaResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
@@ -4177,17 +4194,82 @@ curl http://localhost:5000/a-model-command <span class="se">\</span>
 <div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This is no longer a REST resource. We can do anything.&quot;</span><span class="p">,</span>
     <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
         <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A test&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="mi">42</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>Generating the meta information can reflect that the usual output has been replaced with our new message.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an entry</span>
+curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
+    -H <span class="s2">&quot;Content-Type: application/json&quot;</span>
+</pre></div>
 </div>
-<div class="section" id="implications">
-<h3>Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h3>
-<p>Once the output from a resource can be anything, a meta resource for the resource will not know what you have created. There are ways to mitigate that through providing documentation hooks to the modification functions used with the resource, but that has not been implemented.</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;modelClass&quot;</span><span class="p">:</span> <span class="s2">&quot;AModel&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;urlPrefix&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;unique&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;afterCommit&quot;</span><span class="p">:</span> <span class="s2">&quot;This now returns a custom message&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;table&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;AModel&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;unique&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;num_variable&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;xml&quot;</span><span class="p">:</span> <span class="s2">&quot;AModel&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -4269,7 +4351,6 @@ curl http://localhost:5000/a-model-command <span class="se">\</span>
 <li class="toctree-l3"><a class="reference internal" href="#suggested-uses">Suggested Uses</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-the-api">Using the API</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#implications">Implications</a></li>
 </ul>
 </li>
 </ul>
@@ -4279,20 +4360,21 @@ curl http://localhost:5000/a-model-command <span class="se">\</span>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.4) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.2.3) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.2.2) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.2.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id7">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id12">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id14">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id21">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id24">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id26">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id28">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id9">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id12">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id14">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id23">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id26">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id28">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id30">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

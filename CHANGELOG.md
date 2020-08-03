@@ -1,3 +1,10 @@
+## (0.2.5) -
+### Add
+*   Added an ability to document the internal processes that can shape the inputs and data records. To simplify the process a utility class, `MetaDoc`, has been added to `utils.py` to provide a scaffolding to hold the documentation. Adding a meta doc class to a model resource enables documentation for the `process_{method}_input` functions as well as the before/after commit functions. Finally, since control via these functions can affect the resource responses, there is an `exclude` flag in the MetaDoc class. Adding a method to exclude will mean that meta information would rely on your description regarding whichever function causes the resource to end in non-traditional manner.
+
+### Changed
+*   The example `post_only_resource` has been modified to include custom documentation from an after_commit function as well as out for meta information for this resource.
+
 ## (0.2.4) -
 ### Changed
 *   More work on query inputs in meta info. Removed extraneous properties from queries. Now it includes only type, format, maxLength, properties needed to understand the kind of data for filtering queries.

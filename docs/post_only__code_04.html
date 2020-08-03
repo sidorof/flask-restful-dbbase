@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>&lt;no title&gt; &#8212; Flask-RESTful-DBBase 0.2.4 documentation</title>
+    <title>&lt;no title&gt; &#8212; Flask-RESTful-DBBase 0.2.5 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.5 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -41,11 +41,17 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">PostOnlyResource</span><span class="p">,</span> <span class="o">*</span><span class="n">PostOnlyResource</span><span class="o">.</span><span class="n">get_urls</span><span class="p">())</span>
+  <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># response associated with a POST.</span>
+<span class="n">meta_doc</span> <span class="o">=</span> <span class="n">MetaDoc</span><span class="p">(</span>
+    <span class="n">after_commit</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="s2">&quot;This now returns a custom message&quot;</span>
+    <span class="p">},</span>
+    <span class="n">excludes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">PostOnlyResource</span><span class="o">.</span><span class="n">meta_doc</span> <span class="o">=</span> <span class="n">meta_doc</span>
 
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PostOnlyMetaResource</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
+    <span class="n">resource_class</span> <span class="o">=</span> <span class="n">PostOnlyResource</span>
 </pre></div>
 </div>
 
@@ -67,20 +73,21 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.4) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.2.3) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.2.2) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.2.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id7">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id12">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id14">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id21">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id24">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id26">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id28">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id9">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id12">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id14">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id23">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id26">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id28">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id30">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
