@@ -781,16 +781,16 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_meta(self):
+
         self.assertDictEqual(
             self.BookResource.get_meta(),
             {
                 "modelClass": "Book",
                 "urlPrefix": "/",
-                "url": "/books",
+                "baseUrl": "/books",
                 "methods": {
                     "get": {
                         "url": "/books/<int:id>",
-                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -800,74 +800,76 @@ class TestModelResource(unittest.TestCase):
                                 "info": {},
                             }
                         },
-                        "responses": {
-                            "fields": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "primary_key": True,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "pubYear": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "authorId": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "foreign_key": "author.id",
-                                    "info": {},
-                                },
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                        "fields": {
-                                            "id": {
-                                                "type": "integer",
-                                                "format": "int32",
-                                                "primary_key": True,
-                                                "nullable": True,
-                                                "info": {},
+                        "responses": [
+                            {
+                                "fields": {
+                                    "author": {
+                                        "readOnly": True,
+                                        "relationship": {
+                                            "type": "single",
+                                            "entity": "Author",
+                                            "fields": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "primary_key": True,
+                                                    "nullable": True,
+                                                    "info": {},
+                                                },
+                                                "firstName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "lastName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "fullName": {"readOnly": True},
                                             },
-                                            "firstName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "lastName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "fullName": {"readOnly": True},
                                         },
                                     },
-                                },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                }
                             }
-                        },
+                        ],
                     },
                     "post": {
-                        "requirements": [],
+                        "url": "/books",
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -902,75 +904,76 @@ class TestModelResource(unittest.TestCase):
                                 "info": {},
                             },
                         },
-                        "responses": {
-                            "fields": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "primary_key": True,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "pubYear": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "authorId": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "foreign_key": "author.id",
-                                    "info": {},
-                                },
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                        "fields": {
-                                            "id": {
-                                                "type": "integer",
-                                                "format": "int32",
-                                                "primary_key": True,
-                                                "nullable": True,
-                                                "info": {},
+                        "responses": [
+                            {
+                                "fields": {
+                                    "author": {
+                                        "readOnly": True,
+                                        "relationship": {
+                                            "type": "single",
+                                            "entity": "Author",
+                                            "fields": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "primary_key": True,
+                                                    "nullable": True,
+                                                    "info": {},
+                                                },
+                                                "firstName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "lastName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "fullName": {"readOnly": True},
                                             },
-                                            "firstName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "lastName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "fullName": {"readOnly": True},
                                         },
                                     },
-                                },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                }
                             }
-                        },
+                        ],
                     },
                     "put": {
                         "url": "/books/<int:id>",
-                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -1005,75 +1008,76 @@ class TestModelResource(unittest.TestCase):
                                 "info": {},
                             },
                         },
-                        "responses": {
-                            "fields": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "primary_key": True,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "pubYear": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "authorId": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "foreign_key": "author.id",
-                                    "info": {},
-                                },
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                        "fields": {
-                                            "id": {
-                                                "type": "integer",
-                                                "format": "int32",
-                                                "primary_key": True,
-                                                "nullable": True,
-                                                "info": {},
+                        "responses": [
+                            {
+                                "fields": {
+                                    "author": {
+                                        "readOnly": True,
+                                        "relationship": {
+                                            "type": "single",
+                                            "entity": "Author",
+                                            "fields": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "primary_key": True,
+                                                    "nullable": True,
+                                                    "info": {},
+                                                },
+                                                "firstName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "lastName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "fullName": {"readOnly": True},
                                             },
-                                            "firstName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "lastName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "fullName": {"readOnly": True},
                                         },
                                     },
-                                },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                }
                             }
-                        },
+                        ],
                     },
                     "patch": {
                         "url": "/books/<int:id>",
-                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -1108,75 +1112,76 @@ class TestModelResource(unittest.TestCase):
                                 "info": {},
                             },
                         },
-                        "responses": {
-                            "fields": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "primary_key": True,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "isbn": {
-                                    "type": "string",
-                                    "maxLength": 20,
-                                    "nullable": True,
-                                    "info": {},
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "maxLength": 100,
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "pubYear": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "info": {},
-                                },
-                                "authorId": {
-                                    "type": "integer",
-                                    "format": "int32",
-                                    "nullable": False,
-                                    "foreign_key": "author.id",
-                                    "info": {},
-                                },
-                                "author": {
-                                    "readOnly": True,
-                                    "relationship": {
-                                        "type": "single",
-                                        "entity": "Author",
-                                        "fields": {
-                                            "id": {
-                                                "type": "integer",
-                                                "format": "int32",
-                                                "primary_key": True,
-                                                "nullable": True,
-                                                "info": {},
+                        "responses": [
+                            {
+                                "fields": {
+                                    "author": {
+                                        "readOnly": True,
+                                        "relationship": {
+                                            "type": "single",
+                                            "entity": "Author",
+                                            "fields": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "primary_key": True,
+                                                    "nullable": True,
+                                                    "info": {},
+                                                },
+                                                "firstName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "lastName": {
+                                                    "type": "string",
+                                                    "maxLength": 50,
+                                                    "nullable": False,
+                                                    "info": {},
+                                                },
+                                                "fullName": {"readOnly": True},
                                             },
-                                            "firstName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "lastName": {
-                                                "type": "string",
-                                                "maxLength": 50,
-                                                "nullable": False,
-                                                "info": {},
-                                            },
-                                            "fullName": {"readOnly": True},
                                         },
                                     },
-                                },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "isbn": {
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "pubYear": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "info": {},
+                                    },
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "primary_key": True,
+                                        "nullable": True,
+                                        "info": {},
+                                    },
+                                    "authorId": {
+                                        "type": "integer",
+                                        "format": "int32",
+                                        "nullable": False,
+                                        "foreign_key": "author.id",
+                                        "info": {},
+                                    },
+                                }
                             }
-                        },
+                        ],
                     },
                     "delete": {
                         "url": "/books/<int:id>",
-                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -1186,7 +1191,7 @@ class TestModelResource(unittest.TestCase):
                                 "info": {},
                             }
                         },
-                        "responses": {},
+                        "responses": [{}],
                     },
                 },
                 "table": {
