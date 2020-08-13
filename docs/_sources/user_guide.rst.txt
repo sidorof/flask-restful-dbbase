@@ -21,3 +21,4 @@ The capabilities are presented with a few simple apps designed to highlight the 
 .. include:: app-owner-v2.rst
 .. include:: parent-child-posting.rst
 .. include:: limited-method-resources.rst
+.. include:: edge-cases.rst

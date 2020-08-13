@@ -53,32 +53,13 @@ class MetaResource(Resource):
             meta: (json) : The documentation
         """
         method = request.values.get("method", None)
-        portion = request.values.get("filter", None)
-
-        # split in method filtering
-        non_method_elements = [
-            "modelClass",
-            "urlPrefix",
-            "table",
-        ]
-
-        non_method_portions = None
-        if portion is not None:
-            portion = [item.strip() for item in portion.split(",")]
-            non_method_portions = []
-            for item in portion[:]:
-                if item in non_method_elements:
-                    non_method_portions.append(item)
-                    portion.remove(item)
 
         if method is not None:
             method = method.lower()
 
         try:
             return (
-                self.resource_class.get_meta(
-                    method, non_method_portions, portion
-                ),
+                self.resource_class.get_meta(method),
                 200,
             )
 

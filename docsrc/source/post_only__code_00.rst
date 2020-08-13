@@ -5,7 +5,7 @@
     from flask_restful_dbbase import DBBase
     from flask_restful_dbbase.resources import ModelResource, MetaResource
     from flask_restful_dbbase.generator import create_resource
-    from flask_restful_dbbase.utils import MetaDoc
+    from flask_restful_dbbase.doc_utils import MetaDoc, MethodDoc
     
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"

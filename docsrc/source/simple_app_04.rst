@@ -9,11 +9,10 @@
     {
         "modelClass": "Book",
         "urlPrefix": "/",
-        "url": "/books",
+        "baseUrl": "/books",
         "methods": {
             "get": {
                 "url": "/books/<int:id>",
-                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -23,76 +22,78 @@
                         "info": {}
                     }
                 },
-                "responses": {
-                    "fields": {
-                        "pubYear": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "authorId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "author.id",
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "author": {
-                            "readOnly": true,
-                            "relationship": {
-                                "type": "single",
-                                "entity": "Author",
-                                "fields": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": true,
-                                        "nullable": true,
-                                        "info": {}
-                                    },
-                                    "firstName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "lastName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "fullName": {
-                                        "readOnly": true
+                "responses": [
+                    {
+                        "fields": {
+                            "author": {
+                                "readOnly": true,
+                                "relationship": {
+                                    "type": "single",
+                                    "entity": "Author",
+                                    "fields": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "primary_key": true,
+                                            "nullable": true,
+                                            "info": {}
+                                        },
+                                        "firstName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "lastName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "fullName": {
+                                            "readOnly": true
+                                        }
                                     }
                                 }
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "authorId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "foreign_key": "author.id",
+                                "info": {}
+                            },
+                            "title": {
+                                "type": "string",
+                                "maxLength": 100,
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "pubYear": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "info": {}
                             }
-                        },
-                        "title": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "isbn": {
-                            "type": "string",
-                            "maxLength": 20,
-                            "nullable": true,
-                            "info": {}
                         }
                     }
-                }
+                ]
             },
             "post": {
-                "requirements": [],
+                "url": "/books",
                 "input": {
                     "id": {
                         "type": "integer",
@@ -127,77 +128,78 @@
                         "info": {}
                     }
                 },
-                "responses": {
-                    "fields": {
-                        "pubYear": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "authorId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "author.id",
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "author": {
-                            "readOnly": true,
-                            "relationship": {
-                                "type": "single",
-                                "entity": "Author",
-                                "fields": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": true,
-                                        "nullable": true,
-                                        "info": {}
-                                    },
-                                    "firstName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "lastName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "fullName": {
-                                        "readOnly": true
+                "responses": [
+                    {
+                        "fields": {
+                            "author": {
+                                "readOnly": true,
+                                "relationship": {
+                                    "type": "single",
+                                    "entity": "Author",
+                                    "fields": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "primary_key": true,
+                                            "nullable": true,
+                                            "info": {}
+                                        },
+                                        "firstName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "lastName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "fullName": {
+                                            "readOnly": true
+                                        }
                                     }
                                 }
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "authorId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "foreign_key": "author.id",
+                                "info": {}
+                            },
+                            "title": {
+                                "type": "string",
+                                "maxLength": 100,
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "pubYear": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "info": {}
                             }
-                        },
-                        "title": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "isbn": {
-                            "type": "string",
-                            "maxLength": 20,
-                            "nullable": true,
-                            "info": {}
                         }
                     }
-                }
+                ]
             },
             "put": {
                 "url": "/books/<int:id>",
-                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -232,77 +234,78 @@
                         "info": {}
                     }
                 },
-                "responses": {
-                    "fields": {
-                        "pubYear": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "authorId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "author.id",
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "author": {
-                            "readOnly": true,
-                            "relationship": {
-                                "type": "single",
-                                "entity": "Author",
-                                "fields": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": true,
-                                        "nullable": true,
-                                        "info": {}
-                                    },
-                                    "firstName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "lastName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "fullName": {
-                                        "readOnly": true
+                "responses": [
+                    {
+                        "fields": {
+                            "author": {
+                                "readOnly": true,
+                                "relationship": {
+                                    "type": "single",
+                                    "entity": "Author",
+                                    "fields": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "primary_key": true,
+                                            "nullable": true,
+                                            "info": {}
+                                        },
+                                        "firstName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "lastName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "fullName": {
+                                            "readOnly": true
+                                        }
                                     }
                                 }
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "authorId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "foreign_key": "author.id",
+                                "info": {}
+                            },
+                            "title": {
+                                "type": "string",
+                                "maxLength": 100,
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "pubYear": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "info": {}
                             }
-                        },
-                        "title": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "isbn": {
-                            "type": "string",
-                            "maxLength": 20,
-                            "nullable": true,
-                            "info": {}
                         }
                     }
-                }
+                ]
             },
             "patch": {
                 "url": "/books/<int:id>",
-                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -337,77 +340,78 @@
                         "info": {}
                     }
                 },
-                "responses": {
-                    "fields": {
-                        "pubYear": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "authorId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "foreign_key": "author.id",
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
-                        },
-                        "author": {
-                            "readOnly": true,
-                            "relationship": {
-                                "type": "single",
-                                "entity": "Author",
-                                "fields": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": true,
-                                        "nullable": true,
-                                        "info": {}
-                                    },
-                                    "firstName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "lastName": {
-                                        "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "fullName": {
-                                        "readOnly": true
+                "responses": [
+                    {
+                        "fields": {
+                            "author": {
+                                "readOnly": true,
+                                "relationship": {
+                                    "type": "single",
+                                    "entity": "Author",
+                                    "fields": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "primary_key": true,
+                                            "nullable": true,
+                                            "info": {}
+                                        },
+                                        "firstName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "lastName": {
+                                            "type": "string",
+                                            "maxLength": 50,
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "fullName": {
+                                            "readOnly": true
+                                        }
                                     }
                                 }
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "maxLength": 20,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "authorId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "foreign_key": "author.id",
+                                "info": {}
+                            },
+                            "title": {
+                                "type": "string",
+                                "maxLength": 100,
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "pubYear": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "info": {}
                             }
-                        },
-                        "title": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "isbn": {
-                            "type": "string",
-                            "maxLength": 20,
-                            "nullable": true,
-                            "info": {}
                         }
                     }
-                }
+                ]
             },
             "delete": {
                 "url": "/books/<int:id>",
-                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -417,7 +421,9 @@
                         "info": {}
                     }
                 },
-                "responses": {}
+                "responses": [
+                    {}
+                ]
             }
         },
         "table": {

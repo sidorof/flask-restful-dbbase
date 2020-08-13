@@ -9,7 +9,7 @@ from flask_restful import Api
 from flask_restful_dbbase import DBBase
 from flask_restful_dbbase.resources import ModelResource, MetaResource
 from flask_restful_dbbase.generator import create_resource
-from flask_restful_dbbase.utils import MetaDoc
+from flask_restful_dbbase.doc_utils import MetaDoc, MethodDoc
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
@@ -63,8 +63,15 @@ PostOnlyResource = create_resource(
 # configure meta data to not show the default
 # response associated with a POST.
 meta_doc = MetaDoc(
-    after_commit={"post": "This now returns a custom message"},
-    excludes=["post"],
+    resource_class=PostOnlyResource,
+    methods=[
+        MethodDoc(
+            method="post",
+            after_commit="Here we can say a few words about the process",
+            use_default_response=False,
+            responses=[{"messsage": "Here we can describe the response"}]
+        )
+    ],
 )
 PostOnlyResource.meta_doc = meta_doc
 

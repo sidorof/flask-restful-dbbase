@@ -10,7 +10,7 @@ import inflect
 from flask_restful import Resource
 from dbbase.utils import xlate
 
-from ..utils import MetaDoc
+from ..doc_utils import MetaDoc
 
 
 class DBBaseResource(Resource):
@@ -124,7 +124,7 @@ class DBBaseResource(Resource):
     requires_parameter = False
     fields = None
 
-    meta_doc = MetaDoc()
+    meta_doc = None
 
     def __init__(self):
         if self.model_class is None:
@@ -229,16 +229,12 @@ class DBBaseResource(Resource):
         return urls
 
     @classmethod
-    def get_meta(cls, method=None, non_method_portions=None, portion=None):
+    def get_meta(cls, method=None):
         """
         This function returns the settings for the resource.
 
         Args:
             method: (str : None) : choices are get/post/put/patch/delete.
-            non_method_portions: (list : None) : a list of non-method
-                elements to be included
-            portion: (list : None) : a list of method related elements to
-                be included
 
         Returns:
             meta_data (dict) : A dict with the resource characteristics.
@@ -249,55 +245,10 @@ class DBBaseResource(Resource):
         interacting with an API.
 
         """
-        db = cls.model_class.db
-        method_list = ["get", "post", "put", "patch", "delete"]
-        if method is None:
-            doc = {}
-            doc["modelClass"] = cls.model_class._class()
-            doc["urlPrefix"] = cls.url_prefix
-            doc["url"] = cls.create_url()
+        if cls.meta_doc is None:
+            cls.meta_doc = MetaDoc(resource_class=cls)
 
-            doc["methods"] = {}
-            # this is done to force order without OrderedDict
-            for _method in method_list:
-                if hasattr(cls, _method) and getattr(cls, _method) is not None:
-                    doc["methods"][_method] = cls._meta_method(
-                        _method, portion
-                    )
-            if non_method_portions is not None:
-                if "table" in non_method_portions:
-                    doc["table"] = db.doc_table(cls.model_class)
-            else:
-                doc["table"] = db.doc_table(cls.model_class)
-
-        else:
-            # just the method
-            if hasattr(cls, method):
-                doc = {"method": {method: cls._meta_method(method, portion)}}
-            else:
-                raise ValueError(
-                    f"Method '{method}' is not found for this resource"
-                )
-
-            # add other portions only if in non_method_portions
-            if non_method_portions:
-                # add in individually
-                if "modelClass" in non_method_portions:
-                    doc["modelClass"] = cls.model_class._class()
-                if "urlPrefix" in non_method_portions:
-                    doc["urlPrefix"] = cls.url_prefix
-
-                if "table" in non_method_portions:
-                    doc["table"] = db.doc_table(cls.model_class)
-
-        if method is None and non_method_portions is not None:
-            new_dict = {}
-            for part in non_method_portions:
-                new_dict[part] = doc[part]
-
-            doc = new_dict
-
-        return doc
+        return cls.meta_doc.to_dict(method=method)
 
     @classmethod
     def is_collection(cls):
@@ -306,156 +257,6 @@ class DBBaseResource(Resource):
         """
         # uses max_page_size as a marker
         return hasattr(cls, "max_page_size")
-
-    @classmethod
-    def _meta_method(cls, method, portion):
-        """
-        This function builds the dict meta data object for a specific method.
-
-        Args:
-            method: (str) : The method to be documented.
-            portion: (str) : If only a poriion, such as inputs or
-            response is needed.
-        """
-        db = cls.model_class.db
-
-        method_dict = {}
-
-        if method in ["get", "put", "patch", "delete"]:
-            if cls.is_collection():
-                method_dict["url"] = cls.get_urls()[0]
-            else:
-                method_dict["url"] = cls.get_urls()[1]
-
-        method_dict["requirements"] = cls._meta_method_decorators(method)
-        if method in ["get", "delete"]:
-            if cls.is_collection():
-                obj_params = cls.get_obj_params()
-                tmp = {}
-                for key, col_props in obj_params.items():
-                    if (
-                        "relationship" not in col_props
-                        and "readOnly" not in col_props
-                    ):
-                        tmp[key] = {"type": col_props["type"]}
-                    if "format" in col_props:
-                        tmp[key]["format"] = col_props["format"]
-                    if "maxLength" in col_props:
-                        tmp[key]["maxLength"] = col_props["maxLength"]
-
-                method_dict["queryString"] = tmp
-            else:
-                keys = cls.get_key_names()
-                if len(keys) > 1:
-                    method_dict["input"] = [
-                        dict([[key, db.doc_column(cls.model_class, key)]])
-                        for key in keys
-                    ]
-                else:
-                    key = keys[0]
-                    method_dict["input"] = {
-                        key: db.doc_column(cls.model_class, key)
-                    }
-
-        else:
-            # select all columns that are not read only
-            method_dict["input"] = cls.model_class.filter_columns(
-                column_props=["!readOnly"], to_camel_case=True,
-            )
-
-        # check for extra documentation
-        input_func = f"process_{method}_input"
-        if getattr(cls.meta_doc, input_func):
-            key = xlate(input_func, camel_case=True)
-            method_dict[key] = getattr(cls.meta_doc, input_func)
-
-        if method in cls.meta_doc._before_commit:
-            method_dict["beforeCommit"] = cls.meta_doc._before_commit[method]
-
-        if method in cls.meta_doc._after_commit:
-            method_dict["afterCommit"] = cls.meta_doc._after_commit[method]
-
-        # check excludes
-        if method not in cls.meta_doc.excludes:
-            method_dict["responses"] = cls._meta_method_response(method)
-
-        if portion:
-            new_dict = {}
-            for key in method_dict.keys():
-                if key in portion:
-                    new_dict[key] = method_dict[key]
-            method_dict = new_dict
-
-        return method_dict
-
-    @classmethod
-    def _meta_method_decorators(cls, method):
-        # method decorators go in as requirements
-
-        requirements = []
-        if isinstance(cls.method_decorators, list):
-            requirements = [func.__name__ for func in cls.method_decorators]
-        elif isinstance(cls.method_decorators, dict):
-            if method in cls.method_decorators:
-                requirements = [
-                    func.__name__ for func in cls.method_decorators[method]
-                ]
-
-        return requirements
-
-    @classmethod
-    def _meta_method_response(cls, method):
-        """ _meta_method_response
-
-        The real way to do this:
-
-        NOTE: Develop a resolved list of serial fields and serial field
-        relations. Then pass both a doc function and use the
-        serialization routines to follow relationships to the source.
-        This would capture the detail associated with the relationships
-        as well. Part of the issue is that related serializations work
-        well with instantiated data, because the related classes are
-        available when using to_dict(). However, the related classes
-        within a class method might need to plumb metadata(?) to get
-        all the pieces.
-        """
-        db = cls.model_class.db
-
-        outputs = {}
-
-        if method != "delete":
-
-            serial_fields = cls._get_serial_fields(method, with_class=True)
-
-            if isinstance(serial_fields, dict):
-                # foreign class
-                foreign_class, serial_fields = list(serial_fields.items())[0]
-                # NOTE: serial field relations is unresolved
-                doc = db.doc_table(
-                    foreign_class,
-                    serial_fields=serial_fields,
-                    serial_field_relations=cls._get_serial_field_relations(
-                        method
-                    ),
-                    to_camel_case=True,
-                )[foreign_class._class()]
-            else:
-                if serial_fields is None:
-                    serial_fields = cls.model_class.get_serial_fields()
-
-                doc = db.doc_table(
-                    cls.model_class,
-                    serial_fields=serial_fields,
-                    serial_field_relations=cls._get_serial_field_relations(
-                        method
-                    ),
-                    to_camel_case=True,
-                )[cls.model_class._class()]
-
-            outputs["fields"] = doc["properties"]
-            # NOTE: here is where the default sort would go for collections
-
-        return outputs
 
     @staticmethod
     def _all_keys_found(key_names, data):

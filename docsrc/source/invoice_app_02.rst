@@ -9,9 +9,12 @@
 .. code-block:: JSON 
 
     {
-        "method": {
+        "modelClass": "Invoice",
+        "urlPrefix": "/",
+        "baseUrl": "/invoices",
+        "methods": {
             "post": {
-                "requirements": [],
+                "url": "/invoices",
                 "input": {
                     "id": {
                         "type": "integer",
@@ -71,67 +74,134 @@
                         }
                     }
                 },
-                "responses": {
-                    "fields": {
-                        "invoiceItems": {
-                            "readOnly": false,
-                            "relationship": {
-                                "type": "list",
-                                "entity": "InvoiceItem",
-                                "fields": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "primary_key": true,
-                                        "nullable": true,
-                                        "info": {}
-                                    },
-                                    "invoiceId": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": false,
-                                        "foreign_key": "invoice.id",
-                                        "info": {}
-                                    },
-                                    "partCode": {
-                                        "type": "string",
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "units": {
-                                        "type": "integer",
-                                        "format": "int32",
-                                        "nullable": false,
-                                        "info": {}
-                                    },
-                                    "unitPrice": {
-                                        "type": "float",
-                                        "nullable": false,
-                                        "info": {}
+                "responses": [
+                    {
+                        "fields": {
+                            "userId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "invoiceDate": {
+                                "type": "date",
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "invoiceItems": {
+                                "readOnly": false,
+                                "relationship": {
+                                    "type": "list",
+                                    "entity": "InvoiceItem",
+                                    "fields": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "primary_key": true,
+                                            "nullable": true,
+                                            "info": {}
+                                        },
+                                        "invoiceId": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "nullable": false,
+                                            "foreign_key": "invoice.id",
+                                            "info": {}
+                                        },
+                                        "partCode": {
+                                            "type": "string",
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "units": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "nullable": false,
+                                            "info": {}
+                                        },
+                                        "unitPrice": {
+                                            "type": "float",
+                                            "nullable": false,
+                                            "info": {}
+                                        }
                                     }
                                 }
                             }
-                        },
-                        "invoiceDate": {
-                            "type": "date",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "userId": {
-                            "type": "integer",
-                            "format": "int32",
-                            "nullable": false,
-                            "info": {}
-                        },
-                        "id": {
-                            "type": "integer",
-                            "format": "int32",
-                            "primary_key": true,
-                            "nullable": true,
-                            "info": {}
                         }
                     }
-                }
+                ]
+            }
+        },
+        "table": {
+            "Invoice": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "primary_key": true,
+                        "nullable": true,
+                        "info": {}
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": false,
+                        "info": {}
+                    },
+                    "invoice_date": {
+                        "type": "date",
+                        "nullable": false,
+                        "info": {}
+                    },
+                    "invoice_items": {
+                        "readOnly": false,
+                        "relationship": {
+                            "type": "list",
+                            "entity": "InvoiceItem",
+                            "fields": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "primary_key": true,
+                                    "nullable": true,
+                                    "info": {}
+                                },
+                                "invoice_id": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "foreign_key": "invoice.id",
+                                    "info": {}
+                                },
+                                "part_code": {
+                                    "type": "string",
+                                    "nullable": false,
+                                    "info": {}
+                                },
+                                "units": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "nullable": false,
+                                    "info": {}
+                                },
+                                "unit_price": {
+                                    "type": "float",
+                                    "nullable": false,
+                                    "info": {}
+                                }
+                            }
+                        }
+                    }
+                },
+                "xml": "Invoice"
             }
         }
     }
