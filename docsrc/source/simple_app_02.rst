@@ -13,17 +13,17 @@
 .. code-block:: JSON 
 
     {
-        "pubYear": 1997,
-        "authorId": 3,
-        "id": 6,
         "author": {
-            "lastName": "Skiena",
             "id": 3,
+            "fullName": "Steven Skiena",
             "firstName": "Steven",
-            "fullName": "Steven Skiena"
+            "lastName": "Skiena"
         },
+        "isbn": "0-387-94860-0",
+        "id": 6,
+        "authorId": 3,
         "title": "The Algorithm Design Manual",
-        "isbn": "0-387-94860-0"
+        "pubYear": 1997
     }
 
 ..

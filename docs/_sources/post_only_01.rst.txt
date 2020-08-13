@@ -11,10 +11,10 @@
     {
         "modelClass": "AModel",
         "urlPrefix": "/",
-        "url": "/a-model-command",
+        "baseUrl": "/a-model-command",
         "methods": {
             "post": {
-                "requirements": [],
+                "url": "/a-model-command",
                 "input": {
                     "id": {
                         "type": "integer",
@@ -37,7 +37,12 @@
                         "info": {}
                     }
                 },
-                "afterCommit": "This now returns a custom message"
+                "after_commit": "Here we can say a few words about the process",
+                "responses": [
+                    {
+                        "messsage": "Here we can describe the response"
+                    }
+                ]
             }
         },
         "table": {

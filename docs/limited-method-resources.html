@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.2.5 documentation</title>
+    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.3.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -97,7 +97,7 @@
 <span class="kn">from</span> <span class="nn">flask_restful_dbbase</span> <span class="kn">import</span> <span class="n">DBBase</span>
 <span class="kn">from</span> <span class="nn">flask_restful_dbbase.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span><span class="p">,</span> <span class="n">MetaResource</span>
 <span class="kn">from</span> <span class="nn">flask_restful_dbbase.generator</span> <span class="kn">import</span> <span class="n">create_resource</span>
-<span class="kn">from</span> <span class="nn">flask_restful_dbbase.utils</span> <span class="kn">import</span> <span class="n">MetaDoc</span>
+<span class="kn">from</span> <span class="nn">flask_restful_dbbase.doc_utils</span> <span class="kn">import</span> <span class="n">MetaDoc</span><span class="p">,</span> <span class="n">MethodDoc</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SQLALCHEMY_DATABASE_URI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///:memory:&quot;</span>
@@ -159,12 +159,18 @@
 <p>Because we have caused the resource to give output outside of a standard REST response, meta information associated with this method does not fit the new reality. To accommodate this, we will use a new feature, the <cite>meta_doc</cite> attribute. This is an instance of the <cite>MetaDoc</cite> found in <cite>utils.py</cite>. It presents a structure to place documentation for functions, and also a flag to exclude the standard responses when it is not relevant.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># response associated with a POST.</span>
 <span class="n">meta_doc</span> <span class="o">=</span> <span class="n">MetaDoc</span><span class="p">(</span>
-    <span class="n">after_commit</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="s2">&quot;This now returns a custom message&quot;</span>
-    <span class="p">},</span>
-    <span class="n">excludes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">]</span>
+    <span class="n">resource_class</span><span class="o">=</span><span class="n">PostOnlyResource</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">MethodDoc</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="p">,</span>
+            <span class="n">after_commit</span><span class="o">=</span><span class="s2">&quot;Here we can say a few words about the process&quot;</span><span class="p">,</span>
+            <span class="n">use_default_response</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">responses</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;messsage&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can describe the response&quot;</span><span class="p">}]</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
 <span class="p">)</span>
 <span class="n">PostOnlyResource</span><span class="o">.</span><span class="n">meta_doc</span> <span class="o">=</span> <span class="n">meta_doc</span>
+
 
 <span class="k">class</span> <span class="nc">PostOnlyMetaResource</span><span class="p">(</span><span class="n">MetaResource</span><span class="p">):</span>
     <span class="n">resource_class</span> <span class="o">=</span> <span class="n">PostOnlyResource</span>
@@ -193,9 +199,9 @@ curl http://localhost:5000/a-model-command <span class="se">\</span>
 <div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This is no longer a REST resource. We can do anything.&quot;</span><span class="p">,</span>
     <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A test&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="mi">42</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -209,10 +215,10 @@ curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
 <div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;modelClass&quot;</span><span class="p">:</span> <span class="s2">&quot;AModel&quot;</span><span class="p">,</span>
     <span class="nt">&quot;urlPrefix&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;baseUrl&quot;</span><span class="p">:</span> <span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
     <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
             <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
@@ -235,7 +241,12 @@ curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
                     <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;afterCommit&quot;</span><span class="p">:</span> <span class="s2">&quot;This now returns a custom message&quot;</span>
+            <span class="nt">&quot;after_commit&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can say a few words about the process&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;messsage&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can describe the response&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
         <span class="p">}</span>
     <span class="p">},</span>
     <span class="nt">&quot;table&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -290,21 +301,22 @@ curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.2.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.2.4) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.2.3) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.2.2) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.2.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id9">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id12">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id14">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id23">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id26">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id28">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id30">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">(0.3,0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id2">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id4">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id6">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id8">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id10">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id11">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id14">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id16">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id18">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id20">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id22">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id25">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id28">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id30">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id32">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

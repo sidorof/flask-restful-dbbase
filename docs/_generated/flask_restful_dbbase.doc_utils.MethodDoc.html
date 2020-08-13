@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>flask_restful_dbbase.doc_utils.MethodDoc &#8212; Flask-RESTful-DBBase 0.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.3.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="flask-restful-dbbase-doc-utils-methoddoc">
+<h1>flask_restful_dbbase.doc_utils.MethodDoc<a class="headerlink" href="#flask-restful-dbbase-doc-utils-methoddoc" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="flask_restful_dbbase.doc_utils.MethodDoc">
+<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.doc_utils.</code><code class="sig-name descname">MethodDoc</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">input=None</em>, <em class="sig-param">input_modifier=None</em>, <em class="sig-param">before_commit=None</em>, <em class="sig-param">after_commit=None</em>, <em class="sig-param">use_default_response=True</em>, <em class="sig-param">responses=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class holds details about a method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – (str) : The method name</p></li>
+<li><p><strong>input</strong> – (str) : Optional input if necessary, otherwise default</p></li>
+<li><p><strong>input_modifier</strong> – (str) : Optional input of process_{method}_inputs</p></li>
+<li><p><strong>before_commit</strong> – (str) : Optional before_commit description</p></li>
+<li><p><strong>after_commit</strong> – (str) : Optional after_commit description</p></li>
+<li><p><strong>use_default_response</strong> – (bool) : A flag to overwrite responses</p></li>
+<li><p><strong>responses</strong> – (list) : A list of possible custom responses</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="flask_restful_dbbase.doc_utils.MethodDoc.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">input=None</em>, <em class="sig-param">input_modifier=None</em>, <em class="sig-param">before_commit=None</em>, <em class="sig-param">after_commit=None</em>, <em class="sig-param">use_default_response=True</em>, <em class="sig-param">responses=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.doc_utils.MethodDoc.__init__" title="flask_restful_dbbase.doc_utils.MethodDoc.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(method[, input, input_modifier, …])</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_default_response" title="flask_restful_dbbase.doc_utils.MethodDoc.get_default_response"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_default_response</span></code></a>(meta_doc)</p></td>
+<td><p>This function returns the standard response for the method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.doc_utils.MethodDoc.to_dict" title="flask_restful_dbbase.doc_utils.MethodDoc.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>(meta_doc)</p></td>
+<td><p>Convert attributes to a dictionary</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="flask_restful_dbbase.doc_utils.MethodDoc.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param">meta_doc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert attributes to a dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="flask_restful_dbbase.doc_utils.MethodDoc.get_default_response">
+<code class="sig-name descname">get_default_response</code><span class="sig-paren">(</span><em class="sig-param">meta_doc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.get_default_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_default_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the standard response for the method. If something
+special is done, then the default response would be supressed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p class="logo"><a href="../index.html">
+  <img class="logo" src="../_static/flask-restful-dbbase-small.png" alt="Logo"
+    style="margin-left: -10px"/>
+</a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resource-classes.html">Resource Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">(0.3,0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id2">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id4">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id6">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id8">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id10">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id11">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id14">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id16">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id18">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id20">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id22">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id25">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id28">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id30">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id32">(0.1.0) -</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_generated/flask_restful_dbbase.doc_utils.MethodDoc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Don Smiley.
+    </div>
+    
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle").show();
+        $(".toggle").click(function() {
+            $(this).children().not(".toggle").toggle(400);
+            $(this).toggleClass("open");
+        })
+    });
+</script>
+
+  </body>
+</html>

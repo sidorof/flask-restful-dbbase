@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>(0.2.5) - &#8212; Flask-RESTful-DBBase 0.2.5 documentation</title>
+    <title>(0.3,0) - &#8212; Flask-RESTful-DBBase 0.3.0 documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="license.html" title="License"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.2.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -46,42 +46,51 @@
           <div class="body" role="main">
             
   <div class="section" id="id1">
-<h1>(0.2.5) -<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<h1>(0.3,0) -<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="changed">
+<h2>Changed<a class="headerlink" href="#changed" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Rewrote approach to documentation functions. Expanded the MetaDoc class, added a MethodDoc class. This enables a standardized scaffolding for all the documentation functions, and all meta documentation creation is performed by these classes.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h1>(0.2.5) -<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="add">
 <h2>Add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Added an ability to document the internal processes that can shape the inputs and data records. To simplify the process a utility class, <code class="docutils literal notranslate"><span class="pre">MetaDoc</span></code>, has been added to <code class="docutils literal notranslate"><span class="pre">utils.py</span></code> to provide a scaffolding to hold the documentation. Adding a meta doc class to a model resource enables documentation for the <code class="docutils literal notranslate"><span class="pre">process_{method}_input</span></code> functions as well as the before/after commit functions. Finally, since control via these functions can affect the resource responses, there is an <code class="docutils literal notranslate"><span class="pre">exclude</span></code> flag in the MetaDoc class. Adding a method to exclude will mean that meta information would rely on your description regarding whichever function causes the resource to end in non-traditional manner.</p></li>
 </ul>
 </div>
-<div class="section" id="changed">
-<h2>Changed<a class="headerlink" href="#changed" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>Changed<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>The example <code class="docutils literal notranslate"><span class="pre">post_only_resource</span></code> has been modified to include custom documentation from an after_commit function as well as out for meta information for this resource.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id2">
-<h1>(0.2.4) -<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id3">
-<h2>Changed<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h1>(0.2.4) -<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id5">
+<h2>Changed<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>More work on query inputs in meta info. Removed extraneous properties from queries. Now it includes only type, format, maxLength, properties needed to understand the kind of data for filtering queries.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id4">
-<h1>(0.2.3) -<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id5">
-<h2>Changed<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h1>(0.2.3) -<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id7">
+<h2>Changed<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Changed key <code class="docutils literal notranslate"><span class="pre">query_string</span></code> to <code class="docutils literal notranslate"><span class="pre">queryString</span></code> in meta info to be more consistent with JavaScript standards for its intended use.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id6">
-<h1>(0.2.2) -<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id7">
-<h2>Changed<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h1>(0.2.2) -<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id9">
+<h2>Changed<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Changed meta information <code class="docutils literal notranslate"><span class="pre">url_part</span></code> to simply <code class="docutils literal notranslate"><span class="pre">url</span></code>.</p></li>
 <li><p>Changed flag for creating a url for meta information for a collection. It previously uses issubclass to identify a collection model resource. However, that fails when using the <code class="docutils literal notranslate"><span class="pre">generator.create_resource</span></code> function due to a reduced mro stack. It now keys off the <code class="docutils literal notranslate"><span class="pre">is_collection</span></code> function.</p></li>
@@ -89,8 +98,8 @@
 </ul>
 </div>
 </div>
-<div class="section" id="id8">
-<h1>(0.2.1) -<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id10">
+<h1>(0.2.1) -<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="added">
 <h2>Added<a class="headerlink" href="#added" title="Permalink to this headline">¶</a></h2>
 <ul>
@@ -112,54 +121,54 @@ details of the underlying table.</p>
 </div>
 </div>
 </div>
-<div class="section" id="id9">
-<h1>(0.2.0) -<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id11">
+<h1>(0.2.0) -<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h1>
 <p>This version breaks previous before / after commmit functions in ModelResource. By requiring a status flag as output from the functions it opens resources to be more easily used beyond simply REST functions.</p>
-<div class="section" id="id10">
-<h2>Added<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id12">
+<h2>Added<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Added a create_resource function that can create resources constrained to a limited HTTP method. Coupled with the refactored functions that can run after posting, a resource can be used for RPC-like features for when the REST is not a good fit.</p></li>
 </ul>
 </div>
-<div class="section" id="id11">
-<h2>Changed<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id13">
+<h2>Changed<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Removed a redundant line in <code class="docutils literal notranslate"><span class="pre">DBBase._include_dbbase</span></code>.</p></li>
 <li><p>Refactored before/after commit functions in ModelResource. Just as the <code class="docutils literal notranslate"><span class="pre">process_{method}_input</span></code> functions return a status with the payload, these functions now return a status as well as a payload. Prior to this change, the assumption of the process was that there may be changes to a database item, or a database item would be replaced with another, but once an adjustment takes place it all goes to an inevitable conclusion of returning SOME item and a status codde. By adding this, a greater range of functionality with the ModelResource is available, including returning simply a message and a status code. In such a case, a ModelResource could use the serialization / validation services, but essentially act as an RPC if need be.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id12">
-<h1>(0.1.11) -<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id13">
-<h2>Changed<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id14">
+<h1>(0.1.11) -<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id15">
+<h2>Changed<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Corrected and simplified the selection of primary keys in <code class="docutils literal notranslate"><span class="pre">DBBaseResource.get_key_names</span></code>.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id14">
-<h1>(0.1.10) -<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id15">
-<h2>Changed<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id16">
+<h1>(0.1.10) -<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id17">
+<h2>Changed<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Ensured that response fields for meta information were in camel case format. Table property fields remain in snake case to be consistent for usage within Python.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id16">
-<h1>(0.1.9) -<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id17">
-<h2>Changed<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id18">
+<h1>(0.1.9) -<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id19">
+<h2>Changed<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Modified setup and requirements.txt files for additional required packages.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id18">
-<h1>(0.1.8) -<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id19">
-<h2>Changed<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id20">
+<h1>(0.1.8) -<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id21">
+<h2>Changed<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="changelog">
 <h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -168,18 +177,18 @@ details of the underlying table.</p>
 </div>
 </div>
 </div>
-<div class="section" id="id20">
-<h1>(0.1.7) -<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id21">
-<h2>Added<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id22">
+<h1>(0.1.7) -<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id23">
+<h2>Added<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Added a modification to the handling of ModelResource.serial_fields to enable a dictionary of a foreign class and serial fields to be returned when replacing the current Model class with another on responses.</p></li>
 <li><p>Added Parent/Child processing in POST. This enables the creation of child records as part of the commit process of a parent.</p></li>
 <li><p>Added an example program creating an invoice with invoice line items at the same time.</p></li>
 </ul>
 </div>
-<div class="section" id="id22">
-<h2>Changed<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id24">
+<h2>Changed<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Corrected approach for default URLs for meta resources. Now the generation of the default URL stems from the root of the model resource.</p></li>
 </ul>
@@ -203,47 +212,47 @@ details of the underlying table.</p>
 </div>
 </div>
 </div>
-<div class="section" id="id23">
-<h1>(0.1.6) -<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id24">
-<h2>Added<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id25">
+<h1>(0.1.6) -<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id26">
+<h2>Added<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Added more tests on resources - coverage is now 98%</p></li>
 <li><p>Added more sections to documentation of resources</p></li>
 </ul>
 </div>
-<div class="section" id="id25">
-<h2>Changed<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id27">
+<h2>Changed<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Changed default URLs. Added pluralizer for default URLs. Now a model <code class="docutils literal notranslate"><span class="pre">Book</span></code> will default to a URL of <code class="docutils literal notranslate"><span class="pre">/books</span></code></p></li>
 <li><p>Tightened up processing on process_{method}_input functions to a more standardized with more complete documentation.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id26">
-<h1>(0.1.5) -<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id27">
-<h2>Changed<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id28">
+<h1>(0.1.5) -<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id29">
+<h2>Changed<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Corrected the project location with hyphens instead of underlines</p></li>
 <li><p>Corrected typo in the setup description</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id28">
-<h1>(0.1.1) -<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id29">
-<h2>Added<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id30">
+<h1>(0.1.1) -<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id31">
+<h2>Added<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Added ModelResource for datacentric methods that are not collections.</p></li>
 <li><p>Added tests using unittest and pytest.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id30">
-<h1>(0.1.0) -<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id31">
-<h2>Added<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id32">
+<h1>(0.1.0) -<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id33">
+<h2>Added<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Initial public release</p></li>
 </ul>
@@ -268,71 +277,75 @@ details of the underlying table.</p>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">(0.2.5) -</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#add">Add</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">(0.3,0) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#changed">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id2">(0.2.4) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id2">(0.2.5) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#add">Add</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id4">(0.2.3) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id4">(0.2.4) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id5">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id6">(0.2.2) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id6">(0.2.3) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id7">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id8">(0.2.1) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id8">(0.2.2) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id9">Changed</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id10">(0.2.1) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#added">Added</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id9">(0.2.0) -</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id10">Added</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id11">Changed</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#id12">(0.1.11) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id11">(0.2.0) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id12">Added</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id13">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id14">(0.1.10) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id14">(0.1.11) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id15">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id16">(0.1.9) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id16">(0.1.10) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id17">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id18">(0.1.8) -</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id19">Changed</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id18">(0.1.9) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id19">Changed</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id20">(0.1.8) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id21">Changed</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#changelog">Changelog</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id20">(0.1.7) -</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id21">Added</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id22">Changed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id22">(0.1.7) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id23">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id23">(0.1.6) -</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id24">Added</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id25">Changed</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#id26">(0.1.5) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id25">(0.1.6) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id26">Added</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id27">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id28">(0.1.1) -</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id29">Added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id28">(0.1.5) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id29">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id30">(0.1.0) -</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id30">(0.1.1) -</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id31">Added</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id32">(0.1.0) -</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id33">Added</a></li>
 </ul>
 </li>
 </ul>

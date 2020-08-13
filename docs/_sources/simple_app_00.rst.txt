@@ -9,17 +9,17 @@
 .. code-block:: JSON 
 
     {
-        "pubYear": 2004,
-        "authorId": 1,
-        "id": 1,
         "author": {
-            "lastName": "Cooper",
             "id": 1,
+            "fullName": "Geoffrey Cooper",
             "firstName": "Geoffrey",
-            "fullName": "Geoffrey Cooper"
+            "lastName": "Cooper"
         },
+        "isbn": "0-87893-214-3",
+        "id": 1,
+        "authorId": 1,
         "title": "The Cell: A Molecular Approach, 3rd edition",
-        "isbn": "0-87893-214-3"
+        "pubYear": 2004
     }
 
 ..

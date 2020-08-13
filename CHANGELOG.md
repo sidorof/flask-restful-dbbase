@@ -1,3 +1,7 @@
+## (0.3,0) -
+### Changed
+* Rewrote approach to documentation functions. Expanded the MetaDoc class, added a MethodDoc class. This enables a standardized scaffolding for all the documentation functions, and all meta documentation creation is performed by these classes.
+
 ## (0.2.5) -
 ### Add
 *   Added an ability to document the internal processes that can shape the inputs and data records. To simplify the process a utility class, `MetaDoc`, has been added to `utils.py` to provide a scaffolding to hold the documentation. Adding a meta doc class to a model resource enables documentation for the `process_{method}_input` functions as well as the before/after commit functions. Finally, since control via these functions can affect the resource responses, there is an `exclude` flag in the MetaDoc class. Adding a method to exclude will mean that meta information would rely on your description regarding whichever function causes the resource to end in non-traditional manner.

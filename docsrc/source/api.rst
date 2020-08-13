@@ -37,3 +37,14 @@ This section is a reference for classes and functions of **Flask-RESTful-DBBase*
     :nosignatures
 
    create_resource
+
+.. rubric:: Doc Utils
+
+.. currentmodule:: flask_restful_dbbase.doc_utils
+.. autosummary::
+    :toctree: _generated
+    :nosignatures
+
+   MetaDoc
+   MethodDoc
+
