@@ -13,6 +13,7 @@
         "methods": {
             "get": {
                 "url": "/books/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -56,17 +57,10 @@
                                     }
                                 }
                             },
-                            "isbn": {
+                            "title": {
                                 "type": "string",
-                                "maxLength": 20,
-                                "nullable": true,
-                                "info": {}
-                            },
-                            "id": {
-                                "type": "integer",
-                                "format": "int32",
-                                "primary_key": true,
-                                "nullable": true,
+                                "maxLength": 100,
+                                "nullable": false,
                                 "info": {}
                             },
                             "authorId": {
@@ -76,10 +70,17 @@
                                 "foreign_key": "author.id",
                                 "info": {}
                             },
-                            "title": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "isbn": {
                                 "type": "string",
-                                "maxLength": 100,
-                                "nullable": false,
+                                "maxLength": 20,
+                                "nullable": true,
                                 "info": {}
                             },
                             "pubYear": {
@@ -94,6 +95,7 @@
             },
             "post": {
                 "url": "/books",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -162,17 +164,10 @@
                                     }
                                 }
                             },
-                            "isbn": {
+                            "title": {
                                 "type": "string",
-                                "maxLength": 20,
-                                "nullable": true,
-                                "info": {}
-                            },
-                            "id": {
-                                "type": "integer",
-                                "format": "int32",
-                                "primary_key": true,
-                                "nullable": true,
+                                "maxLength": 100,
+                                "nullable": false,
                                 "info": {}
                             },
                             "authorId": {
@@ -182,10 +177,17 @@
                                 "foreign_key": "author.id",
                                 "info": {}
                             },
-                            "title": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "isbn": {
                                 "type": "string",
-                                "maxLength": 100,
-                                "nullable": false,
+                                "maxLength": 20,
+                                "nullable": true,
                                 "info": {}
                             },
                             "pubYear": {
@@ -200,6 +202,7 @@
             },
             "put": {
                 "url": "/books/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -268,17 +271,10 @@
                                     }
                                 }
                             },
-                            "isbn": {
+                            "title": {
                                 "type": "string",
-                                "maxLength": 20,
-                                "nullable": true,
-                                "info": {}
-                            },
-                            "id": {
-                                "type": "integer",
-                                "format": "int32",
-                                "primary_key": true,
-                                "nullable": true,
+                                "maxLength": 100,
+                                "nullable": false,
                                 "info": {}
                             },
                             "authorId": {
@@ -288,10 +284,17 @@
                                 "foreign_key": "author.id",
                                 "info": {}
                             },
-                            "title": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "isbn": {
                                 "type": "string",
-                                "maxLength": 100,
-                                "nullable": false,
+                                "maxLength": 20,
+                                "nullable": true,
                                 "info": {}
                             },
                             "pubYear": {
@@ -306,6 +309,7 @@
             },
             "patch": {
                 "url": "/books/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -374,17 +378,10 @@
                                     }
                                 }
                             },
-                            "isbn": {
+                            "title": {
                                 "type": "string",
-                                "maxLength": 20,
-                                "nullable": true,
-                                "info": {}
-                            },
-                            "id": {
-                                "type": "integer",
-                                "format": "int32",
-                                "primary_key": true,
-                                "nullable": true,
+                                "maxLength": 100,
+                                "nullable": false,
                                 "info": {}
                             },
                             "authorId": {
@@ -394,10 +391,17 @@
                                 "foreign_key": "author.id",
                                 "info": {}
                             },
-                            "title": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int32",
+                                "primary_key": true,
+                                "nullable": true,
+                                "info": {}
+                            },
+                            "isbn": {
                                 "type": "string",
-                                "maxLength": 100,
-                                "nullable": false,
+                                "maxLength": 20,
+                                "nullable": true,
                                 "info": {}
                             },
                             "pubYear": {
@@ -412,6 +416,7 @@
             },
             "delete": {
                 "url": "/books/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",

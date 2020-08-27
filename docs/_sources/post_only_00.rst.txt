@@ -12,9 +12,9 @@
     {
         "message": "This is no longer a REST resource. We can do anything.",
         "data": {
-            "id": 1,
+            "numVariable": 42,
             "description": "A test",
-            "numVariable": 42
+            "id": 1
         }
     }
 

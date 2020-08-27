@@ -16,6 +16,9 @@
         "methods": {
             "get": {
                 "url": "/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -28,6 +31,11 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
                             "id": {
                                 "type": "integer",
                                 "format": "int32",
@@ -65,11 +73,6 @@
                                     "is_callable": true,
                                     "is_scalar": false
                                 },
-                                "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
                                 "info": {}
                             }
                         }
@@ -78,6 +81,9 @@
             },
             "post": {
                 "url": "/orders",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -127,6 +133,11 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
                             "id": {
                                 "type": "integer",
                                 "format": "int32",
@@ -164,11 +175,6 @@
                                     "is_callable": true,
                                     "is_scalar": false
                                 },
-                                "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
                                 "info": {}
                             }
                         }
@@ -177,6 +183,9 @@
             },
             "put": {
                 "url": "/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -226,6 +235,11 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
                             "id": {
                                 "type": "integer",
                                 "format": "int32",
@@ -263,11 +277,6 @@
                                     "is_callable": true,
                                     "is_scalar": false
                                 },
-                                "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
                                 "info": {}
                             }
                         }
@@ -276,6 +285,9 @@
             },
             "patch": {
                 "url": "/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -325,6 +337,11 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
                             "id": {
                                 "type": "integer",
                                 "format": "int32",
@@ -363,11 +380,6 @@
                                     "is_scalar": false
                                 },
                                 "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
-                                "info": {}
                             }
                         }
                     }
@@ -375,6 +387,9 @@
             },
             "delete": {
                 "url": "/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",

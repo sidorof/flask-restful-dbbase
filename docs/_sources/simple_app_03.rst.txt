@@ -12,80 +12,80 @@
         "Book": [
             {
                 "author": {
-                    "id": 1,
-                    "fullName": "Geoffrey Cooper",
                     "firstName": "Geoffrey",
-                    "lastName": "Cooper"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper",
+                    "id": 1
                 },
-                "isbn": "0-87893-214-3",
-                "id": 1,
-                "authorId": 1,
                 "title": "The Cell: A Molecular Approach, 3rd edition",
+                "authorId": 1,
+                "id": 1,
+                "isbn": "0-87893-214-3",
                 "pubYear": 2004
             },
             {
                 "author": {
-                    "id": 1,
-                    "fullName": "Geoffrey Cooper",
                     "firstName": "Geoffrey",
-                    "lastName": "Cooper"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper",
+                    "id": 1
                 },
-                "isbn": "978-0878932191",
-                "id": 2,
-                "authorId": 1,
                 "title": "The Cell: A Molecular Approach, 4th edition",
+                "authorId": 1,
+                "id": 2,
+                "isbn": "978-0878932191",
                 "pubYear": 2006
             },
             {
                 "author": {
-                    "id": 1,
-                    "fullName": "Geoffrey Cooper",
                     "firstName": "Geoffrey",
-                    "lastName": "Cooper"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper",
+                    "id": 1
                 },
-                "isbn": "978-1605352909",
-                "id": 3,
-                "authorId": 1,
                 "title": "The Cell: A Molecular Approach, 7th edition",
+                "authorId": 1,
+                "id": 3,
+                "isbn": "978-1605352909",
                 "pubYear": 2015
             },
             {
                 "author": {
-                    "id": 1,
-                    "fullName": "Geoffrey Cooper",
                     "firstName": "Geoffrey",
-                    "lastName": "Cooper"
+                    "lastName": "Cooper",
+                    "fullName": "Geoffrey Cooper",
+                    "id": 1
                 },
-                "isbn": "978-1605357072",
-                "id": 4,
-                "authorId": 1,
                 "title": "The Cell: A Molecular Approach, 9th edition",
+                "authorId": 1,
+                "id": 4,
+                "isbn": "978-1605357072",
                 "pubYear": 2018
             },
             {
                 "author": {
-                    "id": 2,
-                    "fullName": "Serope Kalpakjian",
                     "firstName": "Serope",
-                    "lastName": "Kalpakjian"
+                    "lastName": "Kalpakjian",
+                    "fullName": "Serope Kalpakjian",
+                    "id": 2
                 },
-                "isbn": "978-0133128741",
-                "id": 5,
-                "authorId": 2,
                 "title": "Manufacturing Engineering & Technology (7th Edition)",
+                "authorId": 2,
+                "id": 5,
+                "isbn": "978-0133128741",
                 "pubYear": 2013
             },
             {
                 "author": {
-                    "id": 3,
-                    "fullName": "Steven Skiena",
                     "firstName": "Steven",
-                    "lastName": "Skiena"
+                    "lastName": "Skiena",
+                    "fullName": "Steven Skiena",
+                    "id": 3
                 },
-                "isbn": "0-387-94860-0",
-                "id": 6,
-                "authorId": 3,
                 "title": "The Algorithm Design Manual",
+                "authorId": 3,
+                "id": 6,
+                "isbn": "0-387-94860-0",
                 "pubYear": 1997
             }
         ]

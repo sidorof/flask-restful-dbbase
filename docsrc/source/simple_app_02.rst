@@ -14,15 +14,15 @@
 
     {
         "author": {
-            "id": 3,
-            "fullName": "Steven Skiena",
             "firstName": "Steven",
-            "lastName": "Skiena"
+            "lastName": "Skiena",
+            "fullName": "Steven Skiena",
+            "id": 3
         },
-        "isbn": "0-387-94860-0",
-        "id": 6,
-        "authorId": 3,
         "title": "The Algorithm Design Manual",
+        "authorId": 3,
+        "id": 6,
+        "isbn": "0-387-94860-0",
         "pubYear": 1997
     }
 

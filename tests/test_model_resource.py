@@ -791,6 +791,7 @@ class TestModelResource(unittest.TestCase):
                 "methods": {
                     "get": {
                         "url": "/books/<int:id>",
+                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -870,6 +871,7 @@ class TestModelResource(unittest.TestCase):
                     },
                     "post": {
                         "url": "/books",
+                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -974,6 +976,7 @@ class TestModelResource(unittest.TestCase):
                     },
                     "put": {
                         "url": "/books/<int:id>",
+                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -1078,6 +1081,7 @@ class TestModelResource(unittest.TestCase):
                     },
                     "patch": {
                         "url": "/books/<int:id>",
+                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",
@@ -1182,6 +1186,7 @@ class TestModelResource(unittest.TestCase):
                     },
                     "delete": {
                         "url": "/books/<int:id>",
+                        "requirements": [],
                         "input": {
                             "id": {
                                 "type": "integer",

@@ -1,4 +1,8 @@
-## (0.3,0) -
+## (0.3.1) -
+### Changed
+* Reinstated the `requirements` key in method docs, which had erroneously dropped off in the rewrite.
+
+## (0.3.0) -
 ### Changed
 * Rewrote approach to documentation functions. Expanded the MetaDoc class, added a MethodDoc class. This enables a standardized scaffolding for all the documentation functions, and all meta documentation creation is performed by these classes.
 
