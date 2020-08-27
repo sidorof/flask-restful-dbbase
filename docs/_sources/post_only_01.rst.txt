@@ -15,6 +15,7 @@
         "methods": {
             "post": {
                 "url": "/a-model-command",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",

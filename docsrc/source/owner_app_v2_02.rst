@@ -12,29 +12,29 @@
     {
         "Order": [
             {
+                "description": "to do different stuff",
+                "orderedAt": "2020-08-27 10:38:03",
                 "statusId": 0,
+                "ownerId": 1,
                 "id": 1,
                 "jobs": [
                     {
-                        "orderId": 1,
-                        "statusId": 0,
-                        "id": 1,
+                        "startedAt": "2020-08-27 17:38:03",
                         "finishedAt": null,
-                        "startedAt": "2020-08-13 22:04:19",
-                        "ownerId": 1
+                        "statusId": 0,
+                        "ownerId": 1,
+                        "orderId": 1,
+                        "id": 1
                     },
                     {
-                        "orderId": 1,
-                        "statusId": 0,
-                        "id": 2,
+                        "startedAt": "2020-08-27 17:38:03",
                         "finishedAt": null,
-                        "startedAt": "2020-08-13 22:04:19",
-                        "ownerId": 1
+                        "statusId": 0,
+                        "ownerId": 1,
+                        "orderId": 1,
+                        "id": 2
                     }
-                ],
-                "ownerId": 1,
-                "orderedAt": "2020-08-13 15:04:19",
-                "description": "to do different stuff"
+                ]
             }
         ]
     }

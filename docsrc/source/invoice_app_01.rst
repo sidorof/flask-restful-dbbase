@@ -9,25 +9,25 @@
 .. code-block:: JSON 
 
     {
-        "userId": 1,
-        "invoiceDate": "2020-08-13",
-        "id": 1,
         "invoiceItems": [
             {
                 "units": 1,
-                "id": 1,
-                "invoiceId": 1,
                 "unitPrice": 20.0,
-                "partCode": "111"
+                "partCode": "111",
+                "invoiceId": 1,
+                "id": 1
             },
             {
                 "units": 5,
-                "id": 2,
-                "invoiceId": 1,
                 "unitPrice": 15.0,
-                "partCode": "222"
+                "partCode": "222",
+                "invoiceId": 1,
+                "id": 2
             }
-        ]
+        ],
+        "invoiceDate": "2020-08-27",
+        "id": 1,
+        "userId": 1
     }
 
 ..

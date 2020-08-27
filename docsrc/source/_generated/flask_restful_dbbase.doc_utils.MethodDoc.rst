@@ -15,6 +15,7 @@ flask\_restful\_dbbase.doc\_utils.MethodDoc
    
       ~MethodDoc.__init__
       ~MethodDoc.get_default_response
+      ~MethodDoc.get_method_decorators
       ~MethodDoc.to_dict
    
    

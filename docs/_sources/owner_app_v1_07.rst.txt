@@ -16,6 +16,9 @@
         "methods": {
             "get": {
                 "url": "/orders",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "queryString": {
                     "id": {
                         "type": "integer",
@@ -43,6 +46,11 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
                             "id": {
                                 "type": "integer",
                                 "format": "int32",
@@ -80,11 +88,6 @@
                                     "is_callable": true,
                                     "is_scalar": false
                                 },
-                                "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
                                 "info": {}
                             }
                         }

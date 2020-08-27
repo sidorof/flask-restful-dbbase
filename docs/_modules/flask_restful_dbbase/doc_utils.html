@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.doc_utils &#8212; Flask-RESTful-DBBase 0.3.0 documentation</title>
+    <title>flask_restful_dbbase.doc_utils &#8212; Flask-RESTful-DBBase 0.3.1 documentation</title>
     <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Flask-RESTful-DBBase 0.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Flask-RESTful-DBBase 0.3.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -96,7 +96,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span> <span class="o">=</span> <span class="n">resource_class</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url_prefix</span> <span class="o">=</span> <span class="n">resource_class</span><span class="o">.</span><span class="n">url_prefix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">resource_class</span><span class="o">.</span><span class="n">create_url</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">requirements</span> <span class="o">=</span> <span class="n">requirements</span>
         <span class="k">if</span> <span class="n">methods</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">methods</span> <span class="o">=</span> <span class="n">methods</span>
@@ -135,7 +134,6 @@
             <span class="s2">&quot;model_class&quot;</span><span class="p">,</span>
             <span class="s2">&quot;url_prefix&quot;</span><span class="p">,</span>
             <span class="s2">&quot;base_url&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;requirements&quot;</span><span class="p">,</span>
             <span class="s2">&quot;table&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
@@ -257,6 +255,8 @@
         <span class="n">db</span> <span class="o">=</span> <span class="n">model_class</span><span class="o">.</span><span class="n">db</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">resource_class</span><span class="p">)</span>
+
+        <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;requirements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_method_decorators</span><span class="p">(</span><span class="n">meta_doc</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">meta_doc</span><span class="o">.</span><span class="n">resource_class</span><span class="o">.</span><span class="n">is_collection</span><span class="p">():</span>
             <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;queryString&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_inputs</span><span class="p">(</span><span class="n">resource_class</span><span class="p">)</span>
 
@@ -284,6 +284,29 @@
             <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_default_response</span><span class="p">(</span><span class="n">meta_doc</span><span class="p">)]</span>
 
         <span class="k">return</span> <span class="n">doc</span></div>
+
+<div class="viewcode-block" id="MethodDoc.get_method_decorators"><a class="viewcode-back" href="../../_generated/flask_restful_dbbase.doc_utils.MethodDoc.html#flask_restful_dbbase.doc_utils.MethodDoc.get_method_decorators">[docs]</a>    <span class="k">def</span> <span class="nf">get_method_decorators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_doc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns a string representation of any method</span>
+<span class="sd">        decorators.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            meta_doc: (obj) : The meta document being processed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list : None) : The string list of method decorator names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">method_decorators</span> <span class="o">=</span> <span class="n">meta_doc</span><span class="o">.</span><span class="n">resource_class</span><span class="o">.</span><span class="n">method_decorators</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_decorators</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">method_decorators</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_decorators</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="n">method_decorators</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="n">item</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">method_decorators</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">]</span>
+                <span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="MethodDoc.get_default_response"><a class="viewcode-back" href="../../_generated/flask_restful_dbbase.doc_utils.MethodDoc.html#flask_restful_dbbase.doc_utils.MethodDoc.get_default_response">[docs]</a>    <span class="k">def</span> <span class="nf">get_default_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_doc</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -349,22 +372,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">(0.3,0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id2">(0.2.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id4">(0.2.4) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id6">(0.2.3) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id8">(0.2.2) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id10">(0.2.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id11">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id14">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id16">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id18">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id20">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id22">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id25">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id28">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id30">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id32">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">(0.3.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id2">(0.3.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id4">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id6">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id8">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id10">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id12">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id13">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id16">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id18">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id20">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id22">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id24">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id27">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id30">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id32">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id34">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>

@@ -16,6 +16,9 @@
         "methods": {
             "get": {
                 "url": "/api/v2/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -28,6 +31,23 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "orderedAt": {
+                                "type": "date-time",
+                                "nullable": true,
+                                "default": {
+                                    "for_update": false,
+                                    "arg": "datetime.now",
+                                    "is_clause_element": false,
+                                    "is_callable": true,
+                                    "is_scalar": false
+                                },
+                                "info": {}
+                            },
                             "statusId": {
                                 "type": "integer",
                                 "format": "int8",
@@ -39,6 +59,13 @@
                                     "is_callable": false,
                                     "is_scalar": true
                                 },
+                                "info": {}
+                            },
+                            "ownerId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "foreign_key": "user.id",
                                 "info": {}
                             },
                             "id": {
@@ -105,30 +132,6 @@
                                         }
                                     }
                                 }
-                            },
-                            "ownerId": {
-                                "type": "integer",
-                                "format": "int32",
-                                "nullable": false,
-                                "foreign_key": "user.id",
-                                "info": {}
-                            },
-                            "orderedAt": {
-                                "type": "date-time",
-                                "nullable": true,
-                                "default": {
-                                    "for_update": false,
-                                    "arg": "datetime.now",
-                                    "is_clause_element": false,
-                                    "is_callable": true,
-                                    "is_scalar": false
-                                },
-                                "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
-                                "info": {}
                             }
                         }
                     }
@@ -136,6 +139,9 @@
             },
             "post": {
                 "url": "/api/v2/orders",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -279,6 +285,9 @@
             },
             "put": {
                 "url": "/api/v2/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -422,6 +431,9 @@
             },
             "patch": {
                 "url": "/api/v2/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -529,6 +541,23 @@
                 "responses": [
                     {
                         "fields": {
+                            "description": {
+                                "type": "string",
+                                "nullable": false,
+                                "info": {}
+                            },
+                            "orderedAt": {
+                                "type": "date-time",
+                                "nullable": true,
+                                "default": {
+                                    "for_update": false,
+                                    "arg": "datetime.now",
+                                    "is_clause_element": false,
+                                    "is_callable": true,
+                                    "is_scalar": false
+                                },
+                                "info": {}
+                            },
                             "statusId": {
                                 "type": "integer",
                                 "format": "int8",
@@ -540,6 +569,13 @@
                                     "is_callable": false,
                                     "is_scalar": true
                                 },
+                                "info": {}
+                            },
+                            "ownerId": {
+                                "type": "integer",
+                                "format": "int32",
+                                "nullable": false,
+                                "foreign_key": "user.id",
                                 "info": {}
                             },
                             "id": {
@@ -606,30 +642,6 @@
                                         }
                                     }
                                 }
-                            },
-                            "ownerId": {
-                                "type": "integer",
-                                "format": "int32",
-                                "nullable": false,
-                                "foreign_key": "user.id",
-                                "info": {}
-                            },
-                            "orderedAt": {
-                                "type": "date-time",
-                                "nullable": true,
-                                "default": {
-                                    "for_update": false,
-                                    "arg": "datetime.now",
-                                    "is_clause_element": false,
-                                    "is_callable": true,
-                                    "is_scalar": false
-                                },
-                                "info": {}
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": false,
-                                "info": {}
                             }
                         }
                     }
@@ -637,6 +649,9 @@
             },
             "delete": {
                 "url": "/api/v2/orders/<int:id>",
+                "requirements": [
+                    "mock_jwt_required"
+                ],
                 "input": {
                     "id": {
                         "type": "integer",
