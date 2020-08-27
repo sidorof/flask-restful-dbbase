@@ -581,6 +581,7 @@ def test_get_meta():
         "methods": {
             "get": {
                 "url": "/books/<int:id>",
+                "requirements": ["my_decorator"],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -660,6 +661,7 @@ def test_get_meta():
             },
             "post": {
                 "url": "/books",
+                "requirements": None,
                 "input": {
                     "id": {
                         "type": "integer",
@@ -764,6 +766,7 @@ def test_get_meta():
             },
             "delete": {
                 "url": "/books/<int:id>",
+                "requirements": None,
                 "input": {
                     "id": {
                         "type": "integer",
@@ -960,6 +963,7 @@ def test_input_processing():
         "methods": {
             "get": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -1042,6 +1046,7 @@ def test_input_processing():
             },
             "post": {
                 "url": "/authors",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -1177,6 +1182,7 @@ def test_input_processing():
             },
             "put": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -1312,6 +1318,7 @@ def test_input_processing():
             },
             "patch": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -1447,6 +1454,7 @@ def test_input_processing():
             },
             "delete": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",

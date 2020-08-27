@@ -174,6 +174,7 @@ class TestMetaModelResource(unittest.TestCase):
                     "methods": {
                         "get": {
                             "url": "/products/<int:id>",
+                            "requirements": [],
                             "input": {
                                 "id": {
                                     "type": "integer",
@@ -237,6 +238,7 @@ class TestMetaModelResource(unittest.TestCase):
                         },
                         "post": {
                             "url": "/products",
+                            "requirements": [],
                             "input": {
                                 "id": {
                                     "type": "integer",
@@ -338,6 +340,7 @@ class TestMetaModelResource(unittest.TestCase):
                         },
                         "put": {
                             "url": "/products/<int:id>",
+                            "requirements": [],
                             "input": {
                                 "id": {
                                     "type": "integer",
@@ -439,6 +442,7 @@ class TestMetaModelResource(unittest.TestCase):
                         },
                         "patch": {
                             "url": "/products/<int:id>",
+                            "requirements": [],
                             "input": {
                                 "id": {
                                     "type": "integer",
@@ -540,6 +544,7 @@ class TestMetaModelResource(unittest.TestCase):
                         },
                         "delete": {
                             "url": "/products/<int:id>",
+                            "requirements": [],
                             "input": {
                                 "id": {
                                     "type": "integer",
@@ -628,6 +633,7 @@ class TestMetaModelResource(unittest.TestCase):
                     "methods": {
                         "get": {
                             "url": "/products/<int:id>",
+                            "requirements": [],
                             "input": {
                                 "id": {
                                     "type": "integer",

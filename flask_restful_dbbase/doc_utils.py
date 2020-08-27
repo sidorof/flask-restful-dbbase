@@ -50,7 +50,6 @@ class MetaDoc(object):
         self.model_class = resource_class.model_class._class()
         self.url_prefix = resource_class.url_prefix
         self.base_url = resource_class.create_url()
-        self.requirements = requirements
         if methods:
             if isinstance(methods, dict):
                 self.methods = methods
@@ -89,7 +88,6 @@ class MetaDoc(object):
             "model_class",
             "url_prefix",
             "base_url",
-            "requirements",
             "table",
         ]
 
@@ -211,6 +209,8 @@ class MethodDoc(object):
         db = model_class.db
         doc = {}
         self._get_url(doc, self.method, resource_class)
+
+        doc["requirements"] = self.get_method_decorators(meta_doc)
         if meta_doc.resource_class.is_collection():
             doc["queryString"] = self._get_inputs(resource_class)
 
@@ -238,6 +238,29 @@ class MethodDoc(object):
             doc["responses"] = [self.get_default_response(meta_doc)]
 
         return doc
+
+    def get_method_decorators(self, meta_doc):
+        """
+        This function returns a string representation of any method
+        decorators.
+
+        Args:
+            meta_doc: (obj) : The meta document being processed.
+
+        Returns:
+            (list : None) : The string list of method decorator names.
+        """
+        method_decorators = meta_doc.resource_class.method_decorators
+        if isinstance(method_decorators, list):
+            return [item.__name__ for item in method_decorators]
+
+        if isinstance(method_decorators, dict):
+            if self.method in method_decorators:
+                return [
+                    item.__name__ for item in method_decorators[self.method]
+                ]
+
+        return None
 
     def get_default_response(self, meta_doc):
         """

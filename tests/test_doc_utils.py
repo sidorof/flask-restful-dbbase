@@ -73,7 +73,6 @@ def test_create_doc():
     assert meta_doc.model_class == Author._class()
     assert meta_doc.url_prefix == AuthorResource.url_prefix
     assert meta_doc.base_url == AuthorResource.create_url()
-    assert meta_doc.requirements is None
     assert meta_doc.methods == {}
     assert meta_doc.table is None
 
@@ -91,6 +90,7 @@ def test_create_doc():
 
     assert post_method_doc.to_dict(meta_doc) == {
         "url": "/authors",
+        "requirements": [],
         "input": {
             "id": {
                 "type": "integer",
@@ -186,6 +186,7 @@ def test_create_doc():
         "methods": {
             "get": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -265,6 +266,7 @@ def test_create_doc():
             },
             "post": {
                 "url": "/authors",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -352,6 +354,7 @@ def test_create_doc():
             },
             "put": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -484,6 +487,7 @@ def test_create_doc():
             },
             "patch": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -616,6 +620,7 @@ def test_create_doc():
             },
             "delete": {
                 "url": "/authors/<int:id>",
+                "requirements": [],
                 "input": {
                     "id": {
                         "type": "integer",
@@ -705,6 +710,7 @@ def test_create_doc():
 
     assert get_method_doc.to_dict(meta_doc=meta_doc) == {
         "url": "/authors/<int:id>",
+        "requirements": [],
         "input": {
             "id": {
                 "type": "integer",
@@ -785,6 +791,7 @@ def test_create_doc():
 
     assert put_method_doc.to_dict(meta_doc=meta_doc) == {
         "url": "/authors/<int:id>",
+        "requirements": [],
         "input": {
             "id": {
                 "type": "integer",
@@ -918,6 +925,7 @@ def test_create_doc():
 
     assert patch_method_doc.to_dict(meta_doc=meta_doc) == {
         "url": "/authors/<int:id>",
+        "requirements": [],
         "input": {
             "id": {
                 "type": "integer",
@@ -1051,6 +1059,7 @@ def test_create_doc():
 
     assert delete_method_doc.to_dict(meta_doc=meta_doc) == {
         "url": "/authors/<int:id>",
+        "requirements": [],
         "input": {
             "id": {
                 "type": "integer",
@@ -1070,6 +1079,7 @@ def test_create_doc():
 
     assert get_method_doc.to_dict(meta_doc=collection_meta_doc) == {
         "url": "/authors",
+        "requirements": [],
         "queryString": {
             "id": {
                 "type": "integer",
@@ -1193,6 +1203,7 @@ def test_create_doc():
 
     assert method_doc.to_dict(meta_doc) == {
         "url": "/authors",
+        "requirements": [],
         "input": {
             "id": {
                 "type": "integer",
