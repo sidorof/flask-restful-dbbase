@@ -1,3 +1,7 @@
+## (0.3.3) -
+### Changed
+*   Changed screen_data function in DBBaseResource to remove additional extraneous data.
+
 ## (0.3.2) -
 ### Changed
 *   Removed super from CollectionModelResource.
