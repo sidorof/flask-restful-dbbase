@@ -1,3 +1,22 @@
+## (0.3.3) -
+### Changed
+*   Changed screen_data function in DBBaseResource to remove additional extraneous data.
+
+## (0.3.2) -
+### Changed
+*   Removed super from CollectionModelResource.
+*   Added `query_string` for multiple values. Axios, for example, uses a notation such as `('statusId[]', '0'), ('statusId[]`. To accommodate that the query string looks for variables ending with `[]` and converts a query to search for values in a list.
+
+An example of the following styles for query strings with arrays are now supported:
+
+```
+    statusId[]=1&statusId[]=2&owner_id=1
+    statusId=[1,2]&owner_id=1
+    statusId=1&statusId=2&owner_id=1
+    statusId=1,2&owner_id=1&debug=false
+
+```
+
 ## (0.3.1) -
 ### Changed
 * Reinstated the `requirements` key in method docs, which had erroneously dropped off in the rewrite.

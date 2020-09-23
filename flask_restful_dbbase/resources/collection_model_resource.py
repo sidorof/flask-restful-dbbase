@@ -29,14 +29,27 @@ class CollectionModelResource(DBBaseResource):
             msg = "A model class must be set for this resource to function."
             raise ValueError(msg)
         self.model_name = self.model_class._class()
-        super().__init__()
 
     def get(self):
 
         FUNC_NAME = "get"
         name = self.model_class._class()
         url = request.path
-        data = request.args
+
+        # consolidate lists -- axios example
+        data = {}
+        for var, value in request.args.lists():
+            if var.endswith("[]"):
+                # signifies an array
+                var = var[:-2]
+
+            if len(value) == 1:
+                value = value[0]
+                if value.startswith("[") and value.endswith("]"):
+                    value = value[1:-1]
+                if value.find(",") > -1:
+                    value = value.split(",")
+            data[var] = value
 
         # special - could be a list of fields
         order_by = request.args.getlist("orderBy", self.order_by)
@@ -62,10 +75,15 @@ class CollectionModelResource(DBBaseResource):
         # params not data so not converted
         page_size = data.get("page_size", None)
         offset = data.get("offset", None)
-        debug = data.get("debug", None)
-
-        if debug == "False":
-            debug = False
+        debug = None
+        if "debug" in data:
+            debug = data.pop("debug")
+            if debug.lower() == "false":
+                debug = False
+            elif debug.lower() == "true":
+                debug = True
+            else:
+                debug = False
 
         if page_size is not None:
             if self.max_page_size is not None:
@@ -87,7 +105,11 @@ class CollectionModelResource(DBBaseResource):
         )
 
         for key, value in query_data.items():
-            query = query.filter(getattr(self.model_class, key) == value)
+            var = getattr(self.model_class, key)
+            if isinstance(value, list):
+                query = query.filter(var.in_(value))
+            else:
+                query = query.filter(var == value)
 
         if order_by:
             msg = "{order} is not a column in {name}"
@@ -111,10 +133,12 @@ class CollectionModelResource(DBBaseResource):
                 query = query.limit(page_size)
             else:
                 query = query.limit(page_size)
+
         if debug:
             return {"query": str(query)}, 200
 
         query = query.all()
+
         sfields, sfield_relations = self._get_serializations("get")
 
         try:

@@ -1196,7 +1196,7 @@ def test_create_doc():
         responses=[{"message": "a unique response"}],
     )
 
-    mult_meta_doc = MetaDoc(
+    MetaDoc(
         resource_class=MultKeyResource,
         methods={method_doc.method: method_doc},
     )

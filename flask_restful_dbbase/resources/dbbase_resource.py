@@ -451,6 +451,10 @@ class DBBaseResource(Resource):
                     # is it required
                     if col_params.get("nullable") is False:
                         required.append(col_key)
+            else:
+                if read_only and col_key in data:
+                    del data[col_key]
+
 
         if not skip_missing_data:
             if required:

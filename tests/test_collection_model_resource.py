@@ -303,6 +303,30 @@ class TestCollectionModelResource(unittest.TestCase):
                 len(res.get_json()[Sample._class()]), len(qry),
             )
 
+            # test variable in list -- first explicit axios list
+            # needs to result in same SQLAlchemy query
+            Sample = self.Sample
+            qry = Sample.query.filter(
+                Sample.status_id.in_([1, 2]), Sample.owner_id == 1
+            ).all()
+            target = [item.to_dict() for item in qry]
+
+            qrys = [
+                "statusId[]=1&statusId[]=2&owner_id=1&debug=false",
+                "statusId=[1,2]&owner_id=1&debug=false",
+                "statusId=1&statusId=2&owner_id=1&debug=potato",
+                "statusId=1,2&owner_id=1&debug=false",
+            ]
+
+            for qry in qrys:
+                with self.subTest(qry=qry):
+                    res = client.get(
+                        "/samples1", query_string=qry, headers=self.headers,
+                    )
+                    self.assertEqual(res.get_json()["Sample"], target)
+
+                    self.assertEqual(res.status_code, 200)
+
     def test_internal_error(self):
         """
         With more error checking up front, this test
