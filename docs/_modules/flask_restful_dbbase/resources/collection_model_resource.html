@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.collection_model_resource &#8212; Flask-RESTful-DBBase 0.3.1 documentation</title>
+    <title>flask_restful_dbbase.resources.collection_model_resource &#8212; Flask-RESTful-DBBase 0.3.3 documentation</title>
     <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -32,7 +32,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.3.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.3.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
       </ul>
@@ -75,14 +75,27 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;A model class must be set for this resource to function.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="CollectionModelResource.get"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.CollectionModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;get&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
+
+        <span class="c1"># consolidate lists -- axios example</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">lists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;[]&quot;</span><span class="p">):</span>
+                <span class="c1"># signifies an array</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="c1"># special - could be a list of fields</span>
         <span class="n">order_by</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s2">&quot;orderBy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span><span class="p">)</span>
@@ -108,10 +121,15 @@
         <span class="c1"># params not data so not converted</span>
         <span class="n">page_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;page_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">debug</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span><span class="p">:</span>
-            <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">debug</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;debug&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">debug</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+                <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">debug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+                <span class="n">debug</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">page_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -133,7 +151,11 @@
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">var</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">order_by</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{order}</span><span class="s2"> is not a column in </span><span class="si">{name}</span><span class="s2">&quot;</span>
@@ -157,10 +179,12 @@
                 <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">page_size</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">page_size</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)},</span> <span class="mi">200</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
         <span class="n">sfields</span><span class="p">,</span> <span class="n">sfield_relations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -201,23 +225,25 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.3.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.3.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.2.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.2.4) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.2.3) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id10">(0.2.2) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id12">(0.2.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id13">(0.2.0) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id16">(0.1.11) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id18">(0.1.10) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id20">(0.1.9) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id22">(0.1.8) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id24">(0.1.7) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id27">(0.1.6) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id30">(0.1.5) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id32">(0.1.1) -</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id34">(0.1.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">(0.3.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id2">(0.3.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id4">(0.3.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id6">(0.3.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id8">(0.2.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id10">(0.2.4) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id12">(0.2.3) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id14">(0.2.2) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id16">(0.2.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id17">(0.2.0) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id20">(0.1.11) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id22">(0.1.10) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id24">(0.1.9) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id26">(0.1.8) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id28">(0.1.7) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id31">(0.1.6) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id34">(0.1.5) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id36">(0.1.1) -</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id38">(0.1.0) -</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
