@@ -476,6 +476,9 @@ class DBBaseResource(Resource):
         """
         errors = []
 
+        if value is None:
+            return errors
+
         if col_params["type"] in ["integer", "float"]:
             if isinstance(value, str):
                 if not value.isnumeric():
@@ -496,7 +499,7 @@ class DBBaseResource(Resource):
 
         max_len = col_params.get("maxLength")
 
-        if max_len:
+        if max_len and value is not None:
             if len(value.strip()) > max_len:
                 errors.append(
                     {
@@ -517,6 +520,9 @@ class DBBaseResource(Resource):
         does a conversion to an object if possible.
         """
         errors = []
+
+        if value is None:
+            return True, value
 
         if col_params["type"] == "date":
             try:

@@ -459,6 +459,14 @@ def test__check_numeric_casting():
         == []
     )
 
+    # None
+    assert (
+        DBBaseResource._check_numeric_casting(
+            col_key="key", value=None, col_params={"type": "integer"}
+        )
+        == []
+    )
+
 
 def test__check_max_text_lengths():
 
@@ -479,6 +487,14 @@ def test__check_max_text_lengths():
     assert (
         DBBaseResource._check_max_text_lengths(
             col_key="key", value="this is a test", col_params={}
+        )
+        == []
+    )
+
+    # None
+    assert (
+        DBBaseResource._check_max_text_lengths(
+            col_key="key", value=None, col_params={"maxLength": 20}
         )
         == []
     )
@@ -521,6 +537,11 @@ def test__check_date_casting():
             }
         ],
     )
+
+    # None
+    assert DBBaseResource._check_date_casting(
+        col_key="key", value=None, col_params={"type": "date-time"}
+    ) == (True, None)
 
 
 def test_screen_data():
