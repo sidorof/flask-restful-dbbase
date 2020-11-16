@@ -1,3 +1,8 @@
+# Changelog
+## (0.3.4) -
+### Changed
+*   Added tests for null values in functions in dbbase_resource that verify value types.
+
 ## (0.3.3) -
 ### Changed
 *   Changed screen_data function in DBBaseResource to remove additional extraneous data.
