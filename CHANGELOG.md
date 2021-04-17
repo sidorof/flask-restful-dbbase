@@ -1,4 +1,8 @@
 # Changelog
+## (0.3.5) -
+### Changed
+*   Specified a version restriction for SQLAlchemy to be lower than 1.4. Converted config :memory: to sqlite:///:memory:.
+
 ## (0.3.4) -
 ### Changed
 *   Added tests for null values in functions in dbbase_resource that verify value types.
