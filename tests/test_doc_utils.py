@@ -12,7 +12,7 @@ from flask_restful_dbbase.resources import (
 
 def test_create_doc():
 
-    db = DB(":memory:")
+    db = DB("sqlite///:memory:")
 
     class Author(db.Model):
         __tablename__ = "author"

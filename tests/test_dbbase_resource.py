@@ -220,7 +220,7 @@ def test_get_urls():
     assert str(err.value) == "A model class must be defined"
 
     # multiple keys
-    db = DB(config=":memory:")
+    db = DB(config="sqlite:///:memory:")
 
     class MultKey(db.Model):
         __tablename__ = "mult_keys"
@@ -549,7 +549,7 @@ def test_screen_data():
     Coverage from other tests except for
     date related.
     """
-    db = DB(config=":memory:")
+    db = DB(config="sqlite:///:memory:")
 
     class AModel(db.Model):
         __tablename__ = "amodel"
@@ -574,7 +574,7 @@ def test_get_meta():
 
     This version does all.
     """
-    db1 = DB(config=":memory:")
+    db1 = DB(config="sqlite:///:memory:")
     Author, Book, author, book = create_models(db1)
 
     def my_decorator():
@@ -915,7 +915,7 @@ def test__item_adjust():
 
 def test_input_processing():
 
-    db10 = DB(config=":memory:")
+    db10 = DB(config="sqlite:///:memory:")
     Author, Book, author, book = create_models(db10)
 
     class TestResource(DBBaseResource):
