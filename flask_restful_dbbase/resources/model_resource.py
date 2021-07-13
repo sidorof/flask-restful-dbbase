@@ -97,7 +97,8 @@ class ModelResource(DBBaseResource):
 
         if item:
             result = item.to_dict(
-                serial_fields=sfields, serial_field_relations=sfield_relations,
+                serial_fields=sfields,
+                serial_field_relations=sfield_relations,
             )
 
             current_app.logger.debug(result)

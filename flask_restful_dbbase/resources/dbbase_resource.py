@@ -136,7 +136,7 @@ class DBBaseResource(Resource):
 
     @classmethod
     def get_key_names(cls, formatted=False):
-        """ get_key_names
+        """get_key_names
 
         This function returns column names marked as primary_key.
 
@@ -366,7 +366,7 @@ class DBBaseResource(Resource):
 
     @classmethod
     def create_url(cls):
-        """ create_url
+        """create_url
 
         Url can come from:
         * url_name resource variable
@@ -455,7 +455,6 @@ class DBBaseResource(Resource):
                 if read_only and col_key in data:
                     del data[col_key]
 
-
         if not skip_missing_data:
             if required:
                 errors.append({"missing_columns": required})
@@ -467,7 +466,7 @@ class DBBaseResource(Resource):
 
     @staticmethod
     def _check_numeric_casting(col_key, value, col_params):
-        """ _check_numeric_casting
+        """_check_numeric_casting
 
         This function just makes a quick to see if a numeric field
         data, if in string form, can be converted to a number.
@@ -490,7 +489,7 @@ class DBBaseResource(Resource):
 
     @staticmethod
     def _check_max_text_lengths(col_key, value, col_params):
-        """ _check_max_text_lengths
+        """_check_max_text_lengths
 
         This function compares a maximum length, if available with
         the data value.
@@ -512,7 +511,7 @@ class DBBaseResource(Resource):
 
     @classmethod
     def _check_date_casting(cls, col_key, value, col_params):
-        """ _check_date_casting
+        """_check_date_casting
 
         This function attempts to change a string date to date object.
 

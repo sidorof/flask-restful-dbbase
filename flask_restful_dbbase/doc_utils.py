@@ -44,7 +44,10 @@ class MetaDoc(object):
     all_methods = ("get", "post", "put", "patch", "delete")
 
     def __init__(
-        self, resource_class, requirements=None, methods=None,
+        self,
+        resource_class,
+        requirements=None,
+        methods=None,
     ):
         self.resource_class = resource_class
         self.model_class = resource_class.model_class._class()
@@ -189,7 +192,8 @@ class MethodDoc(object):
     def _get_input_props(resource_class):
 
         return resource_class.model_class.filter_columns(
-            column_props=["!readOnly"], to_camel_case=True,
+            column_props=["!readOnly"],
+            to_camel_case=True,
         )
 
     @staticmethod

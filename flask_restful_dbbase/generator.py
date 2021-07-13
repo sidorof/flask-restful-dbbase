@@ -79,7 +79,11 @@ def create_resource(
     if class_vars is not None:
         class_dict.update(class_vars)
 
-    new_class = type(name, (DBBaseResource,), class_dict,)
+    new_class = type(
+        name,
+        (DBBaseResource,),
+        class_dict,
+    )
 
     # required model check
     if new_class.model_class is None:
