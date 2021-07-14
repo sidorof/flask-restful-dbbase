@@ -3,8 +3,11 @@
 This module implements a starting point for model resources.
 
 """
-from flask_restful import request, current_app
+import logging
+from flask_restful import request
 from .dbbase_resource import DBBaseResource
+
+logger = logging.getLogger(__name__)
 
 
 class ModelResource(DBBaseResource):
@@ -77,7 +80,7 @@ class ModelResource(DBBaseResource):
                 else:
                     func = self.process_get_input.__name__
                     msg = f"malformed error in {func}: {result}"
-                    current_app.logger.error(msg)
+                    logger.error(msg)
                     return {"message": msg}, 500
 
             query, data = result
@@ -89,7 +92,7 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            current_app.logger.error(msg)
+            logger.error(msg)
             return {"message": msg}, 500
 
         sfields, sfield_relations = self._get_serializations(FUNC_NAME)
@@ -100,12 +103,12 @@ class ModelResource(DBBaseResource):
                 serial_field_relations=sfield_relations,
             )
 
-            current_app.logger.debug(result)
+            logger.debug(result)
 
             return result, 200
 
         msg = f"{self.model_name} with {kdict} not found"
-        current_app.logger.debug(msg)
+        logger.debug(msg)
         return {"message": msg}, 404
 
     def post(self):
@@ -123,11 +126,11 @@ class ModelResource(DBBaseResource):
             except Exception as err:
                 msg = err
                 return_msg = f"A JSON format problem:{msg}: {request.data}"
-                current_app.logger.error(return_msg)
+                logger.error(return_msg)
                 return {"message": return_msg}, 400
 
         else:
-            current_app.logger.info("JSON format is required")
+            logger.info("JSON format is required")
             return {"message": "JSON format is required"}, 415
 
         if self.process_post_input is not None:
@@ -141,7 +144,7 @@ class ModelResource(DBBaseResource):
                 else:
                     func = self.process_post_input.__name__
                     msg = f"malformed error in {func}: {result}"
-                    current_app.logger.error(msg)
+                    logger.error(msg)
                     return {"message": msg}, 500
 
             data = result
@@ -154,11 +157,11 @@ class ModelResource(DBBaseResource):
             )
         except Exception as err:
             msg = f"malformed data: {err.args[0]}"
-            current_app.logger(msg)
+            logger(msg)
             return {"message": msg}, 400
 
         if status is False:
-            current_app.logger.info(data)
+            logger.info(data)
             return {"message": data}, 400
 
         key_names = self.get_key_names(formatted=False)
@@ -178,12 +181,12 @@ class ModelResource(DBBaseResource):
                 item = query.first()
             except Exception as err:
                 msg = err.args[0]
-                current_app.logger.error(msg)
+                logger.error(msg)
                 return {"message": msg}, 400
 
         if item:
             msg = f"{kdict} for {self.model_name} already exists."
-            current_app.logger.info(msg)
+            logger.info(msg)
             return (
                 {"message": msg},
                 409,
@@ -244,7 +247,7 @@ class ModelResource(DBBaseResource):
                     )
                     if sub_status is False:
                         # NOTE: look at this further
-                        current_app.logger.info(sub_data)
+                        logger.info(sub_data)
                         return {"message": sub_data}, 400
 
                     getattr(item, key).append(sub_class(**sub_data))
@@ -264,7 +267,7 @@ class ModelResource(DBBaseResource):
             item.save()
         except Exception as err:
             msg = err.args[0]
-            current_app.logger.error(msg)
+            logger.error(msg)
             return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
@@ -300,7 +303,7 @@ class ModelResource(DBBaseResource):
             kdict = self._check_key(kwargs)
         except Exception as err:
             msg = err.args[0]
-            current_app.logger.info(msg)
+            logger.info(msg)
             return {"message": msg}, 400
 
         if request.is_json:
@@ -309,7 +312,7 @@ class ModelResource(DBBaseResource):
             except Exception as err:
                 msg = err
                 return_msg = f"A JSON format problem:{msg}"
-                current_app.logger.info(return_msg)
+                logger.info(return_msg)
                 return {"message": return_msg}, 400
         else:
             return {"message": "JSON format is required"}, 415
@@ -326,7 +329,7 @@ class ModelResource(DBBaseResource):
                 else:
                     func = self.process_put_input.__name__
                     msg = f"malformed error in {func}: {result}"
-                    current_app.logger.info(msg)
+                    logger.info(msg)
                     return {"message": msg}, 500
 
             query, data = result
@@ -342,7 +345,7 @@ class ModelResource(DBBaseResource):
 
         except Exception as err:
             msg = err.args[0]
-            current_app.logger.error(msg)
+            logger.error(msg)
             return {"message": msg}, 400
 
 
@@ -354,7 +357,7 @@ class ModelResource(DBBaseResource):
             self.model_class.deserialize(data), self.get_obj_params()
         )
         if status is False:
-            current_app.logger.info(f"{str(data)}: 400")
+            logger.info(f"{str(data)}: 400")
             return {"message": data}, 400
 
         if item is None:
@@ -379,8 +382,8 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            current_app.logger.info(msg)
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            logger.info(msg)
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
@@ -451,7 +454,7 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            current_app.logger.error(msg)
+            logger.error(msg)
             return {"message": msg}, 500
 
         data = self.model_class.deserialize(data)
@@ -485,7 +488,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             msg = err.args[0]
             self.model_class.db.session.rollback()
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
                     "message": "An error occurred updating the "
@@ -550,12 +553,12 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            current_app.logger.error(msg)
+            logger.error(msg)
             return {"message": msg}, 500
 
         if item is None:
             msg = f"{self.model_name} with {kdict} not found"
-            current_app.logger.debug(msg)
+            logger.debug(msg)
             return {"message": msg}, 404
 
         adjust_before = self.before_commit.get(FUNC_NAME)
@@ -573,7 +576,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
                     "message": "An error occurred deleting the "
