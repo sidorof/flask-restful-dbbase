@@ -91,13 +91,13 @@ def create_models(db):
         status_id = db.Column(db.SmallInteger, default=0, nullable=True)
 
     class SmallBefore(db.Model):
-        """ small and generic """
+        """small and generic"""
 
         __tablename__ = "small_before"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
 
     class SmallAfter(db.Model):
-        """ small and generic """
+        """small and generic"""
 
         __tablename__ = "small_after"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
@@ -166,7 +166,7 @@ class TestModelProcResource(unittest.TestCase):
                     if data.get("ownerId", None) == user_id:
                         return True, (qry, data)
 
-                    print('returning False')
+                    print("returning False")
                     msg = "The user id does not match the owner id"
                     return (False, ({"message": msg}, 400))
 
@@ -221,7 +221,7 @@ class TestModelProcResource(unittest.TestCase):
         del cls.db
 
     def test_get_with_input_processing(self):
-        """ test_get_with_input_processing
+        """test_get_with_input_processing
 
         This pretends there is a method decorator for jwt. If it
         was only to know if the user is logged in, nothing extra is required.
@@ -256,12 +256,13 @@ class TestModelProcResource(unittest.TestCase):
             res = client.get(f"/samples/{id}", headers=self.headers)
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
-                res.get_json(), {"message": "Sample with {'id': 2} not found"},
+                res.get_json(),
+                {"message": "Sample with {'id': 2} not found"},
             )
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_with_input_processing(self):
-        """ test_post_with_input_processing
+        """test_post_with_input_processing
 
         The input processing is similar to get, except that instead of
         the start of a query, data from the request is part of the function
@@ -307,7 +308,7 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_put_with_input_processing(self):
-        """ test_put_with_input_processing
+        """test_put_with_input_processing
 
         The input processing in this case receives the start of a query,
         the data and kwargs.
@@ -357,7 +358,7 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_patch_with_input_processing(self):
-        """ test_patch_with_input_processing
+        """test_patch_with_input_processing
 
         The input processing in this case receives the start of a query,
         the data and kwargs.
@@ -408,7 +409,7 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_delete_with_input_processing(self):
-        """ test_delete_with_input_processing
+        """test_delete_with_input_processing
 
         The input processing in this case receives the start of a query,
         the data and kwargs.
@@ -492,7 +493,7 @@ def generic_diversion(resource_self, item, status_code):
 
 
 class TestModelBeforeAftertResource(unittest.TestCase):
-    """ TestModelBeforeAftertResource
+    """TestModelBeforeAftertResource
 
     This class tests creating a sample, submitting it to a queue
     as a job, returning the job particulars instead.
@@ -567,7 +568,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
         del cls.db
 
     def test_post_start_job(self):
-        """ test_post_start_job
+        """test_post_start_job
 
         The input processing is similar to get, except that instead of
         the start of a query, data from the request is part of the function
@@ -604,9 +605,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_all_before_adjusts(self):
-        """ test_all_before_adjusts
-
-        """
+        """test_all_before_adjusts"""
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -768,9 +767,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "something else"})
 
     def test_all_after_adjusts(self):
-        """ test_all_after_adjusts
-
-        """
+        """test_all_after_adjusts"""
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -954,7 +951,8 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             )
 
             self.assertDictEqual(
-                res.get_json(), Test1.query.get(test2.id).to_dict(),
+                res.get_json(),
+                Test1.query.get(test2.id).to_dict(),
             )
 
     def test_process_post_input(self):
@@ -999,7 +997,9 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             # debug is False
             data = {"id": 1, "debug": False, "name": "this is a test"}
             res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers,
+                "/test2",
+                data=json.dumps(data),
+                headers=self.headers,
             )
 
             self.assertDictEqual(
@@ -1025,21 +1025,26 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             # debug is True
             data = {"id": 2, "debug": True, "name": "this is a test"}
             res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers,
+                "/test2",
+                data=json.dumps(data),
+                headers=self.headers,
             )
             self.assertDictEqual(
-                res.get_json(), {"id": 2, "name": "this is a test"},
+                res.get_json(),
+                {"id": 2, "name": "this is a test"},
             )
 
             # Trigger exception from failed save
             data = {"id": 3, "debug": True, "name": "disrupt_object"}
             res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers,
+                "/test2",
+                data=json.dumps(data),
+                headers=self.headers,
             )
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': '(sqlite3.IntegrityError) datatype mismatch'},
+                {"message": "(sqlite3.IntegrityError) datatype mismatch"},
             )
 
     def test_process_put_input(self):
@@ -1084,7 +1089,9 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             # debug is False
             data = {"id": 1, "debug": False, "name": "this is a test"}
             res = client.put(
-                "/test3/1", data=json.dumps(data), headers=self.headers,
+                "/test3/1",
+                data=json.dumps(data),
+                headers=self.headers,
             )
 
             self.assertDictEqual(
@@ -1110,20 +1117,25 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             # debug is True
             data = {"id": 2, "debug": True, "name": "this is a test"}
             res = client.put(
-                "/test3/2", data=json.dumps(data), headers=self.headers,
+                "/test3/2",
+                data=json.dumps(data),
+                headers=self.headers,
             )
             self.assertDictEqual(
-                res.get_json(), {"id": 2, "name": "this is a test"},
+                res.get_json(),
+                {"id": 2, "name": "this is a test"},
             )
 
             # Trigger exception from failed save
             data = {"id": 3, "debug": True, "name": "disrupt_object"}
             res = client.put(
-                "/test3/3", data=json.dumps(data), headers=self.headers,
+                "/test3/3",
+                data=json.dumps(data),
+                headers=self.headers,
             )
             self.assertDictEqual(
                 res.get_json(),
-                {'message': '(sqlite3.IntegrityError) datatype mismatch'},
+                {"message": "(sqlite3.IntegrityError) datatype mismatch"},
             )
 
             self.assertEqual(res.status_code, 400)
@@ -1169,7 +1181,9 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             # debug is False
             data = {"id": 1, "debug": False, "name": "this is a test"}
             res = client.patch(
-                "/test3a/1", data=json.dumps(data), headers=self.headers,
+                "/test3a/1",
+                data=json.dumps(data),
+                headers=self.headers,
             )
             self.assertDictEqual(
                 res.get_json(),
@@ -1194,16 +1208,21 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             # debug is True
             data = {"id": 2, "debug": True, "name": "this is a test"}
             res = client.patch(
-                "/test3a/2", data=json.dumps(data), headers=self.headers,
+                "/test3a/2",
+                data=json.dumps(data),
+                headers=self.headers,
             )
             self.assertDictEqual(
-                res.get_json(), {"id": 2, "name": "this is a test"},
+                res.get_json(),
+                {"id": 2, "name": "this is a test"},
             )
 
             # Trigger exception from failed save
             data = {"id": 3, "debug": True, "name": "disrupt_object"}
             res = client.patch(
-                "/test3a/3", data=json.dumps(data), headers=self.headers,
+                "/test3a/3",
+                data=json.dumps(data),
+                headers=self.headers,
             )
 
             self.assertDictEqual(
@@ -1245,7 +1264,10 @@ class TestModelBeforeAftertResource(unittest.TestCase):
 
         with self.app.test_client() as client:
             # input_flag is 0 - error in process input
-            res = client.delete("/test4/1", headers=self.headers,)
+            res = client.delete(
+                "/test4/1",
+                headers=self.headers,
+            )
 
             self.assertDictEqual(
                 res.get_json(),
@@ -1269,7 +1291,11 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.Test4Resource.input_flag = 2
             data = {"id": 1, "name": "this is a test"}
             Test4(**data).save()
-            res = client.delete("/test4/1", headers=self.headers,)
+            res = client.delete(
+                "/test4/1",
+                headers=self.headers,
+            )
             self.assertDictEqual(
-                res.get_json(), {"message": "Test4 with {'id': 1} is deleted"},
+                res.get_json(),
+                {"message": "Test4 with {'id': 1} is deleted"},
             )

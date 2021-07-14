@@ -570,7 +570,7 @@ def test_screen_data():
 
 
 def test_get_meta():
-    """ test_get_meta
+    """test_get_meta
 
     This version does all.
     """

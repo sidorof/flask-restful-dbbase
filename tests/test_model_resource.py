@@ -12,7 +12,7 @@ logging.disable(logging.CRITICAL)
 
 
 def passthrough(self, item, status_code):
-    """ passthrough
+    """passthrough
 
     For testing before/after commit functions
     """
@@ -168,7 +168,8 @@ class TestModelResource(unittest.TestCase):
             res = client.get(f"/books/{wrong_id}", headers=self.headers)
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
-                res.get_json(), {"message": "Book with {'id': 10} not found"},
+                res.get_json(),
+                {"message": "Book with {'id': 10} not found"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -443,11 +444,13 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.post(
-                "/books", data='isbn="newisbn", title="new title"',
+                "/books",
+                data='isbn="newisbn", title="new title"',
             )
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
-                res.get_json(), {"message": "JSON format is required"},
+                res.get_json(),
+                {"message": "JSON format is required"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -567,7 +570,7 @@ class TestModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            print('============= here -----------------')
+            print("============= here -----------------")
             # incorrect json entry
             res = client.put(
                 "/books/1000",
@@ -590,11 +593,13 @@ class TestModelResource(unittest.TestCase):
                 self.set_db()
 
             res = client.put(
-                "/books/1000", data='isbn="newisbn", title="new title"',
+                "/books/1000",
+                data='isbn="newisbn", title="new title"',
             )
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
-                res.get_json(), {"message": "JSON format is required"},
+                res.get_json(),
+                {"message": "JSON format is required"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -664,17 +669,20 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_patch_not_json1(self):
-        """not JSON, reject
-        """
+        """not JSON, reject"""
         data = 'isbn="newisbnafsasfasfasdsdsdfsdsadasf", title="new title"'
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
-            res = client.patch("/books/1000", data=data,)
+            res = client.patch(
+                "/books/1000",
+                data=data,
+            )
             self.assertEqual(res.status_code, 415)
             self.assertDictEqual(
-                res.get_json(), {"message": "JSON format is required"},
+                res.get_json(),
+                {"message": "JSON format is required"},
             )
         self.assertEqual(res.content_type, "application/json")
 
@@ -754,7 +762,8 @@ class TestModelResource(unittest.TestCase):
             res = client.delete(f"/books/{wrong_id}", headers=self.headers)
             self.assertEqual(res.status_code, 404)
             self.assertDictEqual(
-                res.get_json(), {"message": "Book with {'id': 10} not found"},
+                res.get_json(),
+                {"message": "Book with {'id': 10} not found"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1318,7 +1327,9 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': '(sqlite3.OperationalError) no such table: throwaway'},
+                {
+                    "message": "(sqlite3.OperationalError) no such table: throwaway"
+                },
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1359,7 +1370,7 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': 'trigger erroor'},
+                {"message": "trigger erroor"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1406,7 +1417,7 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': "'NoneType' object has no attribute 'save'"},
+                {"message": "'NoneType' object has no attribute 'save'"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1422,7 +1433,7 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': "'str' object is not callable"},
+                {"message": "'str' object is not callable"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1510,7 +1521,9 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': "An error occurred deleting the ThrowAwayDelete: 'NoneType' object has no attribute 'delete'."},
+                {
+                    "message": "An error occurred deleting the ThrowAwayDelete: 'NoneType' object has no attribute 'delete'."
+                },
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1524,6 +1537,6 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
-                {'message': "'str' object is not callable"},
+                {"message": "'str' object is not callable"},
             )
             self.assertEqual(res.content_type, "application/json")

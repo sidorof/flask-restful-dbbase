@@ -123,9 +123,7 @@ class TestCollectionModelResource(unittest.TestCase):
         self.assertRaises(ValueError, ACollectionResource.get_urls)
 
     def test_get_no_params(self):
-        """ test_get_no_params
-
-        """
+        """test_get_no_params"""
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -139,9 +137,7 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_get_with_params(self):
-        """ test_get_with_params
-
-        """
+        """test_get_with_params"""
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -160,7 +156,8 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]), len(qry),
+                len(res.get_json()[Sample._class()]),
+                len(qry),
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -199,7 +196,8 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]), len(qry),
+                len(res.get_json()[Sample._class()]),
+                len(qry),
             )
 
             # multiple sort with list
@@ -227,11 +225,13 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]), len(qry),
+                len(res.get_json()[Sample._class()]),
+                len(qry),
             )
 
             self.assertListEqual(
-                res.get_json()["Sample"], [item.to_dict() for item in qry],
+                res.get_json()["Sample"],
+                [item.to_dict() for item in qry],
             )
 
             # test debug
@@ -274,7 +274,8 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]), len(qry),
+                len(res.get_json()[Sample._class()]),
+                len(qry),
             )
 
             # offset
@@ -300,7 +301,8 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
 
             self.assertEqual(
-                len(res.get_json()[Sample._class()]), len(qry),
+                len(res.get_json()[Sample._class()]),
+                len(qry),
             )
 
             # test variable in list -- first explicit axios list
@@ -321,7 +323,9 @@ class TestCollectionModelResource(unittest.TestCase):
             for qry in qrys:
                 with self.subTest(qry=qry):
                     res = client.get(
-                        "/samples1", query_string=qry, headers=self.headers,
+                        "/samples1",
+                        query_string=qry,
+                        headers=self.headers,
                     )
                     self.assertEqual(res.get_json()["Sample"], target)
 
@@ -350,7 +354,10 @@ class TestCollectionModelResource(unittest.TestCase):
 
         with self.app.test_client() as client:
 
-            res = client.get("/tests", headers=self.headers,)
+            res = client.get(
+                "/tests",
+                headers=self.headers,
+            )
 
             self.assertDictEqual(
                 res.get_json(),
@@ -391,7 +398,9 @@ class TestCollectionModelResource(unittest.TestCase):
 
         with self.app.test_client() as client:
             res = client.get(
-                "/test1", query_string={"debug": False}, headers=self.headers,
+                "/test1",
+                query_string={"debug": False},
+                headers=self.headers,
             )
 
             self.assertDictEqual(
@@ -411,7 +420,9 @@ class TestCollectionModelResource(unittest.TestCase):
 
             # debug is True
             res = client.get(
-                "/test1", query_string={"debug": True}, headers=self.headers,
+                "/test1",
+                query_string={"debug": True},
+                headers=self.headers,
             )
 
             self.assertListEqual(
