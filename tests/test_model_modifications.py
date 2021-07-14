@@ -163,9 +163,10 @@ class TestModelProcResource(unittest.TestCase):
 
                     # see how owner is camel case, data at this stage
                     #   is not yet deserialized
-                    if data.get("ownerId") == user_id:
+                    if data.get("ownerId", None) == user_id:
                         return True, (qry, data)
 
+                    print('returning False')
                     msg = "The user id does not match the owner id"
                     return (False, ({"message": msg}, 400))
 
@@ -335,7 +336,6 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
         sample = {"id": 1, "ownerId": 1, "param1": 5, "param2": 6}
-
         # owner id matches user i
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -591,7 +591,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             result = res.get_json()
             result.pop("startTime")
             self.assertDictEqual(
-                res.get_json(),
+                result,
                 {
                     "id": 1,
                     "ownerId": 2,
@@ -1036,9 +1036,10 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.post(
                 "/test2", data=json.dumps(data), headers=self.headers,
             )
+            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {"message": "Internal Server Error: method post: /test2"},
+                {'message': '(sqlite3.IntegrityError) datatype mismatch'},
             )
 
     def test_process_put_input(self):
@@ -1120,16 +1121,12 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             res = client.put(
                 "/test3/3", data=json.dumps(data), headers=self.headers,
             )
-
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "An error occurred updating the Test3: "
-                    "(sqlite3.IntegrityError) datatype mismatch."
-                },
+                {'message': '(sqlite3.IntegrityError) datatype mismatch'},
             )
 
-            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.status_code, 400)
 
     def test_process_patch_input(self):
 

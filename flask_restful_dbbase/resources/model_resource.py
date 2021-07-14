@@ -89,9 +89,8 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return {"message": return_msg}, 500
+            current_app.logger.error(msg)
+            return {"message": msg}, 500
 
         sfields, sfield_relations = self._get_serializations(FUNC_NAME)
 
@@ -124,11 +123,11 @@ class ModelResource(DBBaseResource):
             except Exception as err:
                 msg = err
                 return_msg = f"A JSON format problem:{msg}: {request.data}"
-                current_app.logger.error(msg)
+                current_app.logger.error(return_msg)
                 return {"message": return_msg}, 400
 
         else:
-            current_app.logger.info(msg)
+            current_app.logger.info("JSON format is required")
             return {"message": "JSON format is required"}, 415
 
         if self.process_post_input is not None:
@@ -148,12 +147,18 @@ class ModelResource(DBBaseResource):
             data = result
 
         obj_params = self.get_obj_params()
-        status, data = self.screen_data(
-            self.model_class.deserialize(data), obj_params
-        )
+
+        try:
+            status, data = self.screen_data(
+                self.model_class.deserialize(data), obj_params
+            )
+        except Exception as err:
+            msg = f"malformed data: {err.args[0]}"
+            current_app.logger(msg)
+            return {"message": msg}, 400
 
         if status is False:
-            current_app.logger.info(msg)
+            current_app.logger.info(data)
             return {"message": data}, 400
 
         key_names = self.get_key_names(formatted=False)
@@ -173,10 +178,8 @@ class ModelResource(DBBaseResource):
                 item = query.first()
             except Exception as err:
                 msg = err.args[0]
-                return_msg = f"Internal Server Error: method {FUNC_NAME}: "
-                f"{url}"
-                current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-                return {"message": return_msg}, 500
+                current_app.logger.error(msg)
+                return {"message": msg}, 400
 
         if item:
             msg = f"{kdict} for {self.model_name} already exists."
@@ -259,12 +262,10 @@ class ModelResource(DBBaseResource):
 
         try:
             item.save()
-
         except Exception as err:
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return {"message": return_msg}, 500
+            current_app.logger.error(msg)
+            return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after:
@@ -307,8 +308,8 @@ class ModelResource(DBBaseResource):
                 data = request.json
             except Exception as err:
                 msg = err
-                return_msg = f"A JSON format problem:{msg}: {request.data}"
-                current_app.logger.info(msg)
+                return_msg = f"A JSON format problem:{msg}"
+                current_app.logger.info(return_msg)
                 return {"message": return_msg}, 400
         else:
             return {"message": "JSON format is required"}, 415
@@ -331,7 +332,6 @@ class ModelResource(DBBaseResource):
             query, data = result
 
         status, kdict = self._all_keys_found(list(kdict.keys()), data)
-
         if status:
             for key_name, value in kdict.items():
                 query = query.filter(
@@ -339,11 +339,12 @@ class ModelResource(DBBaseResource):
                 )
         try:
             item = query.first()
+
         except Exception as err:
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return {"message": return_msg}, 500
+            current_app.logger.error(msg)
+            return {"message": msg}, 400
+
 
         data = self.model_class.deserialize(data)
 
@@ -353,7 +354,7 @@ class ModelResource(DBBaseResource):
             self.model_class.deserialize(data), self.get_obj_params()
         )
         if status is False:
-            current_app.logger.info(f"{msg}: 400")
+            current_app.logger.info(f"{str(data)}: 400")
             return {"message": data}, 400
 
         if item is None:
@@ -378,15 +379,9 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
+            current_app.logger.info(msg)
             current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return (
-                {
-                    "message": "An error occurred updating the "
-                    f"{self.model_name}: {msg}."
-                },
-                500,
-            )
+            return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after:
@@ -456,9 +451,8 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return {"message": return_msg}, 500
+            current_app.logger.error(msg)
+            return {"message": msg}, 500
 
         data = self.model_class.deserialize(data)
 
@@ -556,12 +550,8 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            return_msg = (
-                f"Internal Server Error: method {FUNC_NAME}: {url}: {msg}"
-            )
-
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-            return {"message": return_msg}, 500
+            current_app.logger.error(msg)
+            return {"message": msg}, 500
 
         if item is None:
             msg = f"{self.model_name} with {kdict} not found"

@@ -261,23 +261,22 @@ class TestModelResource(unittest.TestCase):
     def test_post_bad_date_data(self):
 
         bad_datetbl = {"today": "wrong", "now": "wrong"}
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
-            # no date conversions
+            # no date conversions, so with Internal Server Error
+            # this fail
             res = client.post(
                 "/date-tables",
                 data=json.dumps(bad_datetbl),
                 headers=self.headers,
             )
-            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "Internal Server Error: "
-                    "method post: /date-tables"
+                    "message": "(builtins.TypeError) SQLite Date type only accepts Python date objects as input."
                 },
             )
             self.assertEqual(res.content_type, "application/json")
@@ -505,7 +504,6 @@ class TestModelResource(unittest.TestCase):
             # "pub_year": 2004,
             # "author_id": author.id,
         }
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -513,6 +511,7 @@ class TestModelResource(unittest.TestCase):
             res = client.put(
                 "/books/1", data=json.dumps(book), headers=self.headers
             )
+
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
@@ -568,7 +567,7 @@ class TestModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-
+            print('============= here -----------------')
             # incorrect json entry
             res = client.put(
                 "/books/1000",
@@ -1319,10 +1318,7 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "Internal Server Error: "
-                    "method get: /throw-aways/1"
-                },
+                {'message': '(sqlite3.OperationalError) no such table: throwaway'},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1360,14 +1356,10 @@ class TestModelBadDatabase(unittest.TestCase):
                 data=json.dumps(item),
                 headers=self.headers,
             )
-
-            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "Internal Server Error: method "
-                    "post: /throw-away-posts"
-                },
+                {'message': 'trigger erroor'},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1410,14 +1402,11 @@ class TestModelBadDatabase(unittest.TestCase):
                 data=item.serialize(),
                 headers=self.headers,
             )
-            self.assertEqual(res.status_code, 500)
+
+            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "An error occurred updating the "
-                    "ThrowAwayPut: 'NoneType' object has no attribute "
-                    "'save'."
-                },
+                {'message': "'NoneType' object has no attribute 'save'"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1430,14 +1419,10 @@ class TestModelBadDatabase(unittest.TestCase):
                 data=json.dumps(data),
                 headers=self.headers,
             )
-
-            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "Internal Server Error: method put: "
-                    f"/throw-away-puts/{item.id}"
-                },
+                {'message': "'str' object is not callable"},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1525,11 +1510,7 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "An error occurred deleting the "
-                    "ThrowAwayDelete: 'NoneType' object has no attribute "
-                    "'delete'."
-                },
+                {'message': "An error occurred deleting the ThrowAwayDelete: 'NoneType' object has no attribute 'delete'."},
             )
             self.assertEqual(res.content_type, "application/json")
 
@@ -1543,10 +1524,6 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "Internal Server Error: method "
-                    f"delete: /throw-away-deletes/{item.id}: 'str' object "
-                    "is not callable"
-                },
+                {'message': "'str' object is not callable"},
             )
             self.assertEqual(res.content_type, "application/json")

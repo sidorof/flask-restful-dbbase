@@ -443,6 +443,7 @@ class DBBaseResource(Resource):
                         dtstatus, value = self._check_date_casting(
                             col_key, value, col_params
                         )
+
                         if dtstatus:
                             data[col_key] = value
                         else:
