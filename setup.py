@@ -21,6 +21,7 @@ ZIP_SAFE = False
 INSTALL_REQUIRES = [
     "flask",
     "Flask-RESTful",
+    "SQLAlchemy < 1.4",
     "Flask-SQLAlchemy",
     "DBBase",
     "python-dateutil",
