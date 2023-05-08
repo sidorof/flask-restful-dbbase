@@ -47,7 +47,6 @@ def create_models(db):
 
 
 def test_default_class_variables():
-
     assert DBBaseResource.model_class is None
     assert DBBaseResource.model_class is None
     assert DBBaseResource.url_prefix == "/"
@@ -180,7 +179,6 @@ def test_get_obj_params():
 
 
 def test_format_key():
-
     key = "test"
     key_type = "integer"
 
@@ -315,7 +313,6 @@ def test__get_serial_fields():
 
 def test__get_serial_fields_foreign_class():
     class UserResource(DBBaseResource):
-
         serial_fields = {"post": {Address: ["city", "state"]}}
 
     assert UserResource._get_serial_fields(method="post", with_class=True) == {
@@ -421,7 +418,6 @@ def test_create_url():
 
 
 def test__check_numeric_casting():
-
     # valid
     assert (
         DBBaseResource._check_numeric_casting(
@@ -469,7 +465,6 @@ def test__check_numeric_casting():
 
 
 def test__check_max_text_lengths():
-
     # valid
     assert (
         DBBaseResource._check_max_text_lengths(
@@ -501,7 +496,6 @@ def test__check_max_text_lengths():
 
 
 def test__check_date_casting():
-
     # DBBaseResource.use_date_conversions = True
 
     # valid - date
@@ -873,7 +867,6 @@ def test_get_meta():
 
 
 def test__all_keys_found():
-
     data = {"key1": 1, "key2": 2, "extra": True}
 
     # key_names is a string
@@ -914,7 +907,6 @@ def test__item_adjust():
 
 
 def test_input_processing():
-
     db10 = DB(config="sqlite:///:memory:")
     Author, Book, author, book = create_models(db10)
 

@@ -139,7 +139,6 @@ class TestModelResource(unittest.TestCase):
         del cls.db
 
     def test_model_name(self):
-
         db = self.db
 
         class TestModel(db.Model):
@@ -155,11 +154,9 @@ class TestModelResource(unittest.TestCase):
         self.assertEqual(TestResource().model_name, "TestModel")
 
     def test_is_collection(self):
-
         self.assertFalse(self.BookResource.is_collection())
 
     def test_get_404(self):
-
         wrong_id = 10
 
         with self.app.test_client() as client:
@@ -174,7 +171,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_get(self):
-
         id = 1
 
         with self.app.test_client() as client:
@@ -201,7 +197,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_incomplete(self):
-
         book = {
             "isbn": "an isbn",
             # "title": "The Cell: A Molecular Approach, 3rd edition",
@@ -260,7 +255,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_bad_date_data(self):
-
         bad_datetbl = {"today": "wrong", "now": "wrong"}
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -306,7 +300,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_existing_id(self):
-
         book = {
             "id": 1,
             "isbn": "an isbn",
@@ -570,7 +563,7 @@ class TestModelResource(unittest.TestCase):
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            print("============= here -----------------")
+
             # incorrect json entry
             res = client.put(
                 "/books/1000",
@@ -604,7 +597,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_put(self):
-
         book = {
             "isbn": "an isbn",
             "title": "The Cell: A Molecular Approach, 3rd edition",
@@ -753,7 +745,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_delete_404(self):
-
         wrong_id = 10
 
         with self.app.test_client() as client:
@@ -768,7 +759,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_delete(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -789,7 +779,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_meta(self):
-
         self.assertDictEqual(
             self.BookResource.get_meta(),
             {
@@ -1298,7 +1287,6 @@ class TestModelBadDatabase(unittest.TestCase):
         self.headers = headers
 
     def test_get_with_bad_db(self):
-
         db = self.db
 
         class ThrowAway(db.Model):
@@ -1309,7 +1297,6 @@ class TestModelBadDatabase(unittest.TestCase):
         self.db.create_all()
 
         def delete_before_commit(self, item, status_code):
-
             item = None
             return item, status_code
 
@@ -1353,7 +1340,7 @@ class TestModelBadDatabase(unittest.TestCase):
             def process_post_input(self, data):
                 self.model_class.query.first = "bad"
 
-                return True, data
+                return {"status": True, "data": data}
 
         self.ThrowAwayResource = ThrowAwayResource
         self.api.add_resource(ThrowAwayResource, *ThrowAwayResource.get_urls())
@@ -1386,7 +1373,6 @@ class TestModelBadDatabase(unittest.TestCase):
         self.db.create_all()
 
         def delete_before_commit(self, item, status_code):
-
             item = None
             return True, item, status_code
 
@@ -1398,7 +1384,7 @@ class TestModelBadDatabase(unittest.TestCase):
                 if "disrupt" in data:
                     query.first = "bad"
                     data.pop("disrupt")
-                return True, (query, data)
+                return {"status": True, "query": query, "data":data}
 
             before_commit = {"put": delete_before_commit}
 
@@ -1449,9 +1435,8 @@ class TestModelBadDatabase(unittest.TestCase):
         self.db.create_all()
 
         def delete_before_commit(self, item, status_code):
-
             item = None
-            return True, item, status_code
+            return True, item, 500
 
         class ThrowAwayResource(ModelResource):
             model_class = ThrowAwayPatch
@@ -1491,7 +1476,6 @@ class TestModelBadDatabase(unittest.TestCase):
         self.db.create_all()
 
         def delete_before_commit(self, item, status_code):
-
             item = None
             return True, item, status_code
 
@@ -1503,7 +1487,7 @@ class TestModelBadDatabase(unittest.TestCase):
                 if self.test:
                     query.first = "bad"
 
-                return True, query
+                return {"status": True, "query": query}
 
             before_commit = {"delete": delete_before_commit}
 
@@ -1512,7 +1496,6 @@ class TestModelBadDatabase(unittest.TestCase):
         self.ThrowAwayResource = ThrowAwayResource
 
         with self.app.test_client() as client:
-
             item = ThrowAwayDelete(name="test").save()
 
             res = client.delete(

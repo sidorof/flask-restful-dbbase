@@ -1,6 +1,13 @@
 # Changelog
 ## (0.3.6) -
 ### Changed
+*   Added richer set of filtering in model collections.
+*   Refactored process_{method}_input validation. Such functions must now output a dictionary with for cleaner validations.
+
+*   Added Python version specifications through Python 3.10.
+
+## (0.3.6) -
+### Changed
 *   Added Python version specifications through Python 3.9.
 *   Changed logging to stem from Flask.current_app.
 

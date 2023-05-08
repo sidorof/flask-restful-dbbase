@@ -122,7 +122,6 @@ class TestMetaModelResource(unittest.TestCase):
         del cls.db
 
     def test_default_class_variables(self):
-
         self.assertIsNone(MetaResource.resource_class)
         self.assertEqual(MetaResource.url_prefix, "meta")
         self.assertIsNone(MetaResource.url_name)
@@ -156,7 +155,6 @@ class TestMetaModelResource(unittest.TestCase):
         )
 
     def test_get(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -614,7 +612,6 @@ class TestMetaModelResource(unittest.TestCase):
             )
 
     def test_get_with_method(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -753,7 +750,6 @@ class TestMetaModelResource(unittest.TestCase):
             )
 
     def test_get_with_bad_method(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()

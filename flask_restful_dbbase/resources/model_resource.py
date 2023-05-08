@@ -6,6 +6,7 @@ This module implements a starting point for model resources.
 import logging
 from flask_restful import request
 from .dbbase_resource import DBBaseResource
+from ..validations import validate_process
 
 logger = logging.getLogger(__name__)
 
@@ -63,27 +64,22 @@ class ModelResource(DBBaseResource):
         kdict = self._check_key(kwargs)
 
         # for use only with self.process_get_input
-        data = request.args
-
+        data = request.args.to_dict(flat=False)
+        orig_data = request.args.to_dict(flat=False)
         query = self.model_class.query
         if self.process_get_input is not None:
-            # 3 ways to end this
-            # success: result is an updated query
-            # failure:
-            #   exit with a tuple that is a
-            #       (JSON message, status_code)
-            #   exit with message, 500 error - failure of func
-            status, result = self.process_get_input(query, data, kwargs)
-            if status is False:
-                if isinstance(result, tuple) and len(result) == 2:
-                    return result
-                else:
-                    func = self.process_get_input.__name__
-                    msg = f"malformed error in {func}: {result}"
-                    logger.error(msg)
-                    return {"message": msg}, 500
+            output = self.process_get_input(query, data, kwargs)
+            validate_process(output, true_keys=["query", "data"])
 
-            query, data = result
+            if output["status"]:
+                query = output["query"]
+                data = output["data"]
+            else:
+                message = output["message"]
+                status_code = output["status_code"]
+
+                return message, status_code
+
         try:
             for key_name, key in kdict.items():
                 query = query.filter(
@@ -134,20 +130,16 @@ class ModelResource(DBBaseResource):
             return {"message": "JSON format is required"}, 415
 
         if self.process_post_input is not None:
-            status, result = self.process_post_input(data)
+            output = self.process_post_input(data)
+            validate_process(output, true_keys=["data"])
 
-            if status is False:
-                # exit the scene, result should be a
-                # tuple of message and status
-                if isinstance(result, tuple) and len(result) == 2:
-                    return result
-                else:
-                    func = self.process_post_input.__name__
-                    msg = f"malformed error in {func}: {result}"
-                    logger.error(msg)
-                    return {"message": msg}, 500
+            if output["status"]:
+                data = output["data"]
+            else:
+                message = output["message"]
+                status_code = output["status_code"]
 
-            data = result
+                return message, status_code
 
         obj_params = self.get_obj_params()
 
@@ -319,20 +311,18 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_put_input is not None:
-            status, result = self.process_put_input(query, data, kwargs)
+            output = self.process_put_input(query, data, kwargs)
 
-            if status is False:
-                # exit the scene, data should be a
-                # tuple of message and status
-                if isinstance(result, tuple) and len(result) == 2:
-                    return result
-                else:
-                    func = self.process_put_input.__name__
-                    msg = f"malformed error in {func}: {result}"
-                    logger.info(msg)
-                    return {"message": msg}, 500
+            validate_process(output, true_keys=["query", "data"])
 
-            query, data = result
+            if output["status"]:
+                query = output["query"]
+                data = output["data"]
+            else:
+                message = output["message"]
+                status_code = output["status_code"]
+
+                return message, status_code
 
         status, kdict = self._all_keys_found(list(kdict.keys()), data)
         if status:
@@ -433,19 +423,18 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_patch_input is not None:
-            status, result = self.process_patch_input(query, data, kwargs)
+            output = self.process_patch_input(query, data, kwargs)
 
-            if status is False:
-                # exit the scene, data should be a
-                # tuple of message and status
-                if isinstance(result, tuple) and len(result) == 2:
-                    return result
-                else:
-                    func = self.process_patch_input.__name__
-                    msg = f"malformed error in {func}: {result}"
-                    return {"message": msg}, 500
+            validate_process(output, true_keys=["query", "data"])
 
-            query, data = result
+            if output["status"]:
+                query = output["query"]
+                data = output["data"]
+            else:
+                message = output["message"]
+                status_code = output["status_code"]
+
+                return message, status_code
 
         for key_name, value in kdict.items():
             query = query.filter(getattr(self.model_class, key_name) == value)
@@ -533,19 +522,16 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_delete_input is not None:
-            status, result = self.process_delete_input(query, kwargs)
+            output = self.process_delete_input(query, kwargs)
+            validate_process(output, true_keys=["query"])
 
-            if status is False:
-                # exit the scene, data should be a
-                # tuple of message and status
-                if isinstance(result, tuple) and len(result) == 2:
-                    return result
-                else:
-                    func = self.process_delete_input.__name__
-                    msg = f"malformed error in {func}: {result}"
-                    return {"message": msg}, 500
+            if output["status"]:
+                query = output["query"]
+            else:
+                message = output["message"]
+                status_code = output["status_code"]
 
-            query = result
+                return {"message": message}, status_code
 
         for key_name, value in kdict.items():
             query = query.filter(getattr(self.model_class, key_name) == value)

@@ -9,7 +9,6 @@ from flask_restful_dbbase.generator import create_resource
 
 
 def test_create_resources():
-
     db = DB("sqlite:///:memory:")
 
     class Book(db.Model):
