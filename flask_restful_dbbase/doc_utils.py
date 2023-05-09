@@ -208,8 +208,6 @@ class MethodDoc(object):
     def to_dict(self, meta_doc):
         """Convert attributes to a dictionary"""
         resource_class = meta_doc.resource_class
-        model_class = resource_class.model_class
-        db = model_class.db
         doc = {}
         self._get_url(doc, self.method, resource_class)
 
@@ -267,8 +265,9 @@ class MethodDoc(object):
 
     def get_default_response(self, meta_doc):
         """
-        This function returns the standard response for the method. If something
-        special is done, then the default response would be supressed.
+        This function returns the standard response for the method.
+        If something special is done, then the default response would be
+        supressed.
         """
         resource = meta_doc.resource_class
         method = self.method
@@ -287,8 +286,8 @@ class MethodDoc(object):
                 doc = db.doc_table(
                     foreign_class,
                     serial_fields=serial_fields,
-                    serial_field_relations=resource._get_serial_field_relations(
-                        method
+                    serial_field_relations=(
+                        resource._get_serial_field_relations(method)
                     ),
                     to_camel_case=True,
                 )[foreign_class._class()]
@@ -299,8 +298,8 @@ class MethodDoc(object):
                 doc = db.doc_table(
                     resource.model_class,
                     serial_fields=serial_fields,
-                    serial_field_relations=resource._get_serial_field_relations(
-                        method
+                    serial_field_relations=(
+                        resource._get_serial_field_relations(method)
                     ),
                     to_camel_case=True,
                 )[resource.model_class._class()]

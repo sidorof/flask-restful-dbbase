@@ -8,7 +8,7 @@ Assumes a get method.
 
 from os import path
 from flask import request
-from . import Resource, CollectionModelResource
+from . import Resource
 
 
 class MetaResource(Resource):

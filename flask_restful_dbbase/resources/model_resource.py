@@ -57,7 +57,8 @@ class ModelResource(DBBaseResource):
         This function is the HTTP GET method for a resource handling
         a single item.
         """
-        url = request.path
+        # may be used later
+        # url = request.path
         FUNC_NAME = "get"
 
         # the correct key test - raises error if improper url
@@ -65,7 +66,6 @@ class ModelResource(DBBaseResource):
 
         # for use only with self.process_get_input
         data = request.args.to_dict(flat=False)
-        orig_data = request.args.to_dict(flat=False)
         query = self.model_class.query
         if self.process_get_input is not None:
             output = self.process_get_input(query, data, kwargs)
@@ -113,7 +113,8 @@ class ModelResource(DBBaseResource):
         a single item.
         """
         FUNC_NAME = "post"
-        url = request.path
+        # may be used later
+        # url = request.path
         status_code = 201
 
         if request.is_json:

@@ -4,9 +4,7 @@ This module implements a starting point for collection model resources.
 
 """
 import json
-from copy import deepcopy
 import inspect
-from sqlalchemy import desc
 
 from dbbase.utils import xlate
 from flask_restful import request
@@ -26,8 +24,8 @@ class CollectionModelResource(DBBaseResource):
     This class supports only gets to return collections of
     records.
 
-    Like the ModelResource class there is a provision for a process_get_input
-    function.
+    Like the ModelResource class there is a provision for a
+    process_get_input function.
 
     The usual filtering is available for gathering records if a variable is
     a specific value. Most of the time, this will be all that is necessary.
@@ -79,7 +77,8 @@ class CollectionModelResource(DBBaseResource):
 
         "serialFields": ["id", "statusId"],
             can specify specific columns to be returned
-            fallback: serial fields can be specified by resource or dbbase model
+            fallback: serial fields can be specified by resource or dbbase
+            model
 
         "debug": "False",
             covered below
@@ -273,7 +272,11 @@ class CollectionModelResource(DBBaseResource):
             #   To continue processing after updates or changes:
             #       {"status": True, "query", query, "data": data}
             #   To exit the scene:
-            #       {"status": False, "message", msg, "status_code": status_code}
+            #       {
+            #           "status": False,
+            #           "message", msg,
+            #           "status_code": status_code
+            #       }
             #   Anything other than that results in a 500 error
             output = self.process_get_input(query, data)
             # bare minimum check
