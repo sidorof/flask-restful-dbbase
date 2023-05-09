@@ -1,18 +1,16 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources.collection_model_resource &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="../../../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>flask_restful_dbbase.resources.collection_model_resource &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
      
@@ -32,9 +30,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../../flask_restful_dbbase.html" accesskey="U">flask_restful_dbbase</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">flask_restful_dbbase.resources.collection_model_resource</a></li> 
       </ul>
     </div>  
 
@@ -49,19 +48,102 @@
 <span class="sd">This module implements a starting point for collection model resources.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">desc</span>
+
 <span class="kn">from</span> <span class="nn">dbbase.utils</span> <span class="kn">import</span> <span class="n">xlate</span>
 <span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">.dbbase_resource</span> <span class="kn">import</span> <span class="n">DBBaseResource</span>
+<span class="kn">from</span> <span class="nn">..validations</span> <span class="kn">import</span> <span class="n">validate_process</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="CollectionModelResource"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.CollectionModelResource">[docs]</a><span class="k">class</span> <span class="nc">CollectionModelResource</span><span class="p">(</span><span class="n">DBBaseResource</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CollectionModelResource Class</span>
 
 <span class="sd">    This model class implements the base class.</span>
+
+<span class="sd">    This class supports only gets to return collections of</span>
+<span class="sd">    records.</span>
+
+<span class="sd">    Like the ModelResource class there is a provision for a process_get_input</span>
+<span class="sd">    function.</span>
+
+<span class="sd">    The usual filtering is available for gathering records if a variable is</span>
+<span class="sd">    a specific value. Most of the time, this will be all that is necessary.</span>
+
+<span class="sd">    However, there is a means to select records by a comparison operator.</span>
+
+<span class="sd">    Use a format as follows:</span>
+
+<span class="sd">    query_string: {</span>
+<span class="sd">        var1: [operator, comparison_value]</span>
+<span class="sd">    }</span>
+
+<span class="sd">    The list of operators for single comparison value is:</span>
+<span class="sd">        [&quot;eq&quot;, &quot;ne&quot;, &quot;gt&quot;, &quot;ge&quot;, &quot;lt&quot;, &quot;le&quot;]</span>
+
+<span class="sd">    In addition, if comparison is made such as selecting where var1 &gt; var2,</span>
+<span class="sd">    use `{var1: [&quot;gt&quot;, var:var2]}` to signal this is another variable.</span>
+
+<span class="sd">    To gather records that are found in a list use var1[]: [val1, val2, ...].</span>
+
+<span class="sd">    Or, for more flexibility use:</span>
+
+<span class="sd">    query_string: {</span>
+<span class="sd">        var1: [operator, [val1, val2, ...]]</span>
+<span class="sd">    }</span>
+
+<span class="sd">    The supported list of operators are</span>
+<span class="sd">        [&quot;like&quot;, &quot;ilike&quot;, &quot;notlike&quot;, &quot;notilike&quot;]</span>
+
+<span class="sd">    To control record set sizes, a variable `page_config` is a dict of page</span>
+<span class="sd">    or record variables.</span>
+
+<span class="sd">    Bear in mind tha all variables entering can be either camel or snake based.</span>
+
+<span class="sd">    Page_config variables:</span>
+
+<span class="sd">        &quot;orderBy&quot;: [&quot;id&quot;, &quot;statusId&quot;],</span>
+<span class="sd">            Can be a single value or a list</span>
+<span class="sd">            To sort in descending order use the format -var1</span>
+
+<span class="sd">        &quot;pageSize&quot;: &quot;50&quot;,</span>
+<span class="sd">            The maximum page size can be limited by the class</span>
+<span class="sd">            variable `max_page_size`</span>
+
+<span class="sd">        &quot;offset&quot;: 30,  The number of records to skip</span>
+
+<span class="sd">        &quot;limit&quot;: &quot;100&quot;,</span>
+<span class="sd">            limits the size of the record set</span>
+
+<span class="sd">        &quot;serialFields&quot;: [&quot;id&quot;, &quot;statusId&quot;],</span>
+<span class="sd">            can specify specific columns to be returned</span>
+<span class="sd">            fallback: serial fields can be specified by resource or dbbase model</span>
+
+<span class="sd">        &quot;debug&quot;: &quot;False&quot;,</span>
+<span class="sd">            covered below</span>
+
+<span class="sd">    if debug is true, the recordset is not returned. Instead, data returned</span>
+<span class="sd">    consists of variables used, the default variable amounts, and the</span>
+<span class="sd">    sqlalchemy query that would be executed.</span>
+
+<span class="sd">        &quot;class_defaults&quot;: {</span>
+<span class="sd">            &quot;model_name&quot;: self.model_name,</span>
+<span class="sd">            &quot;process_get_input&quot;: get_input_doc,</span>
+<span class="sd">            &quot;max_page_size&quot;: self.max_page_size,</span>
+<span class="sd">            &quot;order_by&quot;: None,</span>
+<span class="sd">            &quot;op_codes&quot;: self.OP_CODES1 + self.OP_CODES2,</span>
+<span class="sd">        },</span>
+<span class="sd">        &quot;original_data&quot;: orig_data,</span>
+<span class="sd">        &quot;converted_data&quot;: query_data,</span>
+<span class="sd">        &quot;page_configs&quot;: configs,</span>
+<span class="sd">        &quot;query&quot;: str(query)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -70,130 +152,295 @@
     <span class="n">max_page_size</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">order_by</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="n">_PAGE_CONFIGS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;page_size&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;offset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;limit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;order_by&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;serial_fields&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">OP_CODES1</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="s2">&quot;ne&quot;</span><span class="p">,</span> <span class="s2">&quot;gt&quot;</span><span class="p">,</span> <span class="s2">&quot;ge&quot;</span><span class="p">,</span> <span class="s2">&quot;lt&quot;</span><span class="p">,</span> <span class="s2">&quot;le&quot;</span><span class="p">]</span>
+    <span class="n">OP_CODES2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;like&quot;</span><span class="p">,</span> <span class="s2">&quot;ilike&quot;</span><span class="p">,</span> <span class="s2">&quot;notlike&quot;</span><span class="p">,</span> <span class="s2">&quot;notilike&quot;</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;A model class must be set for this resource to function.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CollectionModelResource.get"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.CollectionModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_page_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts any config variables to snake case and</span>
+<span class="sd">        verifies the variables are part of page configs.</span>
 
+<span class="sd">        NOTE: what if a None or null is sent through?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">configs</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_key</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PAGE_CONFIGS</span><span class="p">:</span>
+                <span class="c1"># run the gauntlet</span>
+                <span class="k">if</span> <span class="n">new_key</span> <span class="o">==</span> <span class="s2">&quot;order_by&quot;</span><span class="p">:</span>
+                    <span class="c1"># account for field name conversion</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="n">xlate</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span>
+                        <span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">xlate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+
+                <span class="k">elif</span> <span class="n">new_key</span> <span class="o">==</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">new_key</span> <span class="o">==</span> <span class="s2">&quot;page_size&quot;</span><span class="p">:</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">new_value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span><span class="p">:</span>
+                            <span class="n">new_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span>
+
+                <span class="k">elif</span> <span class="n">new_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;page_size&quot;</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">]:</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">new_key</span> <span class="o">==</span> <span class="s1">&#39;debug&#39;</span><span class="p">:</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_key</span> <span class="o">==</span> <span class="s2">&quot;serial_fields&quot;</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">xlate</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span>
+                    <span class="p">]</span>
+
+                <span class="n">tmp</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown page config value: </span><span class="si">{</span><span class="n">new_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;order_by&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tmp</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_by</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;order_by&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;order_by&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">order_by</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">tmp</span>
+
+    <span class="k">def</span> <span class="nf">_classify_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Classifies the operation using the variable. Also,</span>
+<span class="sd">        translation from camel to snake takes place as well</span>
+
+<span class="sd">        var, value</span>
+<span class="sd">            select where var = value   normal</span>
+
+<span class="sd">        var[], list | single value</span>
+<span class="sd">            select item1 or item2 or item3 ...</span>
+
+<span class="sd">        value, (op, value)</span>
+<span class="sd">            &quot;eq ne gt lt ...&quot;</span>
+
+<span class="sd">        return</span>
+<span class="sd">            op, new_var, value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;[]&quot;</span><span class="p">):</span>
+
+            <span class="n">new_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">var</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">new_var</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">value</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Note that val could be a variable such as var:my_variable</span>
+            <span class="c1"># xlate of my_variable is handled when adding to query filter</span>
+            <span class="n">op</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
+
+            <span class="n">new_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">:</span>
+                <span class="n">str_list</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Op code &quot;</span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s1">&quot; wrong. Must be in </span><span class="si">{</span><span class="n">str_list</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">new_var</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">val</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">:</span>
+                <span class="c1"># mistake concluded</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;There must be a value paired with the operator. &quot;</span>
+                    <span class="s2">&quot;Example: [operator, value]&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">new_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">new_var</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">value</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># default</span>
+            <span class="n">new_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">new_var</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="CollectionModelResource.get"><a class="viewcode-back" href="../../../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.CollectionModelResource.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">FUNC_NAME</span> <span class="o">=</span> <span class="s2">&quot;get&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">()</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
 
-        <span class="c1"># consolidate lists -- axios example</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">lists</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;[]&quot;</span><span class="p">):</span>
-                <span class="c1"># signifies an array</span>
-                <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">orig_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pageConfig&quot;</span><span class="p">,</span> <span class="s2">&quot;page_config&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">configs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page_configs</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="k">break</span>
 
-        <span class="c1"># special - could be a list of fields</span>
-        <span class="n">order_by</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s2">&quot;orderBy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span><span class="p">)</span>
+        <span class="n">order_by</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order_by&quot;</span><span class="p">)</span>
+        <span class="n">page_size</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;page_size&quot;</span><span class="p">)</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">)</span>
+        <span class="n">serial_fields</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;serial_fields&quot;</span><span class="p">)</span>
+        <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;serial_field_relations&quot;</span><span class="p">)</span>
+        <span class="n">debug</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;debug&quot;</span> <span class="ow">in</span> <span class="n">configs</span> <span class="k">else</span> <span class="kc">False</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">query</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># single values will still be in a list at this point</span>
+            <span class="c1"># Ex: {id: [40]}&quot;</span>
 
-            <span class="n">status</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="c1"># exit the scene, data should be a</span>
-                <span class="c1"># tuple of message and status</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">result</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;malformed error in </span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">},</span> <span class="mi">500</span>
-            <span class="n">query</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="c1"># format for output:</span>
+            <span class="c1">#   To continue processing after updates or changes:</span>
+            <span class="c1">#       {&quot;status&quot;: True, &quot;query&quot;, query, &quot;data&quot;: data}</span>
+            <span class="c1">#   To exit the scene:</span>
+            <span class="c1">#       {&quot;status&quot;: False, &quot;message&quot;, msg, &quot;status_code&quot;: status_code}</span>
+            <span class="c1">#   Anything other than that results in a 500 error</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="c1"># bare minimum check</span>
+            <span class="n">validate_process</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">true_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">])</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="c1"># extract job params first -- filtered out below</span>
-
-        <span class="c1"># params not data so not converted</span>
-        <span class="n">page_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;page_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">offset</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">debug</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="s2">&quot;debug&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">debug</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">debug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
-                <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="n">debug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
-                <span class="n">debug</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+                <span class="n">status_code</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;status_code&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">page_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">page_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">page_size</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">},</span> <span class="n">status_code</span>
 
-        <span class="c1"># for later</span>
-        <span class="c1"># qquery = request.values.get(&#39;query&#39;, None)</span>
+        <span class="n">query_data</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">query_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># classify op and convert var from camel_case</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">query_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classify_op</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="mi">400</span>
 
         <span class="n">obj_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_obj_params</span><span class="p">()</span>
+        <span class="n">query_data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_data</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">obj_params</span>
+        <span class="p">]</span>
 
-        <span class="n">query_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">obj_params</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="c1"># query filtering</span>
+        <span class="k">for</span> <span class="n">new_var</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_data</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">new_var</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;var:&quot;</span><span class="p">:</span>
+                <span class="c1"># also a variable</span>
+                <span class="n">comp_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">4</span><span class="p">:],</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">comp_var</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">var</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span><span class="p">:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s2">__&quot;</span><span class="p">)</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">var</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+                <span class="c1"># bad op codes already weeded out above</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">order_by</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{order}</span><span class="s2"> is not a column in </span><span class="si">{name}</span><span class="s2">&quot;</span>
             <span class="n">order_list</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">order_by</span><span class="p">:</span>
-                <span class="n">order</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
-                    <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">order</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+                    <span class="n">order</span> <span class="o">=</span> <span class="n">order</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+                        <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="p">(</span>
+                            <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)},</span>
+                            <span class="mi">400</span><span class="p">,</span>
+                        <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="p">(</span>
-                        <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)},</span>
-                        <span class="mi">400</span><span class="p">,</span>
-                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+                        <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="p">(</span>
+                            <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)},</span>
+                            <span class="mi">400</span><span class="p">,</span>
+                        <span class="p">)</span>
+
             <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="o">*</span><span class="n">order_list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">page_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">page_size</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">page_size</span><span class="p">)</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">page_size</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># works same as page size, more familiar for dbs</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)},</span> <span class="mi">200</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">get_input_doc</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">get_input_doc</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;class_defaults&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                    <span class="s2">&quot;process_get_input&quot;</span><span class="p">:</span> <span class="n">get_input_doc</span><span class="p">,</span>
+                    <span class="s2">&quot;max_page_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span><span class="p">,</span>
+                    <span class="s2">&quot;order_by&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;op_codes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;original_data&quot;</span><span class="p">:</span> <span class="n">orig_data</span><span class="p">,</span>
+                <span class="s2">&quot;converted_data&quot;</span><span class="p">:</span> <span class="n">query_data</span><span class="p">,</span>
+                <span class="s2">&quot;page_configs&quot;</span><span class="p">:</span> <span class="n">configs</span><span class="p">,</span>
+                <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="p">},</span> <span class="mi">200</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 
-        <span class="n">sfields</span><span class="p">,</span> <span class="n">sfield_relations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">serial_fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">serial_fields</span><span class="p">,</span> <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="p">{</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="o">.</span><span class="n">_class</span><span class="p">():</span> <span class="p">[</span>
                         <span class="n">item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
-                            <span class="n">serial_fields</span><span class="o">=</span><span class="n">sfields</span><span class="p">,</span>
-                            <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">sfield_relations</span><span class="p">,</span>
+                            <span class="n">serial_fields</span><span class="o">=</span><span class="n">serial_fields</span><span class="p">,</span>
+                            <span class="n">serial_field_relations</span><span class="o">=</span><span class="n">serial_field_relations</span><span class="p">,</span>
                         <span class="p">)</span>
                         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">query</span>
                     <span class="p">],</span>
@@ -208,6 +455,7 @@
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">return_msg</span><span class="p">},</span> <span class="mi">500</span></div></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -226,7 +474,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -241,12 +489,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -256,7 +504,7 @@
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

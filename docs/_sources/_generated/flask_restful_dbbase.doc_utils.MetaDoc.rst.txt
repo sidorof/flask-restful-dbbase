@@ -1,4 +1,4 @@
-flask\_restful\_dbbase.doc\_utils.MetaDoc
+﻿flask\_restful\_dbbase.doc\_utils.MetaDoc
 =========================================
 
 .. currentmodule:: flask_restful_dbbase.doc_utils

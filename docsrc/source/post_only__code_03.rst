@@ -7,7 +7,9 @@
         methods=["post"],
         url_prefix="/",
         url_name="a-model-command",
-        class_vars={"after_commit": {"post": after_commit},},
+        class_vars={
+            "after_commit": {"post": after_commit},
+        },
     )
     
 ..

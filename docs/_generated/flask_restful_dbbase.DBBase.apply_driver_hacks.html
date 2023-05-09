@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.DBBase.apply_driver_hacks &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>flask_restful_dbbase.DBBase.apply_driver_hacks &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">flask_restful_dbbase.DBBase.apply_driver_hacks</a></li> 
       </ul>
     </div>  
 
@@ -41,11 +41,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="flask-restful-dbbase-dbbase-apply-driver-hacks">
-<h1>flask_restful_dbbase.DBBase.apply_driver_hacks<a class="headerlink" href="#flask-restful-dbbase-dbbase-apply-driver-hacks" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="flask_restful_dbbase.DBBase.apply_driver_hacks">
-<code class="sig-prename descclassname">DBBase.</code><code class="sig-name descname">apply_driver_hacks</code><span class="sig-paren">(</span><em class="sig-param">app</em>, <em class="sig-param">sa_url</em>, <em class="sig-param">options</em><span class="sig-paren">)</span><a class="headerlink" href="#flask_restful_dbbase.DBBase.apply_driver_hacks" title="Permalink to this definition">¶</a></dt>
+  <section id="flask-restful-dbbase-dbbase-apply-driver-hacks">
+<h1>flask_restful_dbbase.DBBase.apply_driver_hacks<a class="headerlink" href="#flask-restful-dbbase-dbbase-apply-driver-hacks" title="Permalink to this heading">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.DBBase.apply_driver_hacks">
+<span class="sig-prename descclassname"><span class="pre">DBBase.</span></span><span class="sig-name descname"><span class="pre">apply_driver_hacks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sa_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flask_restful_dbbase.DBBase.apply_driver_hacks" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method is called before engine creation and used to inject
 driver specific hacks into the options.  The <cite>options</cite> parameter is
 a dictionary of keyword arguments that will then be used to call
@@ -53,11 +53,17 @@ the <code class="xref py py-func docutils literal notranslate"><span class="pre"
 <p>The default implementation provides some saner defaults for things
 like pool sizes for MySQL and sqlite.  Also it injects the setting of
 <cite>SQLALCHEMY_NATIVE_UNICODE</cite>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 2.5: </span>Returns <code class="docutils literal notranslate"><span class="pre">(sa_url,</span> <span class="pre">options)</span></code>. SQLAlchemy 1.4 made the URL
+immutable, so any changes to it must now be passed back up
+to the original caller.</p>
+</div>
 </dd></dl>
 
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -76,7 +82,7 @@ like pool sizes for MySQL and sqlite.  Also it injects the setting of
 <li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -94,12 +100,12 @@ like pool sizes for MySQL and sqlite.  Also it injects the setting of
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -109,7 +115,7 @@ like pool sizes for MySQL and sqlite.  Also it injects the setting of
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

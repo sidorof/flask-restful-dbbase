@@ -10,6 +10,7 @@
     api.add_resource(JobMetaCollection, *JobMetaCollection.get_urls())
     api.add_resource(JobMeta, *JobMeta.get_urls())
     
+    
     if __name__ == "__main__":
-        app.run(debug=True)
+        app.run(debug=True, port=5004)
 ..

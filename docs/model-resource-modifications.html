@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Model Resource Modifications &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Model Resource Modifications &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Model Resource Modifications</a></li> 
       </ul>
     </div>  
 
@@ -41,8 +41,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="model-resource-modifications">
-<h1>Model Resource Modifications<a class="headerlink" href="#model-resource-modifications" title="Permalink to this headline">¶</a></h1>
+  <section id="model-resource-modifications">
+<h1>Model Resource Modifications<a class="headerlink" href="#model-resource-modifications" title="Permalink to this heading">¶</a></h1>
 <p>Model resources can cover a fair amount of ground for a datacentric API, but when the vanilla version will not fit, there are remedies as a fall-back solution rather than simply writing your own.</p>
 <p>Model resources are preset to take functions that can insert your necessary logic into the right point in the processing cycle.</p>
 <p>There are three insertion points. The details change, depending upon the HTTP method, but there are more similarities than differences.</p>
@@ -57,14 +57,14 @@
 </dl>
 </li>
 </ul>
-<div class="section" id="process-input-functions">
-<h2>Process Input Functions<a class="headerlink" href="#process-input-functions" title="Permalink to this headline">¶</a></h2>
+<section id="process-input-functions">
+<h2>Process Input Functions<a class="headerlink" href="#process-input-functions" title="Permalink to this heading">¶</a></h2>
 <p>Process input functions take the form of a function that can
 process the input data for the HTTP methods.</p>
 <p>The format template for these functions is <cite>process_{method}_input</cite>.</p>
 <p>Since HTTP methods have different requirements for input data, the inputs vary according to the method. And, since these functions are inserted into an on-going process, the arguments and returns for the functions are specific. However, the returns follow a common format of <cite>(status, result)</cite>. The status is a True / False indicating that you would like the method to continue with the possibly altered data. <cite>False</cite> indicates that the method should end. A failure must have a tuple of a text message and a response status code that will be made into a return result and returned to the front end.</p>
-<div class="section" id="input-variables">
-<h3>Input Variables<a class="headerlink" href="#input-variables" title="Permalink to this headline">¶</a></h3>
+<section id="input-variables">
+<h3>Input Variables<a class="headerlink" href="#input-variables" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><cite>kwargs</cite>: as passed into the method</p></li>
 <li><p><cite>data</cite>: the data gleaned from the request in a dictionary form: This is the data prior to deserializations, so the variable names would be in camel case still.</p></li>
@@ -74,103 +74,31 @@ process the input data for the HTTP methods.</p>
 </pre></div>
 </div>
 <p>And finally, this is an unexecuted query that the normal program will execute afterwards.</p>
-</div>
-<div class="section" id="returns">
-<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h3>
-<p>Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form <cite>(status, result)</cite> where status is either <cite>True</cite> to continue or <cite>False</cite> to exit early. So, if a tuple is not returned an error will be triggered about the process_input_function itself.</p>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this heading">¶</a></h3>
+<p>Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form <cite>{“status” True, “query”: query, “data”: data}</cite> where status is either <cite>True</cite> to continue or <cite>{“status”: False, “message”: message, “status_code”: status_code}</cite> to exit early. So, if a dictionary is not returned an error will be triggered about the process_input_function itself.</p>
 <p>Use the following formats as a guide.</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 8%" />
-<col style="width: 9%" />
-<col style="width: 10%" />
-<col style="width: 13%" />
-<col style="width: 11%" />
-<col style="width: 30%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td rowspan="2"><p>Method</p></td>
-<td colspan="4"><p>Args</p></td>
-<td colspan="2"><p>Returns a tuple</p></td>
-</tr>
-<tr class="row-even"><td><p>self</p></td>
-<td><p>query</p></td>
-<td><p>data</p></td>
-<td><p>kwargs</p></td>
-<td><p>status</p></td>
-<td><p>result</p></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><p>GET</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td><p>True</p></td>
-<td><p>(query, data)</p></td>
-</tr>
-<tr class="row-even"><td><p>False</p></td>
-<td><p>(message, status_code)</p></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><p>POST</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"></td>
-<td><p>True</p></td>
-<td><p>data</p></td>
-</tr>
-<tr class="row-even"><td><p>False</p></td>
-<td><p>(message, status_code)</p></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><p>PUT</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td><p>True</p></td>
-<td><p>(query, data)</p></td>
-</tr>
-<tr class="row-even"><td><p>False</p></td>
-<td><p>(message, status_code)</p></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><p>PATCH</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"><p>X</p></td>
-<td><p>True</p></td>
-<td><p>(query, data)</p></td>
-</tr>
-<tr class="row-even"><td><p>False</p></td>
-<td><p>(message, status_code)</p></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><p>DELETE</p></td>
-<td rowspan="2"><p>X</p></td>
-<td rowspan="2"></td>
-<td rowspan="2"></td>
-<td rowspan="2"><p>X</p></td>
-<td><p>True</p></td>
-<td><p>query</p></td>
-</tr>
-<tr class="row-even"><td><p>False</p></td>
-<td><p>(message, status_code)</p></td>
-</tr>
-</tbody>
-</table>
 <p>For example, suppose you want to add a process input function for POST.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="n">model_class</span> <span class="o">=</span> <span class="n">MyClass</span>
 
     <span class="k">def</span> <span class="nf">process_post_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="c1"># your magic here</span>
-        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">result</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
+            <span class="s2">&quot;status_code&quot;</span><span class="p">:</span> <span class="n">status_code</span>
+        <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="adjustments-before-or-after-commits">
-<h2>Adjustments Before or After Commits<a class="headerlink" href="#adjustments-before-or-after-commits" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="adjustments-before-or-after-commits">
+<h2>Adjustments Before or After Commits<a class="headerlink" href="#adjustments-before-or-after-commits" title="Permalink to this heading">¶</a></h2>
 <p>Being able to jump in prior to a commit or just after can be very helpful. Possible areas:</p>
 <ul class="simple">
 <li><p>Triggering another process to run instead of saving, or run directly after saving.</p></li>
@@ -197,14 +125,6 @@ process the input data for the HTTP methods.</p>
 <p>So your <cite>submit_job</cite> function would be called on POST or PUT, otherwise not.</p>
 <p>The format of the before / after functions is similar to the following:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 6%" />
-<col style="width: 16%" />
-<col style="width: 13%" />
-<col style="width: 15%" />
-<col style="width: 32%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td rowspan="2"><p>Method</p></td>
 <td colspan="4" rowspan="2"><p>Args</p></td>
@@ -224,10 +144,11 @@ after_commit</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -246,7 +167,7 @@ after_commit</p></td>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -264,12 +185,12 @@ after_commit</p></td>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -279,7 +200,7 @@ after_commit</p></td>
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

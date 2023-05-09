@@ -8,7 +8,7 @@
                 method="post",
                 after_commit="Here we can say a few words about the process",
                 use_default_response=False,
-                responses=[{"messsage": "Here we can describe the response"}]
+                responses=[{"messsage": "Here we can describe the response"}],
             )
         ],
     )

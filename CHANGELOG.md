@@ -1,10 +1,11 @@
 # Changelog
-## (0.3.6) -
+## (0.4.0) -
 ### Changed
 *   Added richer set of filtering in model collections.
 *   Refactored process_{method}_input validation. Such functions must now output a dictionary with for cleaner validations.
 
 *   Added Python version specifications through Python 3.10.
+*   Dropped support of Python 3.6
 
 ## (0.3.6) -
 ### Changed

@@ -5,7 +5,6 @@ logger = logging.getLogger(__name__)
 
 
 def validate_process(output, true_keys, false_keys=None):
-
     false_keys = ["message", "status_code"]
 
     if not isinstance(output, dict):

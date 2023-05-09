@@ -126,9 +126,9 @@ class OwnerResource(ModelResource):
         user_id = get_identity()
         if user_id:
             query = query.filter_by(owner_id=user_id)
-            return True, (query, data)
+            return {"status": True, "query": query, "data": data}
 
-        return False, ({"message": "Not found"}, 404)
+        return {"status": False, "message": "Not found", "status_code": 404}
 
     def process_post_input(self, data):
         """
@@ -139,12 +139,13 @@ class OwnerResource(ModelResource):
         owner_id = data.get("ownerId", None)
         if owner_id:
             if int(owner_id) == user_id:
-                return True, data
+                return {"status": True, "data": data}
 
-        return (
-            False,
-            ({"message": "The user id does not match the owner id"}, 400),
-        )
+        return {
+            "status": False,
+            "message": "The user id does not match the owner id",
+            "status_code": 400,
+        }
 
     def process_put_input(self, query, data, kwargs):
         """
@@ -155,12 +156,13 @@ class OwnerResource(ModelResource):
         owner_id = data.get("ownerId", None)
         if owner_id:
             if int(owner_id) == user_id:
-                return True, (query, data)
+                return {"status": True, "query": query, "data": data}
 
-        return (
-            False,
-            ({"message": "The user id does not match the owner id"}, 400),
-        )
+        return {
+            "status": False,
+            "message": "The user id does not match the owner id",
+            "status_code": 400,
+        }
 
     def process_patch_input(self, query, data, kwargs):
         """
@@ -171,12 +173,13 @@ class OwnerResource(ModelResource):
         owner_id = data.get("ownerId", None)
         if owner_id:
             if int(owner_id) == user_id:
-                return True, data
+                return {"status": True, "query": query, "data": data}
 
-        return (
-            False,
-            ({"message": "The user id does not match the owner id"}, 400),
-        )
+        return {
+            "status": False,
+            "message": "The user id does not match the owner id",
+            "status_code": 400,
+        }
 
     def process_delete_input(self, query, kwargs):
         """
@@ -185,9 +188,9 @@ class OwnerResource(ModelResource):
         user_id = get_identity()
         if user_id:
             query = query.filter_by(owner_id=user_id)
-            return True, query
+            return {"status": True, "query": query}
 
-        return False, ("Not found", 404)
+        return {"status": False, "message": "Not found", "status_code": 404}
 
 
 class OwnerCollectionResource(CollectionModelResource):
@@ -201,9 +204,13 @@ class OwnerCollectionResource(CollectionModelResource):
         user_id = get_identity()
         if user_id:
             query = query.filter_by(owner_id=user_id)
-            return True, (query, data)
+            return {"status": True, "query": query, "data": data}
 
-        return False, ("The user id is not authorized", 400)
+        return {
+            "status": False,
+            "message": "The user id is not authorized",
+            "status_code": 400,
+        }
 
 
 # order resources
@@ -290,5 +297,6 @@ api.add_resource(JobResource, *JobResource.get_urls())
 api.add_resource(JobMetaCollection, *JobMetaCollection.get_urls())
 api.add_resource(JobMeta, *JobMeta.get_urls())
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5004)

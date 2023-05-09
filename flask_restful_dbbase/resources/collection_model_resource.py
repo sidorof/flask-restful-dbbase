@@ -147,8 +147,7 @@ class CollectionModelResource(DBBaseResource):
                     # account for field name conversion
                     if isinstance(value, list):
                         new_value = [
-                            xlate(val, camel_case=False)
-                            for val in value
+                            xlate(val, camel_case=False) for val in value
                         ]
                     else:
                         new_value = [xlate(value, camel_case=False)]
@@ -165,14 +164,11 @@ class CollectionModelResource(DBBaseResource):
                 elif new_key in ["page_size", "offset", "limit"]:
                     new_value = int(value)
 
-                elif new_key == 'debug':
-                    new_value = value.lower() == 'true'
+                elif new_key == "debug":
+                    new_value = value.lower() == "true"
                 else:
                     new_key == "serial_fields"
-                    new_value = [
-                        xlate(val, camel_case=False)
-                        for val in value
-                    ]
+                    new_value = [xlate(val, camel_case=False) for val in value]
 
                 tmp[new_key] = new_value
 
@@ -206,7 +202,6 @@ class CollectionModelResource(DBBaseResource):
 
         """
         if var.endswith("[]"):
-
             new_var = xlate(var[:-2], camel_case=False)
 
             return new_var, "in", value
@@ -219,7 +214,9 @@ class CollectionModelResource(DBBaseResource):
             new_var = xlate(var, camel_case=False)
 
             if op not in self.OP_CODES1 + self.OP_CODES2:
-                str_list = str(self.OP_CODES1 + self.OP_CODES2).replace("\'", "")
+                str_list = str(self.OP_CODES1 + self.OP_CODES2).replace(
+                    "'", ""
+                )
                 raise ValueError(
                     f'Op code "{op}" wrong. Must be in {str_list}'
                 )
@@ -334,7 +331,9 @@ class CollectionModelResource(DBBaseResource):
                 if order.startswith("-"):
                     order = order[1:]
                     if hasattr(self.model_class, order):
-                        order_list.append(getattr(self.model_class, order).desc())
+                        order_list.append(
+                            getattr(self.model_class, order).desc()
+                        )
                     else:
                         return (
                             {"message": msg.format(order=order, name=name)},
@@ -342,9 +341,7 @@ class CollectionModelResource(DBBaseResource):
                         )
                 else:
                     if hasattr(self.model_class, order):
-                        order_list.append(
-                            getattr(self.model_class, order)
-                        )
+                        order_list.append(getattr(self.model_class, order))
                     else:
                         return (
                             {"message": msg.format(order=order, name=name)},
@@ -379,14 +376,14 @@ class CollectionModelResource(DBBaseResource):
                 "original_data": orig_data,
                 "converted_data": query_data,
                 "page_configs": configs,
-                "query": str(query)
+                "query": str(query),
             }, 200
 
         query = query.all()
 
         if serial_fields is None:
-            serial_fields, serial_field_relations = (
-                self._get_serializations("get")
+            serial_fields, serial_field_relations = self._get_serializations(
+                "get"
             )
 
         try:

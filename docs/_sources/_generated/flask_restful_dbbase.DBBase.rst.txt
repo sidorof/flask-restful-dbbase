@@ -1,4 +1,4 @@
-DBBase
+﻿DBBase
 ======
 
 .. currentmodule:: flask_restful_dbbase

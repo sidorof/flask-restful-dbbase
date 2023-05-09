@@ -345,7 +345,6 @@ class DBBaseResource(Resource):
 
     @classmethod
     def _get_serializations(cls, method):
-
         return (
             cls._get_serial_fields(method),
             cls._get_serial_field_relations(method),

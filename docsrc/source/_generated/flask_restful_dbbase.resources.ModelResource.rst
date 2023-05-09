@@ -1,4 +1,4 @@
-ModelResource
+﻿ModelResource
 =============
 
 .. currentmodule:: flask_restful_dbbase.resources
@@ -56,6 +56,7 @@ ModelResource
       ~ModelResource.decorators
       ~ModelResource.default_sort
       ~ModelResource.fields
+      ~ModelResource.init_every_request
       ~ModelResource.meta_doc
       ~ModelResource.method_decorators
       ~ModelResource.methods

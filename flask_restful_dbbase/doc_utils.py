@@ -190,7 +190,6 @@ class MethodDoc(object):
 
     @staticmethod
     def _get_input_props(resource_class):
-
         return resource_class.model_class.filter_columns(
             column_props=["!readOnly"],
             to_camel_case=True,
@@ -277,7 +276,6 @@ class MethodDoc(object):
 
         outputs = {}
         if method != "delete":
-
             serial_fields = resource._get_serial_fields(
                 method, with_class=True
             )

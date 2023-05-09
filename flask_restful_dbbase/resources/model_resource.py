@@ -338,7 +338,6 @@ class ModelResource(DBBaseResource):
             logger.error(msg)
             return {"message": msg}, 400
 
-
         data = self.model_class.deserialize(data)
 
         # use the key(s) from the url

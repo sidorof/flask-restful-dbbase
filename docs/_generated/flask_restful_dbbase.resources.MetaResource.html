@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>MetaResource &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>MetaResource &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MetaResource</a></li> 
       </ul>
     </div>  
 
@@ -41,12 +41,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="metaresource">
-<h1>MetaResource<a class="headerlink" href="#metaresource" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="flask_restful_dbbase.resources.MetaResource">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.resources.</code><code class="sig-name descname">MetaResource</code><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restful.Resource</span></code></p>
+  <section id="metaresource">
+<h1>MetaResource<a class="headerlink" href="#metaresource" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.resources.</span></span><span class="sig-name descname"><span class="pre">MetaResource</span></span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Resource</span></code></p>
 <p>This class enables documentation for a model resource.</p>
 <p><strong>Class variables</strong>:</p>
 <p>resource_class: This is the model resource that you wish to documnent.</p>
@@ -57,17 +57,13 @@ It defaults to a name of ‘meta’.</p>
 <p>Both the url_prefix and url_name come into play only upon initial
 configuration.</p>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.MetaResource.as_view.html#flask_restful_dbbase.resources.MetaResource.as_view" title="flask_restful_dbbase.resources.MetaResource.as_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_view</span></code></a>(name, *class_args, **class_kwargs)</p></td>
-<td><p>Converts the class into an actual view function that can be used with the routing system.</p></td>
+<td><p>Convert the class into a view function that can be registered for a route.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.MetaResource.dispatch_request.html#flask_restful_dbbase.resources.MetaResource.dispatch_request" title="flask_restful_dbbase.resources.MetaResource.dispatch_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispatch_request</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Subclasses have to override this method to implement the actual view function code.</p></td>
+<td><p>The actual view function behavior.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.MetaResource.get.html#flask_restful_dbbase.resources.MetaResource.get" title="flask_restful_dbbase.resources.MetaResource.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>()</p></td>
 <td><p>This function is the request.GET method for the meta resource URL.</p></td>
@@ -78,77 +74,85 @@ configuration.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">decorators</span></code></p></td>
+<td><p>A list of decorators to apply, in order, to the generated view function.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_every_request</span></code></p></td>
+<td><p>Create a new instance of this view class for every request by default.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">method_decorators</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">method_decorators</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.methods" title="flask_restful_dbbase.resources.MetaResource.methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">methods</span></code></a></p></td>
+<td><p>The methods this view is registered for.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">provide_automatic_options</span></code></p></td>
+<td><p>Control whether the <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> method is handled automatically.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">representations</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">methods</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">provide_automatic_options</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">representations</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.resource_class" title="flask_restful_dbbase.resources.MetaResource.resource_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resource_class</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.resource_class" title="flask_restful_dbbase.resources.MetaResource.resource_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resource_class</span></code></a></p></td>
 <td><p>This is the resource class to be documented</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.url_name" title="flask_restful_dbbase.resources.MetaResource.url_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.url_name" title="flask_restful_dbbase.resources.MetaResource.url_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_name</span></code></a></p></td>
 <td><p>This name can be used to make the default URL for the meta resource.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.url_prefix" title="flask_restful_dbbase.resources.MetaResource.url_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_prefix</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.MetaResource.url_prefix" title="flask_restful_dbbase.resources.MetaResource.url_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_prefix</span></code></a></p></td>
 <td><p>This is the default prefix to be used for the URL.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.MetaResource.resource_class">
-<code class="sig-name descname">resource_class</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.resource_class" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource.resource_class">
+<span class="sig-name descname"><span class="pre">resource_class</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.resource_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the resource class to be documented</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.MetaResource.url_prefix">
-<code class="sig-name descname">url_prefix</code><em class="property"> = 'meta'</em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.url_prefix" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource.url_prefix">
+<span class="sig-name descname"><span class="pre">url_prefix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'meta'</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.url_prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the default prefix to be used for the URL.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.MetaResource.url_name">
-<code class="sig-name descname">url_name</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.url_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource.methods">
+<span class="sig-name descname"><span class="pre">methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'GET'}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>The methods this view is registered for. Uses the same default
+(<code class="docutils literal notranslate"><span class="pre">[&quot;GET&quot;,</span> <span class="pre">&quot;HEAD&quot;,</span> <span class="pre">&quot;OPTIONS&quot;]</span></code>) as <code class="docutils literal notranslate"><span class="pre">route</span></code> and
+<code class="docutils literal notranslate"><span class="pre">add_url_rule</span></code> by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource.url_name">
+<span class="sig-name descname"><span class="pre">url_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.url_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>This name can be used to make the default URL for the meta resource.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.MetaResource.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.get" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the request.GET method for the meta resource URL.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>method</strong> – (str) : can specify only a specific method of the resource</p></li>
-<li><p><strong>be documented</strong><strong>, </strong><strong>such as get</strong><strong> or </strong><strong>put.</strong> (<em>to</em>) – </p></li>
+<li><p><strong>documented</strong> (<em>to be</em>) – </p></li>
+<li><p><strong>put.</strong> (<em>such as get or</em>) – </p></li>
 <li><p><strong>filter</strong> – (str) : the details of the table</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>meta</em> – (json) : The documentation</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.MetaResource.get_urls">
-<em class="property">classmethod </em><code class="sig-name descname">get_urls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get_urls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.get_urls" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.MetaResource.get_urls">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_urls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get_urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.MetaResource.get_urls" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns a default url for the resource. To keep
 consistency with the get_urls functions in other resources,
 it returns the url in a list, even though there would never be
@@ -171,9 +175,10 @@ convenience when adding the resource the api.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -192,7 +197,7 @@ convenience when adding the resource the api.</p>
 <li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -210,12 +215,12 @@ convenience when adding the resource the api.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -225,7 +230,7 @@ convenience when adding the resource the api.</p>
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

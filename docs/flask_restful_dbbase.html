@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase package &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>flask_restful_dbbase package &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">flask_restful_dbbase package</a></li> 
       </ul>
     </div>  
 
@@ -41,41 +41,107 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="flask-restful-dbbase-package">
-<h1>flask_restful_dbbase package<a class="headerlink" href="#flask-restful-dbbase-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+  <section id="flask-restful-dbbase-package">
+<h1>flask_restful_dbbase package<a class="headerlink" href="#flask-restful-dbbase-package" title="Permalink to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="flask_restful_dbbase.resources.html">flask_restful_dbbase.resources package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.collection_model_resource">flask_restful_dbbase.resources.collection_model_resource module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.dbbase_resource">flask_restful_dbbase.resources.dbbase_resource module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.meta_resource">flask_restful_dbbase.resources.meta_resource module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.model_resource">flask_restful_dbbase.resources.model_resource module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.collection_model_resource">flask_restful_dbbase.resources.collection_model_resource module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.process_get_input"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.process_get_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.max_page_size"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.max_page_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.order_by"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.order_by</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.OP_CODES1"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.OP_CODES1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.OP_CODES2"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.OP_CODES2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.model_name"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.get"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.methods"><code class="docutils literal notranslate"><span class="pre">CollectionModelResource.methods</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.dbbase_resource">flask_restful_dbbase.resources.dbbase_resource module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="docutils literal notranslate"><span class="pre">DBBaseResource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_class"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.model_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_prefix"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.url_prefix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_name"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.url_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.use_date_conversions"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.use_date_conversions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_fields"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.serial_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_field_relations"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.serial_field_relations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.before_commit"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.before_commit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.after_commit"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.after_commit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.default_sort"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.default_sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.requires_parameter"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.requires_parameter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.fields"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.meta_doc"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.meta_doc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_name"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_key_names"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.get_key_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_obj_params"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.get_obj_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.format_key"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.format_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_urls"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.get_urls()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_meta"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.get_meta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.is_collection"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.is_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.create_url"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.create_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.screen_data"><code class="docutils literal notranslate"><span class="pre">DBBaseResource.screen_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.meta_resource">flask_restful_dbbase.resources.meta_resource module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource"><code class="docutils literal notranslate"><span class="pre">MetaResource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource.resource_class"><code class="docutils literal notranslate"><span class="pre">MetaResource.resource_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource.url_prefix"><code class="docutils literal notranslate"><span class="pre">MetaResource.url_prefix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource.methods"><code class="docutils literal notranslate"><span class="pre">MetaResource.methods</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource.url_name"><code class="docutils literal notranslate"><span class="pre">MetaResource.url_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource.get"><code class="docutils literal notranslate"><span class="pre">MetaResource.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.meta_resource.MetaResource.get_urls"><code class="docutils literal notranslate"><span class="pre">MetaResource.get_urls()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources.model_resource">flask_restful_dbbase.resources.model_resource module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource"><code class="docutils literal notranslate"><span class="pre">ModelResource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.process_get_input"><code class="docutils literal notranslate"><span class="pre">ModelResource.process_get_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.process_post_input"><code class="docutils literal notranslate"><span class="pre">ModelResource.process_post_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.process_put_input"><code class="docutils literal notranslate"><span class="pre">ModelResource.process_put_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.process_patch_input"><code class="docutils literal notranslate"><span class="pre">ModelResource.process_patch_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.process_delete_input"><code class="docutils literal notranslate"><span class="pre">ModelResource.process_delete_input</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.get"><code class="docutils literal notranslate"><span class="pre">ModelResource.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.post"><code class="docutils literal notranslate"><span class="pre">ModelResource.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.put"><code class="docutils literal notranslate"><span class="pre">ModelResource.put()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.patch"><code class="docutils literal notranslate"><span class="pre">ModelResource.patch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.delete"><code class="docutils literal notranslate"><span class="pre">ModelResource.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.model_resource.ModelResource.methods"><code class="docutils literal notranslate"><span class="pre">ModelResource.methods</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="flask_restful_dbbase.resources.html#module-flask_restful_dbbase.resources">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-flask_restful_dbbase.generator">
-<span id="flask-restful-dbbase-generator-module"></span><h2>flask_restful_dbbase.generator module<a class="headerlink" href="#module-flask_restful_dbbase.generator" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-flask_restful_dbbase.generator">
+<span id="flask-restful-dbbase-generator-module"></span><h2>flask_restful_dbbase.generator module<a class="headerlink" href="#module-flask_restful_dbbase.generator" title="Permalink to this heading">¶</a></h2>
 <p>This module implements a technique for creating resources with specific
 methods.</p>
 <p>A customized resource can be created from a resource, but with some
 of the default HTTP methods removed, but with customized resource
 modifications applied to make a unique resource.</p>
-<dl class="function">
-<dt id="flask_restful_dbbase.generator.create_resource">
-<code class="sig-prename descclassname">flask_restful_dbbase.generator.</code><code class="sig-name descname">create_resource</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">resource_class</em>, <em class="sig-param">model_class=None</em>, <em class="sig-param">methods=None</em>, <em class="sig-param">url_prefix=None</em>, <em class="sig-param">url_name=None</em>, <em class="sig-param">class_vars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/generator.html#create_resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.generator.create_resource" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="flask_restful_dbbase.generator.create_resource">
+<span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.generator.</span></span><span class="sig-name descname"><span class="pre">create_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/generator.html#create_resource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.generator.create_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a resource based on a source model class
 and a seed resource.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – (str) : This will be the name stored with the new
 class.</p></li>
@@ -93,25 +159,26 @@ are set in place last, so it is here that additional
 customization of the new resource can be made.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>(obj)</em> – The new resource class</p>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-flask_restful_dbbase">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flask_restful_dbbase" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="flask_restful_dbbase.DBBase">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.</code><code class="sig-name descname">DBBase</code><span class="sig-paren">(</span><em class="sig-param">app=None</em>, <em class="sig-param">use_native_unicode=True</em>, <em class="sig-param">session_options=None</em>, <em class="sig-param">metadata=None</em>, <em class="sig-param">query_class=&lt;class 'flask_sqlalchemy.BaseQuery'&gt;</em>, <em class="sig-param">model_class=&lt;class 'sqlalchemy.ext.declarative.api.Model'&gt;</em>, <em class="sig-param">engine_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase.html#DBBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.DBBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_sqlalchemy.SQLAlchemy</span></code></p>
+</section>
+<section id="module-flask_restful_dbbase">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flask_restful_dbbase" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.DBBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.</span></span><span class="sig-name descname"><span class="pre">DBBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_native_unicode=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_options=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_class=&lt;class</span> <span class="pre">'flask_sqlalchemy.BaseQuery'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_class=&lt;class</span> <span class="pre">'sqlalchemy.ext.declarative.api.Model'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine_options=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase.html#DBBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.DBBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemy</span></code></p>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -130,7 +197,7 @@ customization of the new resource can be made.</p></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -148,12 +215,12 @@ customization of the new resource can be made.</p></li>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -163,7 +230,7 @@ customization of the new resource can be made.</p></li>
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

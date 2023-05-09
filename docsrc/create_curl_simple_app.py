@@ -7,7 +7,7 @@ input("ensure that example/simple_app is running")
 filename = "source/simple_app_{:02d}.rst"
 all_lines = []
 count = 0
-
+port = {port}
 
 def run_cmd(cmd):
 
@@ -46,18 +46,18 @@ def save(count, cmd):
 
 count = save(
     count,
-    """
+    f"""
 # get a book
-curl http://localhost:5000/books/1 \\
+curl http://localhost:{port}/books/1 \\
     -H "Content-Type: application/json"
 """,
 )
 
 count = save(
     count,
-    """
+    f"""
 # post a book, but with invalid data
-curl http://localhost:5000/books \\
+curl http://localhost:{port}/books \\
     -H "Content-Type: application/json" \\
     -d '{"authorId": 1,
          "title": "this is a test woah, this is really a long title, woah, this is really a long title, woah, this is really a long title, woah, this is really a long title, woah, this is really a long title "}'
@@ -66,9 +66,9 @@ curl http://localhost:5000/books \\
 
 count = save(
     count,
-    """
+    f"""
 # post a book with valid data
-curl http://localhost:5000/books \\
+curl http://localhost:{port}/books \\
     -H "Content-Type: application/json" \\
     -d '{"authorId": 3,
          "title": "The Algorithm Design Manual",
@@ -79,18 +79,18 @@ curl http://localhost:5000/books \\
 
 count = save(
     count,
-    """
+    f"""
 # get all books
-curl http://localhost:5000/books \\
+curl http://localhost:{port}/books \\
     -H "Content-Type: application/json"
 """,
 )
 
 count = save(
     count,
-    """
+    f"""
 # get documentation
-curl -g http://localhost:5000/meta/books/single""",
+curl -g http://localhost:{port}/meta/books/single""",
 )
 
 

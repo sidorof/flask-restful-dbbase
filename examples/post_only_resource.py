@@ -57,7 +57,9 @@ PostOnlyResource = create_resource(
     methods=["post"],
     url_prefix="/",
     url_name="a-model-command",
-    class_vars={"after_commit": {"post": after_commit},},
+    class_vars={
+        "after_commit": {"post": after_commit},
+    },
 )
 
 # configure meta data to not show the default
@@ -69,7 +71,7 @@ meta_doc = MetaDoc(
             method="post",
             after_commit="Here we can say a few words about the process",
             use_default_response=False,
-            responses=[{"messsage": "Here we can describe the response"}]
+            responses=[{"messsage": "Here we can describe the response"}],
         )
     ],
 )
@@ -87,4 +89,4 @@ api.add_resource(PostOnlyMetaResource, *PostOnlyMetaResource.get_urls())
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

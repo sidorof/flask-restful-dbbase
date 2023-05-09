@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.resources package &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>flask_restful_dbbase.resources package &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">flask_restful_dbbase.resources package</a></li> 
       </ul>
     </div>  
 
@@ -41,62 +41,149 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="flask-restful-dbbase-resources-package">
-<h1>flask_restful_dbbase.resources package<a class="headerlink" href="#flask-restful-dbbase-resources-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-flask_restful_dbbase.resources.collection_model_resource">
-<span id="flask-restful-dbbase-resources-collection-model-resource-module"></span><h2>flask_restful_dbbase.resources.collection_model_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.collection_model_resource" title="Permalink to this headline">¶</a></h2>
+  <section id="flask-restful-dbbase-resources-package">
+<h1>flask_restful_dbbase.resources package<a class="headerlink" href="#flask-restful-dbbase-resources-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-flask_restful_dbbase.resources.collection_model_resource">
+<span id="flask-restful-dbbase-resources-collection-model-resource-module"></span><h2>flask_restful_dbbase.resources.collection_model_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.collection_model_resource" title="Permalink to this heading">¶</a></h2>
 <p>”
 This module implements a starting point for collection model resources.</p>
-<dl class="class">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.resources.collection_model_resource.</code><code class="sig-name descname">CollectionModelResource</code><a class="reference internal" href="_modules/flask_restful_dbbase/resources/collection_model_resource.html#CollectionModelResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restful_dbbase.resources.dbbase_resource.DBBaseResource</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.resources.collection_model_resource.</span></span><span class="sig-name descname"><span class="pre">CollectionModelResource</span></span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/collection_model_resource.html#CollectionModelResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBBaseResource</span></code></a></p>
 <p>CollectionModelResource Class</p>
 <p>This model class implements the base class.</p>
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.process_get_input">
-<code class="sig-name descname">process_get_input</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.process_get_input" title="Permalink to this definition">¶</a></dt>
+<p>This class supports only gets to return collections of
+records.</p>
+<p>Like the ModelResource class there is a provision for a process_get_input
+function.</p>
+<p>The usual filtering is available for gathering records if a variable is
+a specific value. Most of the time, this will be all that is necessary.</p>
+<p>However, there is a means to select records by a comparison operator.</p>
+<p>Use a format as follows:</p>
+<dl class="simple">
+<dt>query_string: {</dt><dd><p>var1: [operator, comparison_value]</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="simple">
+<dt>The list of operators for single comparison value is:</dt><dd><p>[“eq”, “ne”, “gt”, “ge”, “lt”, “le”]</p>
+</dd>
+</dl>
+<p>In addition, if comparison is made such as selecting where var1 &gt; var2,
+use <cite>{var1: [“gt”, var:var2]}</cite> to signal this is another variable.</p>
+<p>To gather records that are found in a list use var1[]: [val1, val2, …].</p>
+<p>Or, for more flexibility use:</p>
+<dl class="simple">
+<dt>query_string: {</dt><dd><p>var1: [operator, [val1, val2, …]]</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="simple">
+<dt>The supported list of operators are</dt><dd><p>[“like”, “ilike”, “notlike”, “notilike”]</p>
+</dd>
+</dl>
+<p>To control record set sizes, a variable <cite>page_config</cite> is a dict of page
+or record variables.</p>
+<p>Bear in mind tha all variables entering can be either camel or snake based.</p>
+<p>Page_config variables:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“orderBy”: [“id”, “statusId”],</dt><dd><p>Can be a single value or a list
+To sort in descending order use the format -var1</p>
+</dd>
+<dt>“pageSize”: “50”,</dt><dd><p>The maximum page size can be limited by the class
+variable <cite>max_page_size</cite></p>
+</dd>
+</dl>
+<p>“offset”: 30,  The number of records to skip</p>
+<dl class="simple">
+<dt>“limit”: “100”,</dt><dd><p>limits the size of the record set</p>
+</dd>
+<dt>“serialFields”: [“id”, “statusId”],</dt><dd><p>can specify specific columns to be returned
+fallback: serial fields can be specified by resource or dbbase model</p>
+</dd>
+<dt>“debug”: “False”,</dt><dd><p>covered below</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>if debug is true, the recordset is not returned. Instead, data returned
+consists of variables used, the default variable amounts, and the
+sqlalchemy query that would be executed.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“class_defaults”: {</dt><dd><p>“model_name”: self.model_name,
+“process_get_input”: get_input_doc,
+“max_page_size”: self.max_page_size,
+“order_by”: None,
+“op_codes”: self.OP_CODES1 + self.OP_CODES2,</p>
+</dd>
+</dl>
+<p>},
+“original_data”: orig_data,
+“converted_data”: query_data,
+“page_configs”: configs,
+“query”: str(query)</p>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.process_get_input">
+<span class="sig-name descname"><span class="pre">process_get_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.process_get_input" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.max_page_size">
-<code class="sig-name descname">max_page_size</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.max_page_size" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.max_page_size">
+<span class="sig-name descname"><span class="pre">max_page_size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.max_page_size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.order_by">
-<code class="sig-name descname">order_by</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.order_by" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.order_by">
+<span class="sig-name descname"><span class="pre">order_by</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.order_by" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.model_name">
-<code class="sig-name descname">model_name</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.model_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.OP_CODES1">
+<span class="sig-name descname"><span class="pre">OP_CODES1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['eq',</span> <span class="pre">'ne',</span> <span class="pre">'gt',</span> <span class="pre">'ge',</span> <span class="pre">'lt',</span> <span class="pre">'le']</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.OP_CODES1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/collection_model_resource.html#CollectionModelResource.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.get" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.OP_CODES2">
+<span class="sig-name descname"><span class="pre">OP_CODES2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['like',</span> <span class="pre">'ilike',</span> <span class="pre">'notlike',</span> <span class="pre">'notilike']</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.OP_CODES2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.methods">
-<code class="sig-name descname">methods</code><em class="property"> = {'GET'}</em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.methods" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.model_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string version of the Model class name. This is set
+upon initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/collection_model_resource.html#CollectionModelResource.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.methods">
+<span class="sig-name descname"><span class="pre">methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'GET'}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.collection_model_resource.CollectionModelResource.methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>The methods this view is registered for. Uses the same default
+(<code class="docutils literal notranslate"><span class="pre">[&quot;GET&quot;,</span> <span class="pre">&quot;HEAD&quot;,</span> <span class="pre">&quot;OPTIONS&quot;]</span></code>) as <code class="docutils literal notranslate"><span class="pre">route</span></code> and
+<code class="docutils literal notranslate"><span class="pre">add_url_rule</span></code> by default.</p>
+</dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-flask_restful_dbbase.resources.dbbase_resource">
-<span id="flask-restful-dbbase-resources-dbbase-resource-module"></span><h2>flask_restful_dbbase.resources.dbbase_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.dbbase_resource" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-flask_restful_dbbase.resources.dbbase_resource">
+<span id="flask-restful-dbbase-resources-dbbase-resource-module"></span><h2>flask_restful_dbbase.resources.dbbase_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.dbbase_resource" title="Permalink to this heading">¶</a></h2>
 <p>”
 This module implements a starting point for model resources.</p>
-<dl class="class">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.resources.dbbase_resource.</code><code class="sig-name descname">DBBaseResource</code><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restful.Resource</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.resources.dbbase_resource.</span></span><span class="sig-name descname"><span class="pre">DBBaseResource</span></span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Resource</span></code></p>
 <p>DBBaseResource Class</p>
 <p>This model class implements the base class.</p>
 <p>model_class: a dbbase.Model
@@ -119,7 +206,7 @@ adjust the data, or otherwise change the data.</p>
 <p>Format for a before/after function:</p>
 <p><cite>def myfunc(resource_self, item, status_code):</cite></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource_self</strong> – (obj) : This is the self of the resource.
 This provides access to the resource itself.</p></li>
@@ -129,7 +216,7 @@ should change, you can change it here. Otherwise, simply
 return it.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>item</em> – (obj) : The modified record
 status_code (int) : The possibly altered response status_code</p>
 </dd>
@@ -171,137 +258,137 @@ return job, status_code</p>
 <p>meta_doc: This set of attributes is designed to supplement meta
 information automatically generated. It uses the MetaDoc class
 found in utils.</p>
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_class">
-<code class="sig-name descname">model_class</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_class" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_class">
+<span class="sig-name descname"><span class="pre">model_class</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_class" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_prefix">
-<code class="sig-name descname">url_prefix</code><em class="property"> = '/'</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_prefix" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_prefix">
+<span class="sig-name descname"><span class="pre">url_prefix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/'</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_prefix" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_name">
-<code class="sig-name descname">url_name</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_name">
+<span class="sig-name descname"><span class="pre">url_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.url_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.use_date_conversions">
-<code class="sig-name descname">use_date_conversions</code><em class="property"> = False</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.use_date_conversions" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.use_date_conversions">
+<span class="sig-name descname"><span class="pre">use_date_conversions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.use_date_conversions" title="Permalink to this definition">¶</a></dt>
 <dd><p>use_date_conversions can be used if the database, such as SQlite3 does
 not support the acceptance of string-based dates. Since it takes processing
 time and adherence to a format, it is an optional feature.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_fields">
-<code class="sig-name descname">serial_fields</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_fields" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_fields">
+<span class="sig-name descname"><span class="pre">serial_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_field_relations">
-<code class="sig-name descname">serial_field_relations</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_field_relations" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_field_relations">
+<span class="sig-name descname"><span class="pre">serial_field_relations</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.serial_field_relations" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.before_commit">
-<code class="sig-name descname">before_commit</code><em class="property"> = {}</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.before_commit" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.before_commit">
+<span class="sig-name descname"><span class="pre">before_commit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.before_commit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.after_commit">
-<code class="sig-name descname">after_commit</code><em class="property"> = {}</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.after_commit" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.after_commit">
+<span class="sig-name descname"><span class="pre">after_commit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.after_commit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.default_sort">
-<code class="sig-name descname">default_sort</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.default_sort" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.default_sort">
+<span class="sig-name descname"><span class="pre">default_sort</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.default_sort" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.requires_parameter">
-<code class="sig-name descname">requires_parameter</code><em class="property"> = False</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.requires_parameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.requires_parameter">
+<span class="sig-name descname"><span class="pre">requires_parameter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.requires_parameter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.fields">
-<code class="sig-name descname">fields</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.fields" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.meta_doc">
-<code class="sig-name descname">meta_doc</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.meta_doc" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.meta_doc">
+<span class="sig-name descname"><span class="pre">meta_doc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.meta_doc" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_name">
-<code class="sig-name descname">model_name</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.model_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The string version of the Model class name. This is set
 upon initialization.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_key_names">
-<em class="property">classmethod </em><code class="sig-name descname">get_key_names</code><span class="sig-paren">(</span><em class="sig-param">formatted=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_key_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_key_names" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_key_names">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_key_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formatted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_key_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_key_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns column names marked as primary_key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>formatted</strong> – (bool) : will return in form [&lt;int:id&gt;]</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>key_names (list)</em> – a list of keys is returned</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_obj_params">
-<em class="property">classmethod </em><code class="sig-name descname">get_obj_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_obj_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_obj_params" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_obj_params">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_obj_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_obj_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_obj_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a convenience function for getting documentation
 parameters from the model class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>(dict)</em> – The object properties of the model class</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.format_key">
-<em class="property">static </em><code class="sig-name descname">format_key</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">key_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.format_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.format_key" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.format_key">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.format_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.format_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the portion of the URL that embodies the key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> – (str) : The name of the key field.</p></li>
 <li><p><strong>key_type</strong> – (str) : Either ‘integer’ or something else.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>formatted key</em> – (str) : such as &lt;int:id&gt;</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_urls">
-<em class="property">classmethod </em><code class="sig-name descname">get_urls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_urls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_urls" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_urls">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_urls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_urls" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>This function returns something similar to</dt><dd><p>[ {url_prefix}/{this_url}, {url_prefix}/{this_url}/&lt;int:id&gt; ]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_meta">
-<em class="property">classmethod </em><code class="sig-name descname">get_meta</code><span class="sig-paren">(</span><em class="sig-param">method=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_meta" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_meta">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.get_meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.get_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the settings for the resource.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>method</strong> – (str : None) : choices are get/post/put/patch/delete.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>meta_data (dict)</em> – A dict with the resource characteristics.
 If a method is preferred, the focus will be narrowed to that
 method.</p>
@@ -311,15 +398,15 @@ method.</p>
 interacting with an API.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.is_collection">
-<em class="property">classmethod </em><code class="sig-name descname">is_collection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.is_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.is_collection" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.is_collection">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_collection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.is_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.is_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns True if identified as a collection resource.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.create_url">
-<em class="property">classmethod </em><code class="sig-name descname">create_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.create_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.create_url" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.create_url">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.create_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.create_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Url can come from:
 * url_name resource variable</p>
 <p>but if None
@@ -327,23 +414,23 @@ interacting with an API.</p>
 <p>NOTE: figure out flag for use table/classname</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.screen_data">
-<code class="sig-name descname">screen_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">obj_params</em>, <em class="sig-param">skip_missing_data=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.screen_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.screen_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.screen_data">
+<span class="sig-name descname"><span class="pre">screen_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_missing_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/dbbase_resource.html#DBBaseResource.screen_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource.screen_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assumes data is deserialized</p>
 <p>This function screens data from a few parameters, missing data,
 unneeded fields in data, excessive string lengths, improper numbers.</p>
 <p>Note that this function does not exhaustively determine the
 problem. It ends on first failure.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – (dict) : incoming data</p></li>
 <li><p><strong>obj_params</strong> – (dict) : table parameters</p></li>
 <li><p><strong>skip_missing_data</strong> – (bool) : Flag to check for all for record</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>status</em> – (bool) : True, Successful screening
 msg : (None : dict) : description of the problem</p>
 </dd>
@@ -356,16 +443,16 @@ complete list of the problems encountered.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-flask_restful_dbbase.resources.meta_resource">
-<span id="flask-restful-dbbase-resources-meta-resource-module"></span><h2>flask_restful_dbbase.resources.meta_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.meta_resource" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-flask_restful_dbbase.resources.meta_resource">
+<span id="flask-restful-dbbase-resources-meta-resource-module"></span><h2>flask_restful_dbbase.resources.meta_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.meta_resource" title="Permalink to this heading">¶</a></h2>
 <p>This module implements resource with a purpose of documenting
 a model resource.</p>
 <p>Assumes a get method.</p>
-<dl class="class">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.resources.meta_resource.</code><code class="sig-name descname">MetaResource</code><a class="reference internal" href="_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restful.Resource</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.resources.meta_resource.</span></span><span class="sig-name descname"><span class="pre">MetaResource</span></span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Resource</span></code></p>
 <p>This class enables documentation for a model resource.</p>
 <p><strong>Class variables</strong>:</p>
 <p>resource_class: This is the model resource that you wish to documnent.</p>
@@ -375,50 +462,54 @@ to create a url for the documentation.</p>
 It defaults to a name of ‘meta’.</p>
 <p>Both the url_prefix and url_name come into play only upon initial
 configuration.</p>
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource.resource_class">
-<code class="sig-name descname">resource_class</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.resource_class" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource.resource_class">
+<span class="sig-name descname"><span class="pre">resource_class</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.resource_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the resource class to be documented</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource.url_prefix">
-<code class="sig-name descname">url_prefix</code><em class="property"> = 'meta'</em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.url_prefix" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource.url_prefix">
+<span class="sig-name descname"><span class="pre">url_prefix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'meta'</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.url_prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the default prefix to be used for the URL.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource.methods">
-<code class="sig-name descname">methods</code><em class="property"> = {'GET'}</em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.methods" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource.methods">
+<span class="sig-name descname"><span class="pre">methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'GET'}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>The methods this view is registered for. Uses the same default
+(<code class="docutils literal notranslate"><span class="pre">[&quot;GET&quot;,</span> <span class="pre">&quot;HEAD&quot;,</span> <span class="pre">&quot;OPTIONS&quot;]</span></code>) as <code class="docutils literal notranslate"><span class="pre">route</span></code> and
+<code class="docutils literal notranslate"><span class="pre">add_url_rule</span></code> by default.</p>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource.url_name">
-<code class="sig-name descname">url_name</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.url_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource.url_name">
+<span class="sig-name descname"><span class="pre">url_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.url_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>This name can be used to make the default URL for the meta resource.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.get" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the request.GET method for the meta resource URL.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>method</strong> – (str) : can specify only a specific method of the resource</p></li>
-<li><p><strong>be documented</strong><strong>, </strong><strong>such as get</strong><strong> or </strong><strong>put.</strong> (<em>to</em>) – </p></li>
+<li><p><strong>documented</strong> (<em>to be</em>) – </p></li>
+<li><p><strong>put.</strong> (<em>such as get or</em>) – </p></li>
 <li><p><strong>filter</strong> – (str) : the details of the table</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>meta</em> – (json) : The documentation</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.meta_resource.MetaResource.get_urls">
-<em class="property">classmethod </em><code class="sig-name descname">get_urls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get_urls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.get_urls" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.meta_resource.MetaResource.get_urls">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_urls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/meta_resource.html#MetaResource.get_urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.meta_resource.MetaResource.get_urls" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns a default url for the resource. To keep
 consistency with the get_urls functions in other resources,
 it returns the url in a list, even though there would never be
@@ -441,15 +532,15 @@ convenience when adding the resource the api.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-flask_restful_dbbase.resources.model_resource">
-<span id="flask-restful-dbbase-resources-model-resource-module"></span><h2>flask_restful_dbbase.resources.model_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.model_resource" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-flask_restful_dbbase.resources.model_resource">
+<span id="flask-restful-dbbase-resources-model-resource-module"></span><h2>flask_restful_dbbase.resources.model_resource module<a class="headerlink" href="#module-flask_restful_dbbase.resources.model_resource" title="Permalink to this heading">¶</a></h2>
 <p>”
 This module implements a starting point for model resources.</p>
-<dl class="class">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.resources.model_resource.</code><code class="sig-name descname">ModelResource</code><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restful_dbbase.resources.dbbase_resource.DBBaseResource</span></code></a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.resources.model_resource.</span></span><span class="sig-name descname"><span class="pre">ModelResource</span></span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBBaseResource</span></code></a></p>
 <p>ModelResource Class</p>
 <p>This model class implements the base class.</p>
 <p><strong>Class variables</strong>:</p>
@@ -472,80 +563,84 @@ can also divert the method to end the HTTP method early and
 return something entirely different than the item being applied.</p>
 </dd>
 </dl>
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.process_get_input">
-<code class="sig-name descname">process_get_input</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_get_input" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.process_get_input">
+<span class="sig-name descname"><span class="pre">process_get_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_get_input" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.process_post_input">
-<code class="sig-name descname">process_post_input</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_post_input" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.process_post_input">
+<span class="sig-name descname"><span class="pre">process_post_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_post_input" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.process_put_input">
-<code class="sig-name descname">process_put_input</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_put_input" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.process_put_input">
+<span class="sig-name descname"><span class="pre">process_put_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_put_input" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.process_patch_input">
-<code class="sig-name descname">process_patch_input</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_patch_input" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.process_patch_input">
+<span class="sig-name descname"><span class="pre">process_patch_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_patch_input" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.process_delete_input">
-<code class="sig-name descname">process_delete_input</code><em class="property"> = None</em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_delete_input" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.process_delete_input">
+<span class="sig-name descname"><span class="pre">process_delete_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.process_delete_input" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.get" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the HTTP GET method for a resource handling
 a single item.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.post">
-<code class="sig-name descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.post" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the HTTP POST method for a resource handling
 a single item.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.put">
-<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.put" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the HTTP PUT method for a resource handling a
 single item.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.patch">
-<code class="sig-name descname">patch</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.patch" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.patch">
+<span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.patch" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the HTTP PATCH method for a resource handling
 a single item.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flask_restful_dbbase/resources/model_resource.html#ModelResource.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is the HTTP DELETE method for a resource
 handling a single item.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="flask_restful_dbbase.resources.model_resource.ModelResource.methods">
-<code class="sig-name descname">methods</code><em class="property"> = {'DELETE', 'GET', 'PATCH', 'POST', 'PUT'}</em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.methods" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.model_resource.ModelResource.methods">
+<span class="sig-name descname"><span class="pre">methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'DELETE',</span> <span class="pre">'GET',</span> <span class="pre">'PATCH',</span> <span class="pre">'POST',</span> <span class="pre">'PUT'}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.model_resource.ModelResource.methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>The methods this view is registered for. Uses the same default
+(<code class="docutils literal notranslate"><span class="pre">[&quot;GET&quot;,</span> <span class="pre">&quot;HEAD&quot;,</span> <span class="pre">&quot;OPTIONS&quot;]</span></code>) as <code class="docutils literal notranslate"><span class="pre">route</span></code> and
+<code class="docutils literal notranslate"><span class="pre">add_url_rule</span></code> by default.</p>
+</dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-flask_restful_dbbase.resources">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flask_restful_dbbase.resources" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+<section id="module-flask_restful_dbbase.resources">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-flask_restful_dbbase.resources" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -564,7 +659,7 @@ handling a single item.</p>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -582,12 +677,12 @@ handling a single item.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -597,7 +692,7 @@ handling a single item.</p>
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 
