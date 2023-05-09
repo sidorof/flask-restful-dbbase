@@ -8,11 +8,11 @@ Assumes a get method.
 
 from os import path
 from flask import request
-from . import Resource, CollectionModelResource
+from . import Resource
 
 
 class MetaResource(Resource):
-    """ MetaResource
+    """MetaResource
 
     This class enables documentation for a model resource.
 
@@ -70,7 +70,7 @@ class MetaResource(Resource):
 
     @classmethod
     def get_urls(cls):
-        """ get_urls
+        """get_urls
 
         This function returns a default url for the resource. To keep
         consistency with the get_urls functions in other resources,

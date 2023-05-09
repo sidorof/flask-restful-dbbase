@@ -16,11 +16,12 @@ PROJECT_URL = "https://sidorof.github.io/flask-restful-dbbase/"
 LICENSE = "MIT"
 AUTHOR = "Donald Smiley"
 AUTHOR_EMAIL = "dsmiley@sidorof.com"
-PYTHON_REQUIRES = ">=3.6"
+PYTHON_REQUIRES = ">=3.7"
 ZIP_SAFE = False
 INSTALL_REQUIRES = [
     "flask",
     "Flask-RESTful",
+    "SQLAlchemy < 1.4",
     "Flask-SQLAlchemy",
     "DBBase",
     "python-dateutil",
@@ -35,8 +36,10 @@ CLASSIFIERS = [
     "License :: OSI Approved :: MIT License",
     "Topic :: Software Development",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",

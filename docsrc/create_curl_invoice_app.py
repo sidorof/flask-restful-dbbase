@@ -9,7 +9,7 @@ input("ensure that example/invoice_app.py is running")
 filename = "source/invoice_app_{:02d}.rst"
 all_lines = []
 count = 0
-
+port = 5002
 
 def run_cmd(cmd):
 
@@ -59,7 +59,7 @@ count = save(
     count,
     f"""
 # post an invoice
-curl http://localhost:5000/invoices \\
+curl http://localhost:{port}/invoices \\
     -H "Content-Type: application/json" \\
     -d '{json.dumps(invoice, indent=2)}'
 """,
@@ -67,18 +67,18 @@ curl http://localhost:5000/invoices \\
 
 count = save(
     count,
-    """
+    f"""
 # get an invoice
-curl http://localhost:5000/invoices/1 \\
+curl http://localhost:{port}/invoices/1 \\
     -H "Content-Type: application/json"
 """,
 )
 
 count = save(
     count,
-    """
+    f"""
 # meta info for POST
-curl http://localhost:5000/meta/invoices/single?method=post \\
+curl http://localhost:{port}/meta/invoices/single?method=post \\
     -H "Content-Type: application/json"
 """,
 )

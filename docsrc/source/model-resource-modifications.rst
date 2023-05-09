@@ -38,12 +38,12 @@ And finally, this is an unexecuted query that the normal program will execute af
 
 Returns
 +++++++
-Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form `(status, result)` where status is either `True` to continue or `False` to exit early. So, if a tuple is not returned an error will be triggered about the process_input_function itself.
+Since part of the point of these functions is to determine whether to go forward or not, the returns must be in the form `{"status" True, "query": query, "data": data}` where status is either `True` to continue or `{"status": False, "message": message, "status_code": status_code}` to exit early. So, if a dictionary is not returned an error will be triggered about the process_input_function itself.
 
 Use the following formats as a guide.
 
 +----------------+----------------------------------+----------------------------------+
-|                | Args                             |  Returns a tuple                 |
+|                | Args                             |  Returns a dictionary                 |
 |                +------+-------+--------+----------+---------+------------------------+
 | Method         | self | query |  data  |  kwargs  |  status |   result               |
 +----------------+------+-------+--------+----------+---------+------------------------+
@@ -63,7 +63,7 @@ Use the following formats as a guide.
 |                |      |       |        |          +---------+------------------------+
 |                |      |       |        |          |   False | (message, status_code) |
 +----------------+------+-------+--------+----------+---------+------------------------+
-| DELETE         |  X   |       |        |   X      |   True  | query                  |
+| DELETE         |  X   |  X    |        |   X      |   True  | query                  |
 |                |      |       |        |          +---------+------------------------+
 |                |      |       |        |          |   False | (message, status_code) |
 +----------------+------+-------+--------+----------+---------+------------------------+
@@ -77,7 +77,14 @@ For example, suppose you want to add a process input function for POST.
 
         def process_post_input(self, data):
             # your magic here
-            return status, result
+            if status:
+                return {"status" True, "data": data}
+
+            return {
+                "status": False,
+                "message": message,
+                "status_code": status_code
+            }
 
 ..
 
@@ -130,7 +137,4 @@ The format of the before / after functions is similar to the following:
 | after_commit   |      |                |             |               +-------------------------------+
 |                |      |                |             |               |   False, message, status_code |
 +----------------+------+----------------+-------------+---------------+-------------------------------+
-
-
-
 

@@ -1,4 +1,4 @@
-MetaResource
+﻿MetaResource
 ============
 
 .. currentmodule:: flask_restful_dbbase.resources
@@ -30,6 +30,7 @@ MetaResource
    .. autosummary::
    
       ~MetaResource.decorators
+      ~MetaResource.init_every_request
       ~MetaResource.method_decorators
       ~MetaResource.methods
       ~MetaResource.provide_automatic_options

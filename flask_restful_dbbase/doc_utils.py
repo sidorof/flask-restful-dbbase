@@ -44,7 +44,10 @@ class MetaDoc(object):
     all_methods = ("get", "post", "put", "patch", "delete")
 
     def __init__(
-        self, resource_class, requirements=None, methods=None,
+        self,
+        resource_class,
+        requirements=None,
+        methods=None,
     ):
         self.resource_class = resource_class
         self.model_class = resource_class.model_class._class()
@@ -187,9 +190,9 @@ class MethodDoc(object):
 
     @staticmethod
     def _get_input_props(resource_class):
-
         return resource_class.model_class.filter_columns(
-            column_props=["!readOnly"], to_camel_case=True,
+            column_props=["!readOnly"],
+            to_camel_case=True,
         )
 
     @staticmethod
@@ -205,8 +208,6 @@ class MethodDoc(object):
     def to_dict(self, meta_doc):
         """Convert attributes to a dictionary"""
         resource_class = meta_doc.resource_class
-        model_class = resource_class.model_class
-        db = model_class.db
         doc = {}
         self._get_url(doc, self.method, resource_class)
 
@@ -264,8 +265,9 @@ class MethodDoc(object):
 
     def get_default_response(self, meta_doc):
         """
-        This function returns the standard response for the method. If something
-        special is done, then the default response would be supressed.
+        This function returns the standard response for the method.
+        If something special is done, then the default response would be
+        supressed.
         """
         resource = meta_doc.resource_class
         method = self.method
@@ -273,7 +275,6 @@ class MethodDoc(object):
 
         outputs = {}
         if method != "delete":
-
             serial_fields = resource._get_serial_fields(
                 method, with_class=True
             )
@@ -285,8 +286,8 @@ class MethodDoc(object):
                 doc = db.doc_table(
                     foreign_class,
                     serial_fields=serial_fields,
-                    serial_field_relations=resource._get_serial_field_relations(
-                        method
+                    serial_field_relations=(
+                        resource._get_serial_field_relations(method)
                     ),
                     to_camel_case=True,
                 )[foreign_class._class()]
@@ -297,8 +298,8 @@ class MethodDoc(object):
                 doc = db.doc_table(
                     resource.model_class,
                     serial_fields=serial_fields,
-                    serial_field_relations=resource._get_serial_field_relations(
-                        method
+                    serial_field_relations=(
+                        resource._get_serial_field_relations(method)
                     ),
                     to_camel_case=True,
                 )[resource.model_class._class()]

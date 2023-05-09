@@ -1,4 +1,4 @@
-CollectionModelResource
+﻿CollectionModelResource
 =======================
 
 .. currentmodule:: flask_restful_dbbase.resources
@@ -43,11 +43,14 @@ CollectionModelResource
 
    .. autosummary::
    
+      ~CollectionModelResource.OP_CODES1
+      ~CollectionModelResource.OP_CODES2
       ~CollectionModelResource.after_commit
       ~CollectionModelResource.before_commit
       ~CollectionModelResource.decorators
       ~CollectionModelResource.default_sort
       ~CollectionModelResource.fields
+      ~CollectionModelResource.init_every_request
       ~CollectionModelResource.max_page_size
       ~CollectionModelResource.meta_doc
       ~CollectionModelResource.method_decorators

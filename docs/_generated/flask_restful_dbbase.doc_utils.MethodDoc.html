@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>flask_restful_dbbase.doc_utils.MethodDoc &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>flask_restful_dbbase.doc_utils.MethodDoc &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">flask_restful_dbbase.doc_utils.MethodDoc</a></li> 
       </ul>
     </div>  
 
@@ -41,15 +41,15 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="flask-restful-dbbase-doc-utils-methoddoc">
-<h1>flask_restful_dbbase.doc_utils.MethodDoc<a class="headerlink" href="#flask-restful-dbbase-doc-utils-methoddoc" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="flask_restful_dbbase.doc_utils.MethodDoc">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.doc_utils.</code><code class="sig-name descname">MethodDoc</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">input=None</em>, <em class="sig-param">input_modifier=None</em>, <em class="sig-param">before_commit=None</em>, <em class="sig-param">after_commit=None</em>, <em class="sig-param">use_default_response=True</em>, <em class="sig-param">responses=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc" title="Permalink to this definition">¶</a></dt>
+  <section id="flask-restful-dbbase-doc-utils-methoddoc">
+<h1>flask_restful_dbbase.doc_utils.MethodDoc<a class="headerlink" href="#flask-restful-dbbase-doc-utils-methoddoc" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.doc_utils.MethodDoc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.doc_utils.</span></span><span class="sig-name descname"><span class="pre">MethodDoc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_modifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before_commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after_commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This class holds details about a method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>method</strong> – (str) : The method name</p></li>
 <li><p><strong>input</strong> – (str) : Optional input if necessary, otherwise default</p></li>
@@ -61,21 +61,16 @@
 </ul>
 </dd>
 </dl>
-<dl class="method">
-<dt id="flask_restful_dbbase.doc_utils.MethodDoc.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">input=None</em>, <em class="sig-param">input_modifier=None</em>, <em class="sig-param">before_commit=None</em>, <em class="sig-param">after_commit=None</em>, <em class="sig-param">use_default_response=True</em>, <em class="sig-param">responses=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.doc_utils.MethodDoc.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_modifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before_commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after_commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.doc_utils.MethodDoc.__init__" title="flask_restful_dbbase.doc_utils.MethodDoc.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(method[, input, input_modifier, …])</p></td>
-<td><p>Initialize self.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#flask_restful_dbbase.doc_utils.MethodDoc.__init__" title="flask_restful_dbbase.doc_utils.MethodDoc.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(method[, input, input_modifier, ...])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_default_response" title="flask_restful_dbbase.doc_utils.MethodDoc.get_default_response"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_default_response</span></code></a>(meta_doc)</p></td>
 <td><p>This function returns the standard response for the method.</p></td>
@@ -88,39 +83,41 @@
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="flask_restful_dbbase.doc_utils.MethodDoc.to_dict">
-<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param">meta_doc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.to_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.doc_utils.MethodDoc.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert attributes to a dictionary</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.doc_utils.MethodDoc.get_method_decorators">
-<code class="sig-name descname">get_method_decorators</code><span class="sig-paren">(</span><em class="sig-param">meta_doc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.get_method_decorators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_method_decorators" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.doc_utils.MethodDoc.get_method_decorators">
+<span class="sig-name descname"><span class="pre">get_method_decorators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.get_method_decorators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_method_decorators" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns a string representation of any method
 decorators.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>meta_doc</strong> – (obj) : The meta document being processed.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>(list</em> – None) : The string list of method decorator names.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="flask_restful_dbbase.doc_utils.MethodDoc.get_default_response">
-<code class="sig-name descname">get_default_response</code><span class="sig-paren">(</span><em class="sig-param">meta_doc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.get_default_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_default_response" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function returns the standard response for the method. If something
-special is done, then the default response would be supressed.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flask_restful_dbbase.doc_utils.MethodDoc.get_default_response">
+<span class="sig-name descname"><span class="pre">get_default_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_doc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/flask_restful_dbbase/doc_utils.html#MethodDoc.get_default_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.doc_utils.MethodDoc.get_default_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the standard response for the method.
+If something special is done, then the default response would be
+supressed.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -139,7 +136,7 @@ special is done, then the default response would be supressed.</p>
 <li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -157,12 +154,12 @@ special is done, then the default response would be supressed.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -172,7 +169,7 @@ special is done, then the default response would be supressed.</p>
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

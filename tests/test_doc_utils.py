@@ -11,7 +11,6 @@ from flask_restful_dbbase.resources import (
 
 
 def test_create_doc():
-
     db = DB("sqlite///:memory:")
 
     class Author(db.Model):

@@ -7,7 +7,7 @@ input("ensure that example/owner_app_v2 is running")
 filename = "source/owner_app_v2_{:02d}.rst"
 all_lines = []
 count = 0
-
+port = 5004
 
 def run_cmd(cmd):
 
@@ -46,9 +46,9 @@ def save(count, cmd):
 
 count = save(
     count,
-    """
+    f"""
 # post an order, receive a job
-curl http://localhost:5000/api/v2/orders \\
+curl http://localhost:{port}/api/v2/orders \\
     -H "Content-Type: application/json" \\
     -H "Authorization: User:1" \\
     -d '{"ownerId": 1, "description": "to do stuff"}'
@@ -57,9 +57,9 @@ curl http://localhost:5000/api/v2/orders \\
 
 count = save(
     count,
-    """
+    f"""
 # put an order, receive a job
-curl --request PUT http://localhost:5000/api/v2/orders/1 \\
+curl --request PUT http://localhost:{port}/api/v2/orders/1 \\
     -H "Content-Type: application/json" \\
     -H "Authorization: User:1" \\
     -d '{"ownerId": 1, "description": "to do different stuff"}'
@@ -68,9 +68,9 @@ curl --request PUT http://localhost:5000/api/v2/orders/1 \\
 
 count = save(
     count,
-    """
+    f"""
 # get orders
-curl http://localhost:5000/api/v2/orders \\
+curl http://localhost:{port}/api/v2/orders \\
     -H "Content-Type: application/json" \\
     -H "Authorization: User:1"
 """,
@@ -78,9 +78,9 @@ curl http://localhost:5000/api/v2/orders \\
 
 count = save(
     count,
-    """
+    f"""
 # get jobs
-curl http://localhost:5000/api/v2/jobs \\
+curl http://localhost:{port}/api/v2/jobs \\
     -H "Content-Type: application/json" \\
     -H "Authorization: User:1"
 """,
@@ -88,9 +88,9 @@ curl http://localhost:5000/api/v2/jobs \\
 
 count = save(
     count,
-    """
+    f"""
 # get meta data for OrderResource
-curl http://localhost:5000/api/v2/meta/orders/single \\
+curl http://localhost:{port}/api/v2/meta/orders/single \\
     -H "Content-Type: application/json" \\
     -H "Authorization: User:1"
 """,
@@ -98,9 +98,9 @@ curl http://localhost:5000/api/v2/meta/orders/single \\
 
 count = save(
     count,
-    """
+    f"""
 # get meta data for JobResource
-curl http://localhost:5000/api/v2/meta/jobs/single \\
+curl http://localhost:{port}/api/v2/meta/jobs/single \\
     -H "Content-Type: application/json" \\
     -H "Authorization: User:1"
 """,

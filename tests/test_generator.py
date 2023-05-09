@@ -9,7 +9,6 @@ from flask_restful_dbbase.generator import create_resource
 
 
 def test_create_resources():
-
     db = DB("sqlite:///:memory:")
 
     class Book(db.Model):
@@ -23,7 +22,8 @@ def test_create_resources():
     # no model class
     with pytest.raises(ValueError) as err:
         new_resource = create_resource(
-            Book._class(), resource_class=ModelResource,
+            Book._class(),
+            resource_class=ModelResource,
         )
     assert str(err.value) == "A model class must be defined"
 

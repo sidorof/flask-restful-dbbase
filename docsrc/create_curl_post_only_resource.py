@@ -7,6 +7,7 @@ input("ensure that example/post_only_resource is running")
 filename = "source/post_only_{:02d}.rst"
 all_lines = []
 count = 0
+port = 5001
 
 
 def run_cmd(cmd):
@@ -46,7 +47,7 @@ def save(count, cmd):
 
 count = save(
     count,
-    """
+    f"""
 # create an entry
 curl http://localhost:5000/a-model-command \\
     -H "Content-Type: application/json" \\
@@ -56,7 +57,7 @@ curl http://localhost:5000/a-model-command \\
 
 count = save(
     count,
-    """
+    f"""
 # create an entry
 curl http://localhost:5000/meta/a-model-command/single \\
     -H "Content-Type: application/json"

@@ -54,6 +54,10 @@ def create_samples(db):
     Sample(owner_id=1, param1=1, param2=2).save()
     Sample(owner_id=2, param1=3, param2=4).save()
     Sample(id=100, owner_id=2, param1=5, param2=6).save()
+    Sample(id=101, owner_id=2, param1=5, param2=6).save()
+    Sample(id=102, owner_id=2, param1=5, param2=6).save()
+    Sample(id=103, owner_id=2, param1=5, param2=6).save()
+    Sample(id=104, owner_id=2, param1=5, param2=6).save()
 
     OtherSample(owner_id=1).save()
 
@@ -91,13 +95,13 @@ def create_models(db):
         status_id = db.Column(db.SmallInteger, default=0, nullable=True)
 
     class SmallBefore(db.Model):
-        """ small and generic """
+        """small and generic"""
 
         __tablename__ = "small_before"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
 
     class SmallAfter(db.Model):
-        """ small and generic """
+        """small and generic"""
 
         __tablename__ = "small_after"
         id = db.Column(db.Integer, nullable=True, primary_key=True)
@@ -137,65 +141,177 @@ class TestModelProcResource(unittest.TestCase):
 
                 # some test process input functions
                 def process_get_input(self, qry, data, kwargs):
-                    # assumes pretend decorator
-                    # user_id = get_jwt_identity()
-                    user_id = 1
-                    qry = qry.filter_by(owner_id=user_id)
-                    return True, (qry, data)
+                    """Returns True/False, depending on status."""
+
+                    # use explicit variables to make it easier to validate
+                    if "set_status" in data:
+                        status = data.pop("set_status")[0]
+                        if status == "good True status":
+                            return {
+                                "status": True,
+                                "query": qry,
+                                "data": data
+                            }
+                        elif status == "bad True status":
+                            return {
+                                "status": True
+                            }
+
+                        elif status == "good False status":
+                            return {
+                                "status": False,
+                                "message": status,
+                                "status_code": 400
+                            }
+                        elif status == "bad False status":
+                            return {
+                                "status": False,
+                                "message": status,
+                            }
+                        else:
+                            # missing status
+                            return "something else"
+
+                    return {"status": True, "query": qry, "data": data}
 
                 def process_post_input(self, data):
-                    # assumes pretend decorator
-                    # user_id = get_jwt_identity()
-                    user_id = 1
+                    """Returns True/False, depending on status."""
 
-                    # see how owner is camel case, data at this stage
-                    #   is not yet deserialized
-                    if data.get("ownerId") == user_id:
-                        return True, data
+                    # use explicit variables to make it easier to validate
+                    if "set_status" in data:
+                        status = data.pop("set_status")
+                        if status == "good True status":
+                            return {
+                                "status": True,
+                                "data": data
+                            }
+                        elif status == "bad True status":
+                            return {
+                                "status": True
+                            }
 
-                    msg = "The user id does not match the owner id"
-                    return (False, ({"message": msg}, 400))
+                        elif status == "good False status":
+                            return {
+                                "status": False,
+                                "message": status,
+                                "status_code": 400
+                            }
+                        elif status == "bad False Status":
+                            return {
+                                "status": False,
+                                "message": status,
+                            }
+                        else:
+                            # missing status
+                            return "something else"
+
+                    return {"status": True, "data": data}
 
                 def process_put_input(self, qry, data, kwargs):
-                    # assumes pretend decorator
-                    # user_id = get_jwt_identity()
-                    user_id = 1
+                    """Returns True/False, depending on status."""
 
-                    # see how owner is camel case, data at this stage
-                    #   is not yet deserialized
-                    if data.get("ownerId") == user_id:
-                        return True, (qry, data)
+                    # use explicit variables to make it easier to validate
+                    if "set_status" in data:
+                        status = data.pop("set_status")
+                        if status == "good True status":
+                            return {
+                                "status": True,
+                                "query": qry,
+                                "data": data
+                            }
+                        elif status == "bad True Status":
+                            return {
+                                "status": True
+                            }
 
-                    msg = "The user id does not match the owner id"
-                    return (False, ({"message": msg}, 400))
+                        elif status == "good False status":
+                            return {
+                                "status": False,
+                                "message": status,
+                                "status_code": 400
+                            }
+                        elif status == "bad False Status":
+                            return {
+                                "status": False,
+                                "message": status,
+                            }
+                        else:
+                            # missing status
+                            return "something else"
+
+                    return {"status": True, "query": qry, "data": data}
 
                 def process_patch_input(self, qry, data, kwargs):
-                    # assumes pretend decorator
-                    # user_id = get_jwt_identity()
-                    user_id = 1
+                    """Returns True/False, depending on status."""
 
-                    # see how owner is camel case, data at this stage
-                    #   is not yet deserialized
-                    if data.get("ownerId") == user_id:
-                        return True, (qry, data)
+                    # use explicit variables to make it easier to validate
+                    if "set_status" in data:
+                        status = data.pop("set_status")
+                        if status == "good True status":
+                            return {
+                                "status": True,
+                                "query": qry,
+                                "data": data
+                            }
+                        elif status == "bad True Status":
+                            return {
+                                "status": True
+                            }
 
-                    return (
-                        False,
-                        (
-                            {
-                                "message": "The user id does not match the "
-                                "owner id"
-                            },
-                            400,
-                        ),
-                    )
+                        elif status == "good False status":
+                            return {
+                                "status": False,
+                                "message": status,
+                                "status_code": 400
+                            }
+                        elif status == "bad False Status":
+                            return {
+                                "status": False,
+                                "message": status,
+                            }
+                        else:
+                            # missing status
+                            return "something else"
 
+                    return {"status": True, "query": qry, "data": data}
+
+            # Delete testing is separate because it is easier
+            # to have a separate process_delete_input for each scenario.
+            # 1.  Status: good True, => Query
+            # 2.  Status: bad True, => 500
+            # 3.  Status: bad False, => 500
+            # 4.  Status: good False, => 400
+            class DeleteResource1(ModelResource):
+                model_class = cls.Sample
                 def process_delete_input(self, qry, kwargs):
-                    # assumes pretend decorator
-                    # user_id = get_jwt_identity()
-                    user_id = 1
-                    qry = qry.filter_by(owner_id=user_id)
-                    return True, qry
+                    return {"status": True, "query": qry}
+
+            cls.api.add_resource(DeleteResource1, '/delete1/<int:id>')
+
+            class DeleteResource2(ModelResource):
+                model_class = cls.Sample
+                def process_delete_input(self, qry, kwargs):
+                    # missing query
+                    return {"status": True}
+
+            cls.api.add_resource(DeleteResource2, '/delete2/<int:id>')
+
+            class DeleteResource3(ModelResource):
+                model_class = cls.Sample
+                def process_delete_input(self, qry, kwargs):
+                    # missing status_code
+                    return {"status": False, "message": "This is a test"}
+
+            cls.api.add_resource(DeleteResource3, '/delete3/<int:id>')
+
+            class DeleteResource4(ModelResource):
+                model_class = cls.Sample
+                def process_delete_input(self, qry, kwargs):
+                    return {
+                        "status": False, "message": "Test", "status_code": 400
+                    }
+
+            cls.api.add_resource(DeleteResource4, '/delete4/<int:id>')
 
             cls.api.add_resource(
                 OtherSampleResource, *OtherSampleResource.get_urls()
@@ -220,233 +336,366 @@ class TestModelProcResource(unittest.TestCase):
         del cls.db
 
     def test_get_with_input_processing(self):
-        """ test_get_with_input_processing
 
-        This pretends there is a method decorator for jwt. If it
-        was only to know if the user is logged in, nothing extra is required.
-        However, if a user only has access to a subset of recoords, then
-        the `process_get_input` function can be used to determine whether the
-        user is allowed for this specific record.
-
-        """
-        id = 1
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/samples/{id}", headers=self.headers)
+
+            res = client.get(
+                "/samples/1",
+                query_string={"set_status": "bad True status"},
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
+        #
+        # # True, good with correct tuple
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            res = client.get(
+                "/samples/1",
+                query_string={"set_status": "good True status"},
+                headers=self.headers,
+            )
+
+            res_qry = res.json
             self.assertEqual(res.status_code, 200)
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "id": 1,
-                    "ownerId": 1,
-                    "param1": 1,
-                    "param2": 2,
-                    "statusId": 0,
-                },
-            )
-            self.assertEqual(res.content_type, "application/json")
 
-        # user is not an owner of this record
-        id = 2
+        # # False, good with correct tuple
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
-            res = client.get(f"/samples/{id}", headers=self.headers)
-            self.assertEqual(res.status_code, 404)
-            self.assertDictEqual(
-                res.get_json(), {"message": "Sample with {'id': 2} not found"},
+
+            res = client.get(
+                "/samples/1",
+                query_string={"set_status": "good False status"},
+                headers=self.headers,
             )
-            self.assertEqual(res.content_type, "application/json")
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 400)
+
+        # # False, without correct message format
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            res = client.get(
+                "/samples/1",
+                query_string={"set_status": "bad False status"},
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
+
 
     def test_post_with_input_processing(self):
-        """ test_post_with_input_processing
-
-        The input processing is similar to get, except that instead of
-        the start of a query, data from the request is part of the function
-        argument.
-
-        self.process_post_input(data, kwargs)
-
-        """
-        sample = {"ownerId": 2, "param1": 5, "param2": 6}
-
-        # mismatch owner id
-        with self.app.test_client() as client:
-            if self.needs_setup:
-                self.set_db()
-            res = client.post(
-                "/samples", data=json.dumps(sample), headers=self.headers
-            )
-            self.assertEqual(res.status_code, 400)
-            self.assertDictEqual(
-                res.get_json(),
-                {"message": "The user id does not match the owner id"},
-            )
-            self.assertEqual(res.content_type, "application/json")
-
-        # owner id and user id match
-        sample = {"ownerId": 1, "param1": 5, "param2": 6}
+        """test_post_with_input_processing """
 
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "bad True status"
+            }
+
             res = client.post(
-                "/samples", data=json.dumps(sample), headers=self.headers
+                "/samples",
+                data=json.dumps(sample),
+                headers=self.headers,
             )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
+        #
+        # # True, good with correct tuple
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "good True status"
+            }
+            res = client.post(
+                "/samples",
+                data=json.dumps(sample),
+                headers=self.headers,
+            )
+
+            res_qry = res.json
             self.assertEqual(res.status_code, 201)
 
-            # remove the id
-            result = res.get_json()
-            result.pop("id")
-            self.assertDictEqual(
-                result,
-                {"ownerId": 1, "param1": 5, "param2": 6, "statusId": 0},
+        # # False, good with correct tuple
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "good False status"
+            }
+            res = client.post(
+                "/samples",
+                data=json.dumps(sample),
+                headers=self.headers,
             )
-            self.assertEqual(res.content_type, "application/json")
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 400)
+
+        # # False, without correct message format
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "bad False status"
+            }
+
+            res = client.post(
+                "/samples",
+                data=json.dumps(sample),
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
 
     def test_put_with_input_processing(self):
-        """ test_put_with_input_processing
+        """test_put_with_input_processing"""
 
-        The input processing in this case receives the start of a query,
-        the data and kwargs.
-
-        if the owner id matches the user id, and passes back the query and
-        the data.
-
-        Suppose that the input processing does something completely different
-        here, and a specialized filter to the query is needed to complete?
-        That is the reason that the query passes through the function.
-        """
-        sample = {"id": 1, "ownerId": 2, "param1": 5, "param2": 6}
-
-        # mismatch owner id
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "bad True status"
+            }
+
             res = client.put(
-                "/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
             )
-            self.assertEqual(res.status_code, 400)
-            self.assertDictEqual(
-                res.get_json(),
-                {"message": "The user id does not match the owner id"},
-            )
-            self.assertEqual(res.content_type, "application/json")
 
-        sample = {"id": 1, "ownerId": 1, "param1": 5, "param2": 6}
-
-        # owner id matches user i
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
+        # True, good with correct tuple
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "good True status"
+            }
             res = client.put(
-                "/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
             )
+
+            res_qry = res.json
             self.assertEqual(res.status_code, 200)
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "id": 1,
-                    "ownerId": 1,
-                    "param1": 5,
-                    "param2": 6,
-                    "statusId": 0,
-                },
+
+        # False, good with correct tuple
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "good False status"
+            }
+            res = client.put(
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
             )
-            self.assertEqual(res.content_type, "application/json")
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 400)
+
+        # False, without correct message format
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "bad False status"
+            }
+
+            res = client.put(
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
 
     def test_patch_with_input_processing(self):
-        """ test_patch_with_input_processing
+        """test_patch_with_input_processing """
 
-        The input processing in this case receives the start of a query,
-        the data and kwargs.
-
-        if the owner id matches the user id, and passes back the query and
-        the data.
-
-        Suppose that the input processing does something completely different
-        here, and a specialized filter to the query is needed to complete?
-        That is the reason that the query passes through the function.
-        """
-        sample = {"id": 1, "ownerId": 2, "param1": 5, "param2": 6}
-
-        # mismatch owner id
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "bad True status"
+            }
+
             res = client.patch(
-                "/samples/1", data=json.dumps(sample), headers=self.headers
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
             )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
+        # True, good with correct tuple
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "good True status"
+            }
+            res = client.patch(
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 200)
+
+        # False, good with correct tuple
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "good False status"
+            }
+            res = client.patch(
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 400)
+
+        # False, without correct message format
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            sample = {
+                "ownerId": 2,
+                "param1": 5,
+                "param2": 6,
+                "set_status": "bad False status"
+            }
+
+            res = client.patch(
+                "/samples/1",
+                data=json.dumps(sample),
+                headers=self.headers,
+            )
+
+            res_qry = res.json
+            self.assertEqual(res.status_code, 500)
+
+    def test_delete_with_input_processing(self):
+        """test_delete_with_input_processing """
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            res = client.delete(
+                "/delete1/101",
+                headers=self.headers
+            )
+
+            self.assertEqual(res.status_code, 200)
+            self.assertDictEqual(
+                res.get_json(),
+                {"message": "Sample with {'id': 101} is deleted"},
+            )
+            self.assertEqual(res.content_type, "application/json")
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            res = client.delete(
+                "/delete2/102",
+                headers=self.headers)
+
+            self.assertEqual(res.status_code, 500)
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            res = client.delete(
+                "/delete3/103",
+                headers=self.headers)
+
+            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.content_type, "application/json")
+
+        with self.app.test_client() as client:
+            if self.needs_setup:
+                self.set_db()
+
+            res = client.delete(
+                "/delete4/104",
+                headers=self.headers)
+
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {"message": "The user id does not match the owner id"},
+                {"message": "Test"},
             )
-            self.assertEqual(res.content_type, "application/json")
-
-        sample = {"id": 1, "ownerId": 1, "param1": 5, "param2": 6}
-
-        # owner id matches user i
-        with self.app.test_client() as client:
-            if self.needs_setup:
-                self.set_db()
-            res = client.patch(
-                "/samples/1", data=json.dumps(sample), headers=self.headers
-            )
-            self.assertEqual(res.status_code, 200)
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "id": 1,
-                    "ownerId": 1,
-                    "param1": 5,
-                    "param2": 6,
-                    "statusId": 0,
-                },
-            )
-            self.assertEqual(res.content_type, "application/json")
-
-    def test_delete_with_input_processing(self):
-        """ test_delete_with_input_processing
-
-        The input processing in this case receives the start of a query,
-        the data and kwargs.
-
-        if the owner id matches the user id, and passes back the query and
-        the data.
-
-        Suppose that the input processing does something completely different
-        here, and a specialized filter to the query is needed to complete?
-        That is the reason that the query passes through the function.
-        """
-        # mismatch owner id
-        with self.app.test_client() as client:
-            if self.needs_setup:
-                self.set_db()
-
-            res = client.delete("/samples/100", headers=self.headers)
-
-            self.assertEqual(res.status_code, 404)
-            self.assertDictEqual(
-                res.get_json(),
-                {"message": "Sample with {'id': 100} not found"},
-            )
-            self.assertEqual(res.content_type, "application/json")
-
-        # owner id matches user id
-        with self.app.test_client() as client:
-            if self.needs_setup:
-                self.set_db()
-
-            res = client.delete("/other-samples/1", headers=self.headers)
-
-            self.assertEqual(res.status_code, 200)
-            self.assertDictEqual(
-                res.get_json(),
-                {"message": "OtherSample with {'id': 1} is deleted"},
-            )
-            self.assertEqual(res.content_type, "application/json")
 
 
 class JobCreator(object):
@@ -492,7 +741,7 @@ def generic_diversion(resource_self, item, status_code):
 
 
 class TestModelBeforeAftertResource(unittest.TestCase):
-    """ TestModelBeforeAftertResource
+    """TestModelBeforeAftertResource
 
     This class tests creating a sample, submitting it to a queue
     as a job, returning the job particulars instead.
@@ -567,7 +816,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
         del cls.db
 
     def test_post_start_job(self):
-        """ test_post_start_job
+        """test_post_start_job
 
         The input processing is similar to get, except that instead of
         the start of a query, data from the request is part of the function
@@ -591,7 +840,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             result = res.get_json()
             result.pop("startTime")
             self.assertDictEqual(
-                res.get_json(),
+                result,
                 {
                     "id": 1,
                     "ownerId": 2,
@@ -604,9 +853,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_all_before_adjusts(self):
-        """ test_all_before_adjusts
-
-        """
+        """test_all_before_adjusts"""
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -627,7 +874,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.status_code, 418)
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
 
             if self.needs_setup:
@@ -641,7 +887,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.status_code, 418)
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
             if self.needs_setup:
                 self.set_db()
@@ -682,7 +927,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.status_code, 418)
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
 
             if self.needs_setup:
@@ -696,7 +940,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.status_code, 418)
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
             if self.needs_setup:
                 self.set_db()
@@ -739,7 +982,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "something else"})
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
 
             if self.needs_setup:
@@ -754,7 +996,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "something else"})
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
             if self.needs_setup:
                 self.set_db()
@@ -768,9 +1009,7 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "something else"})
 
     def test_all_after_adjusts(self):
-        """ test_all_after_adjusts
-
-        """
+        """test_all_after_adjusts"""
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -791,7 +1030,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.status_code, 418)
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
 
             if self.needs_setup:
@@ -834,7 +1072,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertDictEqual(res.get_json(), {"message": "something else"})
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
 
             if self.needs_setup:
@@ -876,7 +1113,6 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             self.assertEqual(res.status_code, 418)
 
         with self.app.test_client() as client:
-
             small = self.SmallBefore().save()
 
             if self.needs_setup:
@@ -888,391 +1124,3 @@ class TestModelBeforeAftertResource(unittest.TestCase):
             )
 
             self.assertEqual(res.status_code, 418)
-
-    def test_process_get_input(self):
-
-        db = self.db
-
-        class Test1(db.Model):
-            __tablename__ = "test1"
-            id = db.Column(db.Integer, primary_key=True)
-            name = db.Column(db.String)
-
-        db.create_all()
-
-        test_id = 34
-        Test1(id=test_id, name="this is a test").save()
-
-        class Test1Resource(ModelResource):
-            model_class = Test1
-
-            def process_get_input(self, query, data, kwargs):
-                # no actual change to query
-                debug = data.get("debug")
-                if debug == "False":
-                    debug = False
-
-                if debug:
-                    return (True, (query, data))
-                else:
-                    if debug is None:
-                        return (False, ({"message": "debug is None"}, 400))
-
-                    return False, "debug is False"
-
-        self.api.add_resource(Test1Resource, "/test1s/<int:id>")
-
-        with self.app.test_client() as client:
-            # debug is False
-            res = client.get(
-                f"/test1s/{test_id}",
-                query_string={"debug": False},
-                headers=self.headers,
-            )
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "malformed error in process_get_input: "
-                    "debug is False"
-                },
-            )
-            self.assertEqual(res.status_code, 500)
-
-            # debug is None
-            res = client.get(f"/test1s/{test_id}", headers=self.headers)
-
-            self.assertDictEqual(res.get_json(), {"message": "debug is None"})
-            self.assertEqual(res.status_code, 400)
-
-            test2 = Test1(name="this is test2").save()
-
-            # debug is True
-            res = client.get(
-                f"/test1s/{test2.id}",
-                query_string={"debug": True},
-                headers=self.headers,
-            )
-
-            self.assertDictEqual(
-                res.get_json(), Test1.query.get(test2.id).to_dict(),
-            )
-
-    def test_process_post_input(self):
-
-        db = self.db
-
-        class Test2(db.Model):
-            __tablename__ = "test2"
-            id = db.Column(db.Integer, primary_key=True)
-            name = db.Column(db.String)
-
-        db.create_all()
-
-        def disrupt_object(self, item, status_code):
-            if item.name == "disrupt_object":
-                item.id = "failure"
-            return True, item, status_code
-
-        class Test2Resource(ModelResource):
-            model_class = Test2
-
-            before_commit = {"post": disrupt_object}
-
-            def process_post_input(self, data):
-                # no actual change to query
-                debug = data.get("debug")
-                if debug == "False":
-                    debug = False
-
-                if debug:
-                    data.pop("debug")
-                    return (True, (data))
-                else:
-                    if debug is None:
-                        return (False, ({"message": "debug is None"}, 400))
-
-                    return False, "debug is False"
-
-        self.api.add_resource(Test2Resource, "/test2")
-
-        with self.app.test_client() as client:
-            # debug is False
-            data = {"id": 1, "debug": False, "name": "this is a test"}
-            res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers,
-            )
-
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "malformed error in process_post_input: "
-                    "debug is False"
-                },
-            )
-            self.assertEqual(res.status_code, 500)
-
-            # debug is None
-            data = {"id": 1, "name": "this is a test"}
-            res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers
-            )
-
-            self.assertDictEqual(res.get_json(), {"message": "debug is None"})
-            self.assertEqual(res.status_code, 400)
-
-            Test2(name="this is test2").save()
-
-            # debug is True
-            data = {"id": 2, "debug": True, "name": "this is a test"}
-            res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers,
-            )
-            self.assertDictEqual(
-                res.get_json(), {"id": 2, "name": "this is a test"},
-            )
-
-            # Trigger exception from failed save
-            data = {"id": 3, "debug": True, "name": "disrupt_object"}
-            res = client.post(
-                "/test2", data=json.dumps(data), headers=self.headers,
-            )
-            self.assertDictEqual(
-                res.get_json(),
-                {"message": "Internal Server Error: method post: /test2"},
-            )
-
-    def test_process_put_input(self):
-
-        db = self.db
-
-        class Test3(db.Model):
-            __tablename__ = "test3"
-            id = db.Column(db.Integer, primary_key=True)
-            name = db.Column(db.String)
-
-        db.create_all()
-
-        def disrupt_object(self, item, status_code):
-            if item.name == "disrupt_object":
-                item.id = "failure"
-            return True, item, status_code
-
-        class Test3Resource(ModelResource):
-            model_class = Test3
-
-            before_commit = {"put": disrupt_object}
-
-            def process_put_input(self, query, data, kwargs):
-                # no actual change to query
-                debug = data.get("debug")
-                if debug == "False":
-                    debug = False
-
-                if debug:
-                    data.pop("debug")
-                    return (True, (query, data))
-                else:
-                    if debug is None:
-                        return (False, ({"message": "debug is None"}, 400))
-
-                    return False, "debug is False"
-
-        self.api.add_resource(Test3Resource, "/test3/<int:id>")
-
-        with self.app.test_client() as client:
-            # debug is False
-            data = {"id": 1, "debug": False, "name": "this is a test"}
-            res = client.put(
-                "/test3/1", data=json.dumps(data), headers=self.headers,
-            )
-
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "malformed error in process_put_input: "
-                    "debug is False"
-                },
-            )
-            self.assertEqual(res.status_code, 500)
-
-            # debug is None
-            data = {"id": 1, "name": "this is a test"}
-            res = client.put(
-                "/test3/1", data=json.dumps(data), headers=self.headers
-            )
-
-            self.assertDictEqual(res.get_json(), {"message": "debug is None"})
-            self.assertEqual(res.status_code, 400)
-
-            Test3(name="this is test3").save()
-
-            # debug is True
-            data = {"id": 2, "debug": True, "name": "this is a test"}
-            res = client.put(
-                "/test3/2", data=json.dumps(data), headers=self.headers,
-            )
-            self.assertDictEqual(
-                res.get_json(), {"id": 2, "name": "this is a test"},
-            )
-
-            # Trigger exception from failed save
-            data = {"id": 3, "debug": True, "name": "disrupt_object"}
-            res = client.put(
-                "/test3/3", data=json.dumps(data), headers=self.headers,
-            )
-
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "An error occurred updating the Test3: "
-                    "(sqlite3.IntegrityError) datatype mismatch."
-                },
-            )
-
-            self.assertEqual(res.status_code, 500)
-
-    def test_process_patch_input(self):
-
-        db = self.db
-
-        class Test3a(db.Model):
-            __tablename__ = "test3a"
-            id = db.Column(db.Integer, primary_key=True)
-            name = db.Column(db.String)
-
-        db.create_all()
-
-        def disrupt_object(self, item, status_code):
-            if item.name == "disrupt_object":
-                item.id = "failure"
-            return True, item, status_code
-
-        class Test3aResource(ModelResource):
-            model_class = Test3a
-
-            before_commit = {"patch": disrupt_object}
-
-            def process_patch_input(self, query, data, kwargs):
-                # no actual change to query
-                debug = data.get("debug")
-                if debug == "False":
-                    debug = False
-                if debug:
-                    data.pop("debug")
-                    return (True, (query, data))
-                else:
-                    if debug is None:
-                        return (False, ({"message": "debug is None"}, 400))
-
-                    return False, "debug is False"
-
-        self.api.add_resource(Test3aResource, "/test3a/<int:id>")
-
-        with self.app.test_client() as client:
-            # debug is False
-            data = {"id": 1, "debug": False, "name": "this is a test"}
-            res = client.patch(
-                "/test3a/1", data=json.dumps(data), headers=self.headers,
-            )
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "malformed error in process_patch_input: "
-                    "debug is False"
-                },
-            )
-            self.assertEqual(res.status_code, 500)
-
-            # debug is None
-            data = {"id": 1, "name": "this is a test"}
-            res = client.patch(
-                "/test3a/1", data=json.dumps(data), headers=self.headers
-            )
-
-            self.assertDictEqual(res.get_json(), {"message": "debug is None"})
-            self.assertEqual(res.status_code, 400)
-
-            Test3a(name="this is test3").save()
-
-            # debug is True
-            data = {"id": 2, "debug": True, "name": "this is a test"}
-            res = client.patch(
-                "/test3a/2", data=json.dumps(data), headers=self.headers,
-            )
-            self.assertDictEqual(
-                res.get_json(), {"id": 2, "name": "this is a test"},
-            )
-
-            # Trigger exception from failed save
-            data = {"id": 3, "debug": True, "name": "disrupt_object"}
-            res = client.patch(
-                "/test3a/3", data=json.dumps(data), headers=self.headers,
-            )
-
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "An error occurred updating the Test3a: "
-                    "(sqlite3.IntegrityError) datatype mismatch."
-                },
-            )
-
-            self.assertEqual(res.status_code, 500)
-
-    def test_process_delete_input(self):
-
-        db = self.db
-
-        class Test4(db.Model):
-            __tablename__ = "test4"
-            id = db.Column(db.Integer, primary_key=True)
-            name = db.Column(db.String)
-
-        db.create_all()
-
-        class Test4Resource(ModelResource):
-            model_class = Test4
-            input_flag = 0
-
-            def process_delete_input(self, query, kwargs):
-                # no actual change to query
-                if self.input_flag == 0:
-                    return False, ("test", "test", "test")
-                elif self.input_flag == 1:
-                    return (False, ({"message": "input_flag is 1"}, 400))
-                else:
-                    return True, query
-
-        self.api.add_resource(Test4Resource, "/test4/<int:id>")
-        self.Test4Resource = Test4Resource
-
-        with self.app.test_client() as client:
-            # input_flag is 0 - error in process input
-            res = client.delete("/test4/1", headers=self.headers,)
-
-            self.assertDictEqual(
-                res.get_json(),
-                {
-                    "message": "malformed error in process_delete_input: "
-                    "('test', 'test', 'test')"
-                },
-            )
-            self.assertEqual(res.status_code, 500)
-
-            # input_flag is 1 - error discovered, end early
-            self.Test4Resource.input_flag = 1
-            res = client.delete("/test4/1", headers=self.headers)
-
-            self.assertDictEqual(
-                res.get_json(), {"message": "input_flag is 1"}
-            )
-            self.assertEqual(res.status_code, 400)
-
-            # input_flag is 2 - continue to completion
-            self.Test4Resource.input_flag = 2
-            data = {"id": 1, "name": "this is a test"}
-            Test4(**data).save()
-            res = client.delete("/test4/1", headers=self.headers,)
-            self.assertDictEqual(
-                res.get_json(), {"message": "Test4 with {'id': 1} is deleted"},
-            )

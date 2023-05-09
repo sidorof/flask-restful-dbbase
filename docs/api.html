@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>API Reference &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>API Reference &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Running Tests" href="testing.html" />
@@ -40,7 +39,8 @@
         <li class="right" >
           <a href="examples.html" title="Examples"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">API Reference</a></li> 
       </ul>
     </div>  
 
@@ -49,27 +49,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">¶</a></h1>
 <p>This section is a reference for classes and functions of <strong>Flask-RESTful-DBBase</strong>.</p>
 <p class="rubric">DBBase</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.html#flask_restful_dbbase.DBBase" title="flask_restful_dbbase.DBBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBBase</span></code></a>([app, use_native_unicode, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.html#flask_restful_dbbase.DBBase" title="flask_restful_dbbase.DBBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBBase</span></code></a>([app, use_native_unicode, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Resources</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.ModelResource.html#flask_restful_dbbase.resources.ModelResource" title="flask_restful_dbbase.resources.ModelResource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelResource</span></code></a>()</p></td>
 <td><p>ModelResource Class</p></td>
@@ -77,7 +69,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.CollectionModelResource.html#flask_restful_dbbase.resources.CollectionModelResource" title="flask_restful_dbbase.resources.CollectionModelResource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CollectionModelResource</span></code></a>()</p></td>
 <td><p>CollectionModelResource Class</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource" title="flask_restful_dbbase.resources.MetaResource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetaResource</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.MetaResource.html#flask_restful_dbbase.resources.MetaResource" title="flask_restful_dbbase.resources.MetaResource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetaResource</span></code></a>()</p></td>
 <td><p>This class enables documentation for a model resource.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.resources.DBBaseResource.html#flask_restful_dbbase.resources.DBBaseResource" title="flask_restful_dbbase.resources.DBBaseResource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBBaseResource</span></code></a>()</p></td>
@@ -86,35 +78,28 @@
 </tbody>
 </table>
 <p class="rubric">Generator</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.html#flask_restful_dbbase.generator.create_resource" title="flask_restful_dbbase.generator.create_resource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_resource</span></code></a>(name, resource_class[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.html#flask_restful_dbbase.generator.create_resource" title="flask_restful_dbbase.generator.create_resource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_resource</span></code></a>(name, resource_class[, ...])</p></td>
 <td><p>This function creates a resource based on a source model class and a seed resource.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Doc Utils</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.doc_utils.MetaDoc.html#flask_restful_dbbase.doc_utils.MetaDoc" title="flask_restful_dbbase.doc_utils.MetaDoc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetaDoc</span></code></a>(resource_class[, requirements, methods])</p></td>
 <td><p>This class provides a scaffolding for holding documentation used when generating meta documents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.doc_utils.MethodDoc.html#flask_restful_dbbase.doc_utils.MethodDoc" title="flask_restful_dbbase.doc_utils.MethodDoc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MethodDoc</span></code></a>(method[, input, input_modifier, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/flask_restful_dbbase.doc_utils.MethodDoc.html#flask_restful_dbbase.doc_utils.MethodDoc" title="flask_restful_dbbase.doc_utils.MethodDoc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MethodDoc</span></code></a>(method[, input, input_modifier, ...])</p></td>
 <td><p>This class holds details about a method.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -133,7 +118,7 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -153,12 +138,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -168,7 +153,7 @@
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

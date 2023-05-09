@@ -58,7 +58,6 @@ class User(db.Model):
         is_active=True,
         last_login=None,
     ):
-
         self.username = username
         # self.password = bcrypt.generate_password_hash(
         #    password, app.config.get('BCRYPT_LOG_ROUNDS')

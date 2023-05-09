@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>CollectionModelResource &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>CollectionModelResource &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CollectionModelResource</a></li> 
       </ul>
     </div>  
 
@@ -41,29 +41,98 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="collectionmodelresource">
-<h1>CollectionModelResource<a class="headerlink" href="#collectionmodelresource" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="flask_restful_dbbase.resources.CollectionModelResource">
-<em class="property">class </em><code class="sig-prename descclassname">flask_restful_dbbase.resources.</code><code class="sig-name descname">CollectionModelResource</code><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/collection_model_resource.html#CollectionModelResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flask_restful_dbbase.resources.CollectionModelResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restful_dbbase.resources.dbbase_resource.DBBaseResource</span></code></a></p>
+  <section id="collectionmodelresource">
+<h1>CollectionModelResource<a class="headerlink" href="#collectionmodelresource" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.CollectionModelResource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flask_restful_dbbase.resources.</span></span><span class="sig-name descname"><span class="pre">CollectionModelResource</span></span><a class="reference internal" href="../_modules/flask_restful_dbbase/resources/collection_model_resource.html#CollectionModelResource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#flask_restful_dbbase.resources.CollectionModelResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../flask_restful_dbbase.resources.html#flask_restful_dbbase.resources.dbbase_resource.DBBaseResource" title="flask_restful_dbbase.resources.dbbase_resource.DBBaseResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBBaseResource</span></code></a></p>
 <p>CollectionModelResource Class</p>
 <p>This model class implements the base class.</p>
+<p>This class supports only gets to return collections of
+records.</p>
+<p>Like the ModelResource class there is a provision for a
+process_get_input function.</p>
+<p>The usual filtering is available for gathering records if a variable is
+a specific value. Most of the time, this will be all that is necessary.</p>
+<p>However, there is a means to select records by a comparison operator.</p>
+<p>Use a format as follows:</p>
+<dl class="simple">
+<dt>query_string: {</dt><dd><p>var1: [operator, comparison_value]</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="simple">
+<dt>The list of operators for single comparison value is:</dt><dd><p>[“eq”, “ne”, “gt”, “ge”, “lt”, “le”]</p>
+</dd>
+</dl>
+<p>In addition, if comparison is made such as selecting where var1 &gt; var2,
+use <cite>{var1: [“gt”, var:var2]}</cite> to signal this is another variable.</p>
+<p>To gather records that are found in a list use var1[]: [val1, val2, …].</p>
+<p>Or, for more flexibility use:</p>
+<dl class="simple">
+<dt>query_string: {</dt><dd><p>var1: [operator, [val1, val2, …]]</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="simple">
+<dt>The supported list of operators are</dt><dd><p>[“like”, “ilike”, “notlike”, “notilike”]</p>
+</dd>
+</dl>
+<p>To control record set sizes, a variable <cite>page_config</cite> is a dict of page
+or record variables.</p>
+<p>Bear in mind tha all variables entering can be either camel or snake based.</p>
+<p>Page_config variables:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“orderBy”: [“id”, “statusId”],</dt><dd><p>Can be a single value or a list
+To sort in descending order use the format -var1</p>
+</dd>
+<dt>“pageSize”: “50”,</dt><dd><p>The maximum page size can be limited by the class
+variable <cite>max_page_size</cite></p>
+</dd>
+</dl>
+<p>“offset”: 30,  The number of records to skip</p>
+<dl class="simple">
+<dt>“limit”: “100”,</dt><dd><p>limits the size of the record set</p>
+</dd>
+<dt>“serialFields”: [“id”, “statusId”],</dt><dd><p>can specify specific columns to be returned
+fallback: serial fields can be specified by resource or dbbase
+model</p>
+</dd>
+<dt>“debug”: “False”,</dt><dd><p>covered below</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>if debug is true, the recordset is not returned. Instead, data returned
+consists of variables used, the default variable amounts, and the
+sqlalchemy query that would be executed.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“class_defaults”: {</dt><dd><p>“model_name”: self.model_name,
+“process_get_input”: get_input_doc,
+“max_page_size”: self.max_page_size,
+“order_by”: None,
+“op_codes”: self.OP_CODES1 + self.OP_CODES2,</p>
+</dd>
+</dl>
+<p>},
+“original_data”: orig_data,
+“converted_data”: query_data,
+“page_configs”: configs,
+“query”: str(query)</p>
+</div></blockquote>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.as_view.html#flask_restful_dbbase.resources.CollectionModelResource.as_view" title="flask_restful_dbbase.resources.CollectionModelResource.as_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_view</span></code></a>(name, *class_args, **class_kwargs)</p></td>
-<td><p>Converts the class into an actual view function that can be used with the routing system.</p></td>
+<td><p>Convert the class into a view function that can be registered for a route.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.create_url.html#flask_restful_dbbase.resources.CollectionModelResource.create_url" title="flask_restful_dbbase.resources.CollectionModelResource.create_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_url</span></code></a>()</p></td>
 <td><p>Url can come from: * url_name resource variable</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.dispatch_request.html#flask_restful_dbbase.resources.CollectionModelResource.dispatch_request" title="flask_restful_dbbase.resources.CollectionModelResource.dispatch_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispatch_request</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Subclasses have to override this method to implement the actual view function code.</p></td>
+<td><p>The actual view function behavior.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.format_key.html#flask_restful_dbbase.resources.CollectionModelResource.format_key" title="flask_restful_dbbase.resources.CollectionModelResource.format_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_key</span></code></a>(key, key_type)</p></td>
 <td><p>This function returns the portion of the URL that embodies the key.</p></td>
@@ -86,18 +155,20 @@
 <tr class="row-even"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.is_collection.html#flask_restful_dbbase.resources.CollectionModelResource.is_collection" title="flask_restful_dbbase.resources.CollectionModelResource.is_collection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_collection</span></code></a>()</p></td>
 <td><p>This function returns True if identified as a collection resource.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.screen_data.html#flask_restful_dbbase.resources.CollectionModelResource.screen_data" title="flask_restful_dbbase.resources.CollectionModelResource.screen_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen_data</span></code></a>(data, obj_params[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="flask_restful_dbbase.resources.CollectionModelResource.screen_data.html#flask_restful_dbbase.resources.CollectionModelResource.screen_data" title="flask_restful_dbbase.resources.CollectionModelResource.screen_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen_data</span></code></a>(data, obj_params[, ...])</p></td>
 <td><p>Assumes data is deserialized</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OP_CODES1</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">OP_CODES2</span></code></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">after_commit</span></code></p></td>
 <td><p></p></td>
 </tr>
@@ -105,7 +176,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">decorators</span></code></p></td>
-<td><p></p></td>
+<td><p>A list of decorators to apply, in order, to the generated view function.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_sort</span></code></p></td>
 <td><p></p></td>
@@ -113,61 +184,80 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fields</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_page_size</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_every_request</span></code></p></td>
+<td><p>Create a new instance of this view class for every request by default.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_page_size</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta_doc</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta_doc</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">method_decorators</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">method_decorators</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">methods</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.CollectionModelResource.methods" title="flask_restful_dbbase.resources.CollectionModelResource.methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">methods</span></code></a></p></td>
+<td><p>The methods this view is registered for.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_class</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_class</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#flask_restful_dbbase.resources.CollectionModelResource.model_name" title="flask_restful_dbbase.resources.CollectionModelResource.model_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_name</span></code></a></p></td>
+<td><p>The string version of the Model class name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">order_by</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_name</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_get_input</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">order_by</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">provide_automatic_options</span></code></p></td>
+<td><p>Control whether the <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> method is handled automatically.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">representations</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_get_input</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_parameter</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">provide_automatic_options</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial_field_relations</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">representations</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial_fields</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_parameter</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_name</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial_field_relations</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_prefix</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serial_fields</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_name</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url_prefix</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">use_date_conversions</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">use_date_conversions</span></code></p></td>
+<td><p>use_date_conversions can be used if the database, such as SQlite3 does not support the acceptance of string-based dates.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.CollectionModelResource.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.CollectionModelResource.model_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string version of the Model class name. This is set
+upon initialization.</p>
 </dd></dl>
 
-</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flask_restful_dbbase.resources.CollectionModelResource.methods">
+<span class="sig-name descname"><span class="pre">methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'GET'}</span></em><a class="headerlink" href="#flask_restful_dbbase.resources.CollectionModelResource.methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>The methods this view is registered for. Uses the same default
+(<code class="docutils literal notranslate"><span class="pre">[&quot;GET&quot;,</span> <span class="pre">&quot;HEAD&quot;,</span> <span class="pre">&quot;OPTIONS&quot;]</span></code>) as <code class="docutils literal notranslate"><span class="pre">route</span></code> and
+<code class="docutils literal notranslate"><span class="pre">add_url_rule</span></code> by default.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -186,7 +276,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -204,12 +294,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -219,7 +309,7 @@
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 

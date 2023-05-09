@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.3.5 documentation</title>
-    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Limited Method Resources &#8212; Flask-RESTful-DBBase 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/flasky.css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
      
@@ -32,7 +31,8 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Flask-RESTful-DBBase 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Limited Method Resources</a></li> 
       </ul>
     </div>  
 
@@ -41,11 +41,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="limited-method-resources">
-<h1>Limited Method Resources<a class="headerlink" href="#limited-method-resources" title="Permalink to this headline">¶</a></h1>
+  <section id="limited-method-resources">
+<h1>Limited Method Resources<a class="headerlink" href="#limited-method-resources" title="Permalink to this heading">¶</a></h1>
 <p>Sometimes a pure REST approach does not fit the problem. For example, suppose a URL primarily represents an action. If the problem still interacts with the database in some fashion, it may be appropriate to create a resource that is limited in the methods that it exposes.</p>
-<div class="section" id="create-resource">
-<h2>Create Resource<a class="headerlink" href="#create-resource" title="Permalink to this headline">¶</a></h2>
+<section id="create-resource">
+<h2>Create Resource<a class="headerlink" href="#create-resource" title="Permalink to this heading">¶</a></h2>
 <p>The <cite>create_resource</cite> function can create a resource with a custom configuration. The basic principals:</p>
 <ul class="simple">
 <li><p>Specify the name of the resource.</p></li>
@@ -71,9 +71,9 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="suggested-uses">
-<h2>Suggested Uses<a class="headerlink" href="#suggested-uses" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="suggested-uses">
+<h2>Suggested Uses<a class="headerlink" href="#suggested-uses" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>/register:</strong> POST using a User class model. A confirmation email is sent. A message is returned with instructions in place of the posted user data.</p></li>
 <li><p>A command is run that uses deserialization / validation services but goes on to execute the command.</p></li>
@@ -83,9 +83,9 @@
 <p>One thing to consider regarding these alterations is the degree of change wanted from a REST format. For example, a POST method with REST excludes posting an existing data item. Flask-RESTful-DBBase automatically verifies that there is no existing record as a benefit.</p>
 <p>If that is not suitable for the application, another alternative would be to create a resource from the proto resource, DBBaseResource. With it are functions for screening data, etc., and you could create your own POST method.</p>
 </div>
-</div>
-<div class="section" id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
 <p>As before, the code for this example is found in the examples section as</p>
 <div class="default docutils container">
 <p>post_only_resource &lt;<a class="reference external" href="https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/post_only_resource.py">https://github.com/sidorof/flask-restful-dbbase/blob/master/examples/post_only_resource.py</a>&gt;</p>
@@ -122,7 +122,7 @@
 <p>We will divert processing of a POST to exit just after a commit to the database. To that end, the following is a minimal <cite>after_commit</cite> function that will execute.</p>
 <p>The sign that a normal return of the posted data does not happen can be seen at the return. The return tuple starts with a False.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">after_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">status_code</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This will be used in an after_commit function.</span>
 
 <span class="sd">    In this case, the process is diverted to a</span>
@@ -152,7 +152,9 @@
     <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">],</span>
     <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
     <span class="n">url_name</span><span class="o">=</span><span class="s2">&quot;a-model-command&quot;</span><span class="p">,</span>
-    <span class="n">class_vars</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;after_commit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">after_commit</span><span class="p">},},</span>
+    <span class="n">class_vars</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;after_commit&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;post&quot;</span><span class="p">:</span> <span class="n">after_commit</span><span class="p">},</span>
+    <span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -165,7 +167,7 @@
             <span class="n">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="p">,</span>
             <span class="n">after_commit</span><span class="o">=</span><span class="s2">&quot;Here we can say a few words about the process&quot;</span><span class="p">,</span>
             <span class="n">use_default_response</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">responses</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;messsage&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can describe the response&quot;</span><span class="p">}]</span>
+            <span class="n">responses</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;messsage&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can describe the response&quot;</span><span class="p">}],</span>
         <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
@@ -183,108 +185,109 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5001</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="using-the-api">
-<h2>Using the API<a class="headerlink" href="#using-the-api" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="using-the-api">
+<h2>Using the API<a class="headerlink" href="#using-the-api" title="Permalink to this heading">¶</a></h2>
 <p>We POST data to the URL. Data deserialization and validation takes place as usual. And, because this is an after_commit function, it is saved to the database. The result shows the non-REST response to the entry.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an entry</span>
-curl http://localhost:5000/a-model-command <span class="se">\</span>
-    -H <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
-    -d <span class="s1">&#39;{&quot;description&quot;: &quot;A test&quot;, &quot;num_variable&quot;: 42}&#39;</span>
+curl<span class="w"> </span>http://localhost:5000/a-model-command<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;description&quot;: &quot;A test&quot;, &quot;num_variable&quot;: 42}&#39;</span>
 </pre></div>
 </div>
 <div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This is no longer a REST resource. We can do anything.&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
-        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A test&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is no longer a REST resource. We can do anything.&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;numVariable&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A test&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Generating the meta information can reflect that the usual output has been replaced with our new message.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an entry</span>
-curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
-    -H <span class="s2">&quot;Content-Type: application/json&quot;</span>
+curl<span class="w"> </span>http://localhost:5000/meta/a-model-command/single<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span>
 </pre></div>
 </div>
 <div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;modelClass&quot;</span><span class="p">:</span> <span class="s2">&quot;AModel&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;urlPrefix&quot;</span><span class="p">:</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;baseUrl&quot;</span><span class="p">:</span> <span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;post&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;requirements&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
-                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                    <span class="nt">&quot;unique&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;numVariable&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;after_commit&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can say a few words about the process&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;messsage&quot;</span><span class="p">:</span> <span class="s2">&quot;Here we can describe the response&quot;</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;table&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;AModel&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;primary_key&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;maxLength&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
-                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                    <span class="nt">&quot;unique&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;num_variable&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;nullable&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-                    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{}</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;xml&quot;</span><span class="p">:</span> <span class="s2">&quot;AModel&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;modelClass&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AModel&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;urlPrefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;baseUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;post&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/a-model-command&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;requirements&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;primary_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;nullable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;maxLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;nullable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;unique&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;numVariable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;nullable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;after_commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Here we can say a few words about the process&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;messsage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Here we can describe the response&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;table&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;AModel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;primary_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;nullable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;maxLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;nullable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;unique&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;num_variable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;nullable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AModel&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -303,7 +306,7 @@ curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running Tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html#id32">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html#id36">Changelog</a></li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
@@ -321,12 +324,12 @@ curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -336,7 +339,7 @@ curl http://localhost:5000/meta/a-model-command/single <span class="se">\</span>
 
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Don Smiley.
+        &#169; Copyright 2023, Don Smiley.
     </div>
     
 
