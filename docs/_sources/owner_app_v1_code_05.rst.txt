@@ -27,13 +27,9 @@
             user_id = get_identity()
             if user_id:
                 query = query.filter_by(owner_id=user_id)
-                    return {"status": True, "query": query, "data": data}
+                return {"status": True, "query": query, "data": data}
     
-            return {
-                status: False,
-                "message": "Not found",
-                "status_code": 404
-            }
+            return {"status": False, "message": "Not found", "status_code": 404}
     
         def process_post_input(self, data):
             """
@@ -49,7 +45,7 @@
             return {
                 "status": False,
                 "message": "The user id does not match the owner id",
-                "status_code": 400
+                "status_code": 400,
             }
     
         def process_put_input(self, query, data, kwargs):
@@ -63,10 +59,10 @@
                 if int(owner_id) == user_id:
                     return {"status": True, "query": query, "data": data}
     
-            return (
+            return {
                 "status": False,
                 "message": "The user id does not match the owner id",
-                "status_code": 400
+                "status_code": 400,
             }
     
         def process_patch_input(self, query, data, kwargs):
@@ -83,7 +79,7 @@
             return {
                 "status": False,
                 "message": "The user id does not match the owner id",
-                "status_code": 400
+                "status_code": 400,
             }
     
         def process_delete_input(self, query, kwargs):
@@ -114,7 +110,7 @@
             return {
                 "status": False,
                 "message": "The user id is not authorized",
-                "status_code": 400
+                "status_code": 400,
             }
     
     

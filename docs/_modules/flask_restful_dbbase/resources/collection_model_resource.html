@@ -49,9 +49,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">desc</span>
 
 <span class="kn">from</span> <span class="nn">dbbase.utils</span> <span class="kn">import</span> <span class="n">xlate</span>
 <span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">request</span>
@@ -71,8 +69,8 @@
 <span class="sd">    This class supports only gets to return collections of</span>
 <span class="sd">    records.</span>
 
-<span class="sd">    Like the ModelResource class there is a provision for a process_get_input</span>
-<span class="sd">    function.</span>
+<span class="sd">    Like the ModelResource class there is a provision for a</span>
+<span class="sd">    process_get_input function.</span>
 
 <span class="sd">    The usual filtering is available for gathering records if a variable is</span>
 <span class="sd">    a specific value. Most of the time, this will be all that is necessary.</span>
@@ -124,7 +122,8 @@
 
 <span class="sd">        &quot;serialFields&quot;: [&quot;id&quot;, &quot;statusId&quot;],</span>
 <span class="sd">            can specify specific columns to be returned</span>
-<span class="sd">            fallback: serial fields can be specified by resource or dbbase model</span>
+<span class="sd">            fallback: serial fields can be specified by resource or dbbase</span>
+<span class="sd">            model</span>
 
 <span class="sd">        &quot;debug&quot;: &quot;False&quot;,</span>
 <span class="sd">            covered below</span>
@@ -192,8 +191,7 @@
                     <span class="c1"># account for field name conversion</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                         <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span>
-                            <span class="n">xlate</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span>
+                            <span class="n">xlate</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span>
                         <span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">xlate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
@@ -210,14 +208,11 @@
                 <span class="k">elif</span> <span class="n">new_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;page_size&quot;</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">]:</span>
                     <span class="n">new_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-                <span class="k">elif</span> <span class="n">new_key</span> <span class="o">==</span> <span class="s1">&#39;debug&#39;</span><span class="p">:</span>
-                    <span class="n">new_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+                <span class="k">elif</span> <span class="n">new_key</span> <span class="o">==</span> <span class="s2">&quot;debug&quot;</span><span class="p">:</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">new_key</span> <span class="o">==</span> <span class="s2">&quot;serial_fields&quot;</span>
-                    <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="n">xlate</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span>
-                    <span class="p">]</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">xlate</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
 
                 <span class="n">tmp</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
 
@@ -251,7 +246,6 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;[]&quot;</span><span class="p">):</span>
-
             <span class="n">new_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">var</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">new_var</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">value</span>
@@ -264,7 +258,9 @@
             <span class="n">new_var</span> <span class="o">=</span> <span class="n">xlate</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">camel_case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">:</span>
-                <span class="n">str_list</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">str_list</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">OP_CODES2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s1">&#39;Op code &quot;</span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s1">&quot; wrong. Must be in </span><span class="si">{</span><span class="n">str_list</span><span class="si">}</span><span class="s1">&#39;</span>
                 <span class="p">)</span>
@@ -321,7 +317,11 @@
             <span class="c1">#   To continue processing after updates or changes:</span>
             <span class="c1">#       {&quot;status&quot;: True, &quot;query&quot;, query, &quot;data&quot;: data}</span>
             <span class="c1">#   To exit the scene:</span>
-            <span class="c1">#       {&quot;status&quot;: False, &quot;message&quot;, msg, &quot;status_code&quot;: status_code}</span>
+            <span class="c1">#       {</span>
+            <span class="c1">#           &quot;status&quot;: False,</span>
+            <span class="c1">#           &quot;message&quot;, msg,</span>
+            <span class="c1">#           &quot;status_code&quot;: status_code</span>
+            <span class="c1">#       }</span>
             <span class="c1">#   Anything other than that results in a 500 error</span>
             <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_get_input</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
             <span class="c1"># bare minimum check</span>
@@ -379,7 +379,9 @@
                 <span class="k">if</span> <span class="n">order</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
                     <span class="n">order</span> <span class="o">=</span> <span class="n">order</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
-                        <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>
+                        <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span><span class="o">.</span><span class="n">desc</span><span class="p">()</span>
+                        <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="p">(</span>
                             <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)},</span>
@@ -387,9 +389,7 @@
                         <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
-                        <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">order_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">order</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="p">(</span>
                             <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)},</span>
@@ -424,14 +424,14 @@
                 <span class="s2">&quot;original_data&quot;</span><span class="p">:</span> <span class="n">orig_data</span><span class="p">,</span>
                 <span class="s2">&quot;converted_data&quot;</span><span class="p">:</span> <span class="n">query_data</span><span class="p">,</span>
                 <span class="s2">&quot;page_configs&quot;</span><span class="p">:</span> <span class="n">configs</span><span class="p">,</span>
-                <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+                <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">),</span>
             <span class="p">},</span> <span class="mi">200</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">serial_fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">serial_fields</span><span class="p">,</span> <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">)</span>
+            <span class="n">serial_fields</span><span class="p">,</span> <span class="n">serial_field_relations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_serializations</span><span class="p">(</span>
+                <span class="s2">&quot;get&quot;</span>
             <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>

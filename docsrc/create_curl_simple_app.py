@@ -7,7 +7,7 @@ input("ensure that example/simple_app is running")
 filename = "source/simple_app_{:02d}.rst"
 all_lines = []
 count = 0
-port = {port}
+port = 5000
 
 def run_cmd(cmd):
 

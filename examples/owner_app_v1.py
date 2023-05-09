@@ -118,7 +118,7 @@ class OwnerResource(ModelResource):
             query = query.filter_by(owner_id=user_id)
             return {"status": True, "query": query, "data": data}
 
-        return {status: False, "message": "Not found", "status_code": 404}
+        return {"status": False, "message": "Not found", "status_code": 404}
 
     def process_post_input(self, data):
         """
