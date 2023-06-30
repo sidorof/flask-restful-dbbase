@@ -415,5 +415,5 @@ class CollectionModelResource(DBBaseResource):
         except Exception as err:
             msg = err.args[0]
             return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": return_msg}, 500
