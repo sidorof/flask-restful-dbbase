@@ -7,12 +7,9 @@ import json
 import inspect
 
 from dbbase.utils import xlate
-from flask_restful import request
+from flask_restful import request, current_app
 from .dbbase_resource import DBBaseResource
 from ..validations import validate_process
-import logging
-
-logger = logging.getLogger(__file__)
 
 
 class CollectionModelResource(DBBaseResource):
@@ -246,6 +243,8 @@ class CollectionModelResource(DBBaseResource):
         url = request.path
 
         data = request.args.to_dict(flat=False)
+        current_app.logger.debug("args received: {data}")
+
         orig_data = request.args.to_dict(flat=False)
 
         configs = {}
@@ -261,6 +260,16 @@ class CollectionModelResource(DBBaseResource):
         serial_fields = configs.get("serial_fields")
         serial_field_relations = configs.get("serial_field_relations")
         debug = configs["debug"] if "debug" in configs else False
+
+        current_app.logger.debug("order_by: {order_by}")
+        current_app.logger.debug("page_size: {page_size}")
+        current_app.logger.debug("limit: {limit}")
+        current_app.logger.debug("offset: {offset}")
+        current_app.logger.debug("serial_fields: {serial_fields}")
+        current_app.logger.debug(
+            "serial_field_relations: {serial_field_relations}"
+        )
+        current_app.logger.debug("debug: {debug}")
 
         query = self.model_class.query
 

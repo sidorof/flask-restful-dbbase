@@ -3,12 +3,9 @@
 This module implements a starting point for model resources.
 
 """
-import logging
-from flask_restful import request
+from flask_restful import request, current_app
 from .dbbase_resource import DBBaseResource
 from ..validations import validate_process
-
-logger = logging.getLogger(__name__)
 
 
 class ModelResource(DBBaseResource):
@@ -68,43 +65,59 @@ class ModelResource(DBBaseResource):
         data = request.args.to_dict(flat=False)
         query = self.model_class.query
         if self.process_get_input is not None:
+            current_app.logger.debug("function process_get_input started")
             output = self.process_get_input(query, data, kwargs)
+            current_app.logger.debug("function process_get_input finished")
+
+            current_app.logger.debug("function validate_process started")
             validate_process(output, true_keys=["query", "data"])
+            current_app.logger.debug("function validate_process finished")
 
             if output["status"]:
                 query = output["query"]
                 data = output["data"]
+                current_app.logger.debug(
+                    "Processing continuing with updated query/data"
+                )
             else:
                 message = output["message"]
                 status_code = output["status_code"]
 
+                current_app.logger.debug(f"{message}: {status_code}")
                 return message, status_code
 
         try:
+            current_app.logger.debug(
+                f"query filtering with {key_name} == {key}"
+            )
             for key_name, key in kdict.items():
                 query = query.filter(
                     getattr(self.model_class, key_name) == key
                 )
             item = query.first()
+            current_app.logger.debug(
+                f"item {item} selected"
+            )
         except Exception as err:
             msg = err.args[0]
-            logger.error(msg)
+            current_app.logger.error(msg)
             return {"message": msg}, 500
 
         sfields, sfield_relations = self._get_serializations(FUNC_NAME)
-
+        current_app.logger.debug("Serial fields: {sfields}")
+        current_app.logger.debug("Serial field relations: {sfield_relations}")
         if item:
             result = item.to_dict(
                 serial_fields=sfields,
                 serial_field_relations=sfield_relations,
             )
 
-            logger.debug(result)
+            current_app.logger.debug(result)
 
             return result, 200
 
         msg = f"{self.model_name} with {kdict} not found"
-        logger.debug(msg)
+        current_app.logger.debug(msg)
         return {"message": msg}, 404
 
     def post(self):

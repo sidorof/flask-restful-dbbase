@@ -15,8 +15,8 @@ from flask_restful_dbbase.resources import CollectionModelResource
 from flask_restful_dbbase.validations import validate_process
 from sqlalchemy import desc
 
-
-logging.disable(logging.CRITICAL)
+current_app = flask_restful.current_app
+# logging.disable(logging.CRITICAL)
 
 
 def create_samples(db):
