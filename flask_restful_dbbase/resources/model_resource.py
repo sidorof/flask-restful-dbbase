@@ -163,7 +163,7 @@ class ModelResource(DBBaseResource):
             )
         except Exception as err:
             msg = f"malformed data: {err.args[0]}"
-            logger(msg)
+            current_app.logger(msg)
             return {"message": msg}, 400
 
         if status is False:
