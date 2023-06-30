@@ -87,10 +87,10 @@ class ModelResource(DBBaseResource):
                 return message, status_code
 
         try:
-            current_app.logger.debug(
-                f"query filtering with {key_name} == {key}"
-            )
             for key_name, key in kdict.items():
+                current_app.logger.debug(
+                    f"query filtering with {key_name} == {key}"
+                )
                 query = query.filter(
                     getattr(self.model_class, key_name) == key
                 )
@@ -136,11 +136,11 @@ class ModelResource(DBBaseResource):
             except Exception as err:
                 msg = err
                 return_msg = f"A JSON format problem:{msg}: {request.data}"
-                logger.error(return_msg)
+                current_app.logger.error(return_msg)
                 return {"message": return_msg}, 400
 
         else:
-            logger.info("JSON format is required")
+            current_app.logger.info("JSON format is required")
             return {"message": "JSON format is required"}, 415
 
         if self.process_post_input is not None:
@@ -167,7 +167,7 @@ class ModelResource(DBBaseResource):
             return {"message": msg}, 400
 
         if status is False:
-            logger.info(data)
+            current_app.logger.info(data)
             return {"message": data}, 400
 
         key_names = self.get_key_names(formatted=False)
@@ -187,12 +187,12 @@ class ModelResource(DBBaseResource):
                 item = query.first()
             except Exception as err:
                 msg = err.args[0]
-                logger.error(msg)
+                current_app.logger.error(msg)
                 return {"message": msg}, 400
 
         if item:
             msg = f"{kdict} for {self.model_name} already exists."
-            logger.info(msg)
+            current_app.logger.info(msg)
             return (
                 {"message": msg},
                 409,
@@ -253,7 +253,7 @@ class ModelResource(DBBaseResource):
                     )
                     if sub_status is False:
                         # NOTE: look at this further
-                        logger.info(sub_data)
+                        current_app.logger.info(sub_data)
                         return {"message": sub_data}, 400
 
                     getattr(item, key).append(sub_class(**sub_data))
@@ -273,7 +273,7 @@ class ModelResource(DBBaseResource):
             item.save()
         except Exception as err:
             msg = err.args[0]
-            logger.error(msg)
+            current_app.logger.error(msg)
             return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
@@ -309,7 +309,7 @@ class ModelResource(DBBaseResource):
             kdict = self._check_key(kwargs)
         except Exception as err:
             msg = err.args[0]
-            logger.info(msg)
+            current_app.logger.info(msg)
             return {"message": msg}, 400
 
         if request.is_json:
@@ -318,7 +318,7 @@ class ModelResource(DBBaseResource):
             except Exception as err:
                 msg = err
                 return_msg = f"A JSON format problem:{msg}"
-                logger.info(return_msg)
+                current_app.logger.info(return_msg)
                 return {"message": return_msg}, 400
         else:
             return {"message": "JSON format is required"}, 415
@@ -349,7 +349,7 @@ class ModelResource(DBBaseResource):
 
         except Exception as err:
             msg = err.args[0]
-            logger.error(msg)
+            current_app.logger.error(msg)
             return {"message": msg}, 400
 
         data = self.model_class.deserialize(data)
@@ -360,7 +360,7 @@ class ModelResource(DBBaseResource):
             self.model_class.deserialize(data), self.get_obj_params()
         )
         if status is False:
-            logger.info(f"{str(data)}: 400")
+            current_app.logger.info(f"{str(data)}: 400")
             return {"message": data}, 400
 
         if item is None:
@@ -385,8 +385,8 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            logger.info(msg)
-            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.info(msg)
+            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
@@ -456,7 +456,7 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            logger.error(msg)
+            current_app.logger.error(msg)
             return {"message": msg}, 500
 
         data = self.model_class.deserialize(data)
@@ -490,7 +490,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             msg = err.args[0]
             self.model_class.db.session.rollback()
-            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
                     "message": "An error occurred updating the "
@@ -552,12 +552,12 @@ class ModelResource(DBBaseResource):
             item = query.first()
         except Exception as err:
             msg = err.args[0]
-            logger.error(msg)
+            current_app.logger.error(msg)
             return {"message": msg}, 500
 
         if item is None:
             msg = f"{self.model_name} with {kdict} not found"
-            logger.debug(msg)
+            current_app.logger.debug(msg)
             return {"message": msg}, 404
 
         adjust_before = self.before_commit.get(FUNC_NAME)
@@ -575,7 +575,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return (
                 {
                     "message": "An error occurred deleting the "
