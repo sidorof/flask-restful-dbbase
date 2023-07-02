@@ -57,9 +57,9 @@ class ModelResource(DBBaseResource):
         """
         # may be used later
         url = request.path
-        FUNC_NAME = "GET"
+        FUNC_NAME = "get"
 
-        current_app.logger.info(f"{FUNC_NAME} {url} {kwargs}")
+        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
 
         # the correct key test - raises error if improper url
         current_app.logger.debug("  Checking key in kwargs")
@@ -143,12 +143,12 @@ class ModelResource(DBBaseResource):
         This function is the HTTP POST method for a resource handling
         a single item.
         """
-        FUNC_NAME = "POST"
+        FUNC_NAME = "post"
         # may be used later
         url = request.path
         status_code = 201
 
-        current_app.logger.info(f"{FUNC_NAME} {url}")
+        current_app.logger.info(f"{FUNC_NAME.upper()} {url}")
 
         if request.is_json:
             try:
@@ -349,10 +349,10 @@ class ModelResource(DBBaseResource):
         single item.
         """
         url = request.path
-        FUNC_NAME = "PUT"
+        FUNC_NAME = "put"
         status_code = 200
 
-        current_app.logger.info(f"{FUNC_NAME} {url} {kwargs}")
+        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
 
         try:
             current_app.logger.debug("  Checking key in kwargs")
@@ -513,10 +513,10 @@ class ModelResource(DBBaseResource):
         a single item.
         """
         url = request.path
-        FUNC_NAME = "PATCH"
+        FUNC_NAME = "patch"
         status_code = 200
 
-        current_app.logger.info(f"{FUNC_NAME} {url} {kwargs}")
+        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
 
         try:
             current_app.logger.debug("  Checking key in kwargs")
@@ -680,10 +680,10 @@ class ModelResource(DBBaseResource):
         handling a single item.
         """
         url = request.path
-        FUNC_NAME = "DELETE"
+        FUNC_NAME = "delete"
         status_code = 200
 
-        current_app.logger.info(f"{FUNC_NAME} {url} {kwargs}")
+        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
 
         try:
             current_app.logger.debug("  Checking key in kwargs")
