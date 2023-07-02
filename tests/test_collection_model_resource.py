@@ -5,7 +5,6 @@ This module tests collections.
 import unittest
 from random import randint
 import logging
-import json
 import uuid
 
 import flask
@@ -13,10 +12,8 @@ import flask_restful
 from flask_restful_dbbase import DBBase
 from flask_restful_dbbase.resources import CollectionModelResource
 from flask_restful_dbbase.validations import validate_process
-from sqlalchemy import desc
 
-current_app = flask_restful.current_app
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 
 def create_samples(db):
@@ -346,8 +343,6 @@ class TestCollectionModelResource(unittest.TestCase):
                 .all()
             )
 
-            tmp = res.json
-
             self.assertEqual(res.status_code, 200)
 
             tmp1 = [
@@ -386,7 +381,6 @@ class TestCollectionModelResource(unittest.TestCase):
                 .all()
             )
 
-            tmp = res.json
             self.assertEqual(res.status_code, 200)
 
             tmp1 = [sample.to_dict() for sample in qry]
@@ -422,7 +416,6 @@ class TestCollectionModelResource(unittest.TestCase):
                 .all()
             )
 
-            tmp = res.json
             self.assertEqual(res.status_code, 200)
 
             tmp1 = [sample.to_dict() for sample in qry]
@@ -457,7 +450,6 @@ class TestCollectionModelResource(unittest.TestCase):
                 .all()
             )
 
-            tmp = res.json
             self.assertEqual(res.status_code, 200)
 
             tmp1 = [sample.to_dict() for sample in qry]
@@ -520,8 +512,6 @@ class TestCollectionModelResource(unittest.TestCase):
                     headers=self.headers,
                 )
 
-                res_qry = res.json
-
                 self.assertEqual(res.status_code, 400)
 
     def test_config_params_op_codes2(self):
@@ -558,7 +548,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
     def test_config_params_missing_value2(self):
         op_codes = ["like", "ilike", "notilike"]
-        value = "[]"
+        # value = "[]"
 
         for op in op_codes:
             with self.app.test_client() as client:
@@ -570,7 +560,6 @@ class TestCollectionModelResource(unittest.TestCase):
                     query_string={"param2": [op]},
                     headers=self.headers,
                 )
-                res_qry = res.json
                 self.assertEqual(res.status_code, 400)
 
     def test_config_params_unknown_op(self):
@@ -588,7 +577,6 @@ class TestCollectionModelResource(unittest.TestCase):
                     headers=self.headers,
                 )
 
-                res_qry = res.json
                 self.assertEqual(res.status_code, 400)
 
     def test_config_params_simple_eq(self):
@@ -638,7 +626,8 @@ class TestCollectionModelResource(unittest.TestCase):
                 {
                     "class_defaults": {
                         "model_name": "Sample",
-                        "process_get_input": "Sets the status_id to 6 for no good reason.",
+                        "process_get_input": "Sets the status_id to 6 for no "
+                        "good reason.",
                         "max_page_size": 5,
                         "order_by": None,
                         "op_codes": [
@@ -663,7 +652,11 @@ class TestCollectionModelResource(unittest.TestCase):
                         ["status_id", "eq", 6],
                     ],
                     "page_configs": {"debug": True, "order_by": ["status_id"]},
-                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample \nWHERE sample.id IN (?) AND sample.status_id = ? ORDER BY sample.status_id",
+                    "query": "SELECT sample.id AS sample_id, sample.owner_id "
+                    "AS sample_owner_id, sample.param1 AS sample_param1, "
+                    "sample.param2 AS sample_param2, sample.status_id AS "
+                    "sample_status_id \nFROM sample \nWHERE sample.id IN (?) "
+                    "AND sample.status_id = ? ORDER BY sample.status_id",
                 },
             )
 
@@ -711,7 +704,11 @@ class TestCollectionModelResource(unittest.TestCase):
                     },
                     "converted_data": [["id", "eq", ["40"]]],
                     "page_configs": {"debug": True, "limit": 40},
-                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample \nWHERE sample.id IN (?)\n LIMIT ? OFFSET ?",
+                    "query": "SELECT sample.id AS sample_id, sample.owner_id "
+                    "AS sample_owner_id, sample.param1 AS sample_param1, "
+                    "sample.param2 AS sample_param2, sample.status_id AS "
+                    "sample_status_id \nFROM sample \nWHERE sample.id IN "
+                    "(?)\n LIMIT ? OFFSET ?",
                 },
             )
 
@@ -779,7 +776,8 @@ class TestCollectionModelResource(unittest.TestCase):
                 {
                     "class_defaults": {
                         "model_name": "Sample",
-                        "process_get_input": "Returns True/False, depending on status.",
+                        "process_get_input": "Returns True/False, depending "
+                        "on status.",
                         "max_page_size": None,
                         "order_by": None,
                         "op_codes": [
@@ -801,7 +799,10 @@ class TestCollectionModelResource(unittest.TestCase):
                     },
                     "converted_data": [],
                     "page_configs": {"debug": True, "order_by": ["status_id"]},
-                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample ORDER BY sample.status_id",
+                    "query": "SELECT sample.id AS sample_id, sample.owner_id "
+                    "AS sample_owner_id, sample.param1 AS sample_param1, "
+                    "sample.param2 AS sample_param2, sample.status_id AS "
+                    "sample_status_id \nFROM sample ORDER BY sample.status_id",
                 },
             )
 

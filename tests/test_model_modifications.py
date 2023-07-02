@@ -329,7 +329,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
         #
         # # True, good with correct tuple
@@ -343,7 +342,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 200)
 
         # # False, good with correct tuple
@@ -357,7 +355,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 400)
 
         # # False, without correct message format
@@ -371,7 +368,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
 
     def test_post_with_input_processing(self):
@@ -394,7 +390,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
         #
         # # True, good with correct tuple
@@ -414,7 +409,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 201)
 
         # # False, good with correct tuple
@@ -434,7 +428,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 400)
 
         # # False, without correct message format
@@ -455,7 +448,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
 
     def test_put_with_input_processing(self):
@@ -478,7 +470,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
         # True, good with correct tuple
         with self.app.test_client() as client:
@@ -497,7 +488,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 200)
 
         # False, good with correct tuple
@@ -517,7 +507,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 400)
 
         # False, without correct message format
@@ -538,7 +527,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
 
     def test_patch_with_input_processing(self):
@@ -561,7 +549,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
         # True, good with correct tuple
         with self.app.test_client() as client:
@@ -580,7 +567,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 200)
 
         # False, good with correct tuple
@@ -600,7 +586,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 400)
 
         # False, without correct message format
@@ -621,7 +606,6 @@ class TestModelProcResource(unittest.TestCase):
                 headers=self.headers,
             )
 
-            res_qry = res.json
             self.assertEqual(res.status_code, 500)
 
     def test_delete_with_input_processing(self):

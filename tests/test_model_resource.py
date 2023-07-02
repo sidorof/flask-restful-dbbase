@@ -290,10 +290,12 @@ class TestModelResource(unittest.TestCase):
                 {
                     "message": [
                         {
-                            "today": "Date error: 'wrong': Unknown string format: wrong"
+                            "today": "Date error: 'wrong': Unknown string "
+                            "format: wrong"
                         },
                         {
-                            "now": "Date error: 'wrong': Unknown string format: wrong"
+                            "now": "Date error: 'wrong': Unknown string "
+                            "format: wrong"
                         },
                     ]
                 },
@@ -1316,7 +1318,8 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "(sqlite3.OperationalError) no such table: throwaway"
+                    "message": "(sqlite3.OperationalError) no such table: "
+                    "throwaway"
                 },
             )
             self.assertEqual(res.status_code, 400)
@@ -1508,7 +1511,9 @@ class TestModelBadDatabase(unittest.TestCase):
             self.assertDictEqual(
                 res.get_json(),
                 {
-                    "message": "An error occurred deleting the ThrowAwayDelete: 'NoneType' object has no attribute 'delete'."
+                    "message": "An error occurred deleting the "
+                    "ThrowAwayDelete: 'NoneType' object has no attribute "
+                    "'delete'."
                 },
             )
             self.assertEqual(res.content_type, "application/json")
