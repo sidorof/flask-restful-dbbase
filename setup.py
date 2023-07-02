@@ -19,6 +19,7 @@ AUTHOR_EMAIL = "dsmiley@sidorof.com"
 PYTHON_REQUIRES = ">=3.7"
 ZIP_SAFE = False
 INSTALL_REQUIRES = [
+    "pydantic < 2.0",
     "flask",
     "Flask-RESTful",
     "SQLAlchemy < 1.4",

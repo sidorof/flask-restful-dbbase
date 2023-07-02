@@ -147,21 +147,15 @@ class TestModelProcResource(unittest.TestCase):
                     if "set_status" in data:
                         status = data.pop("set_status")[0]
                         if status == "good True status":
-                            return {
-                                "status": True,
-                                "query": qry,
-                                "data": data
-                            }
+                            return {"status": True, "query": qry, "data": data}
                         elif status == "bad True status":
-                            return {
-                                "status": True
-                            }
+                            return {"status": True}
 
                         elif status == "good False status":
                             return {
                                 "status": False,
                                 "message": status,
-                                "status_code": 400
+                                "status_code": 400,
                             }
                         elif status == "bad False status":
                             return {
@@ -181,20 +175,15 @@ class TestModelProcResource(unittest.TestCase):
                     if "set_status" in data:
                         status = data.pop("set_status")
                         if status == "good True status":
-                            return {
-                                "status": True,
-                                "data": data
-                            }
+                            return {"status": True, "data": data}
                         elif status == "bad True status":
-                            return {
-                                "status": True
-                            }
+                            return {"status": True}
 
                         elif status == "good False status":
                             return {
                                 "status": False,
                                 "message": status,
-                                "status_code": 400
+                                "status_code": 400,
                             }
                         elif status == "bad False Status":
                             return {
@@ -214,21 +203,15 @@ class TestModelProcResource(unittest.TestCase):
                     if "set_status" in data:
                         status = data.pop("set_status")
                         if status == "good True status":
-                            return {
-                                "status": True,
-                                "query": qry,
-                                "data": data
-                            }
+                            return {"status": True, "query": qry, "data": data}
                         elif status == "bad True Status":
-                            return {
-                                "status": True
-                            }
+                            return {"status": True}
 
                         elif status == "good False status":
                             return {
                                 "status": False,
                                 "message": status,
-                                "status_code": 400
+                                "status_code": 400,
                             }
                         elif status == "bad False Status":
                             return {
@@ -248,21 +231,15 @@ class TestModelProcResource(unittest.TestCase):
                     if "set_status" in data:
                         status = data.pop("set_status")
                         if status == "good True status":
-                            return {
-                                "status": True,
-                                "query": qry,
-                                "data": data
-                            }
+                            return {"status": True, "query": qry, "data": data}
                         elif status == "bad True Status":
-                            return {
-                                "status": True
-                            }
+                            return {"status": True}
 
                         elif status == "good False status":
                             return {
                                 "status": False,
                                 "message": status,
-                                "status_code": 400
+                                "status_code": 400,
                             }
                         elif status == "bad False Status":
                             return {
@@ -283,35 +260,41 @@ class TestModelProcResource(unittest.TestCase):
             # 4.  Status: good False, => 400
             class DeleteResource1(ModelResource):
                 model_class = cls.Sample
+
                 def process_delete_input(self, qry, kwargs):
                     return {"status": True, "query": qry}
 
-            cls.api.add_resource(DeleteResource1, '/delete1/<int:id>')
+            cls.api.add_resource(DeleteResource1, "/delete1/<int:id>")
 
             class DeleteResource2(ModelResource):
                 model_class = cls.Sample
+
                 def process_delete_input(self, qry, kwargs):
                     # missing query
                     return {"status": True}
 
-            cls.api.add_resource(DeleteResource2, '/delete2/<int:id>')
+            cls.api.add_resource(DeleteResource2, "/delete2/<int:id>")
 
             class DeleteResource3(ModelResource):
                 model_class = cls.Sample
+
                 def process_delete_input(self, qry, kwargs):
                     # missing status_code
                     return {"status": False, "message": "This is a test"}
 
-            cls.api.add_resource(DeleteResource3, '/delete3/<int:id>')
+            cls.api.add_resource(DeleteResource3, "/delete3/<int:id>")
 
             class DeleteResource4(ModelResource):
                 model_class = cls.Sample
+
                 def process_delete_input(self, qry, kwargs):
                     return {
-                        "status": False, "message": "Test", "status_code": 400
+                        "status": False,
+                        "message": "Test",
+                        "status_code": 400,
                     }
 
-            cls.api.add_resource(DeleteResource4, '/delete4/<int:id>')
+            cls.api.add_resource(DeleteResource4, "/delete4/<int:id>")
 
             cls.api.add_resource(
                 OtherSampleResource, *OtherSampleResource.get_urls()
@@ -336,7 +319,6 @@ class TestModelProcResource(unittest.TestCase):
         del cls.db
 
     def test_get_with_input_processing(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -392,9 +374,8 @@ class TestModelProcResource(unittest.TestCase):
             res_qry = res.json
             self.assertEqual(res.status_code, 500)
 
-
     def test_post_with_input_processing(self):
-        """test_post_with_input_processing """
+        """test_post_with_input_processing"""
 
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -404,7 +385,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "bad True status"
+                "set_status": "bad True status",
             }
 
             res = client.post(
@@ -425,7 +406,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "good True status"
+                "set_status": "good True status",
             }
             res = client.post(
                 "/samples",
@@ -445,7 +426,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "good False status"
+                "set_status": "good False status",
             }
             res = client.post(
                 "/samples",
@@ -465,7 +446,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "bad False status"
+                "set_status": "bad False status",
             }
 
             res = client.post(
@@ -488,7 +469,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "bad True status"
+                "set_status": "bad True status",
             }
 
             res = client.put(
@@ -508,7 +489,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "good True status"
+                "set_status": "good True status",
             }
             res = client.put(
                 "/samples/1",
@@ -528,7 +509,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "good False status"
+                "set_status": "good False status",
             }
             res = client.put(
                 "/samples/1",
@@ -548,7 +529,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "bad False status"
+                "set_status": "bad False status",
             }
 
             res = client.put(
@@ -561,7 +542,7 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
 
     def test_patch_with_input_processing(self):
-        """test_patch_with_input_processing """
+        """test_patch_with_input_processing"""
 
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -571,7 +552,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "bad True status"
+                "set_status": "bad True status",
             }
 
             res = client.patch(
@@ -591,7 +572,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "good True status"
+                "set_status": "good True status",
             }
             res = client.patch(
                 "/samples/1",
@@ -611,7 +592,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "good False status"
+                "set_status": "good False status",
             }
             res = client.patch(
                 "/samples/1",
@@ -631,7 +612,7 @@ class TestModelProcResource(unittest.TestCase):
                 "ownerId": 2,
                 "param1": 5,
                 "param2": 6,
-                "set_status": "bad False status"
+                "set_status": "bad False status",
             }
 
             res = client.patch(
@@ -644,16 +625,13 @@ class TestModelProcResource(unittest.TestCase):
             self.assertEqual(res.status_code, 500)
 
     def test_delete_with_input_processing(self):
-        """test_delete_with_input_processing """
+        """test_delete_with_input_processing"""
 
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(
-                "/delete1/101",
-                headers=self.headers
-            )
+            res = client.delete("/delete1/101", headers=self.headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
@@ -666,9 +644,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(
-                "/delete2/102",
-                headers=self.headers)
+            res = client.delete("/delete2/102", headers=self.headers)
 
             self.assertEqual(res.status_code, 500)
 
@@ -676,9 +652,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(
-                "/delete3/103",
-                headers=self.headers)
+            res = client.delete("/delete3/103", headers=self.headers)
 
             self.assertEqual(res.status_code, 500)
             self.assertEqual(res.content_type, "application/json")
@@ -687,9 +661,7 @@ class TestModelProcResource(unittest.TestCase):
             if self.needs_setup:
                 self.set_db()
 
-            res = client.delete(
-                "/delete4/104",
-                headers=self.headers)
+            res = client.delete("/delete4/104", headers=self.headers)
 
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(

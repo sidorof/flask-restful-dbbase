@@ -255,7 +255,6 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_bad_date_data(self):
-
         bad_datetbl = {"today": "wrong", "now": "wrong"}
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -270,9 +269,10 @@ class TestModelResource(unittest.TestCase):
             )
             self.assertDictEqual(
                 res.get_json(),
-                {"message": "(builtins.TypeError) SQLite Date type "
-                     "only accepts Python date objects as input."
-                }
+                {
+                    "message": "(builtins.TypeError) SQLite Date type "
+                    "only accepts Python date objects as input."
+                },
             )
             self.assertEqual(res.status_code, 400)
             self.assertEqual(res.content_type, "application/json")
@@ -704,7 +704,7 @@ class TestModelResource(unittest.TestCase):
                         {
                             "pub_year": "The value two "
                             "thousand 4 is not a number"
-                        }
+                        },
                     ]
                 },
             )
@@ -1387,7 +1387,7 @@ class TestModelBadDatabase(unittest.TestCase):
                 if "disrupt" in data:
                     query.first = "bad"
                     data.pop("disrupt")
-                return {"status": True, "query": query, "data":data}
+                return {"status": True, "query": query, "data": data}
 
             before_commit = {"put": delete_before_commit}
 

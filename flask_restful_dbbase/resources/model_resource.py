@@ -91,7 +91,9 @@ class ModelResource(DBBaseResource):
                     "Processing continuing with updated query/data"
                 )
             else:
-                current_app.logger.debug("Output process_get_input status: False")
+                current_app.logger.debug(
+                    "Output process_get_input status: False"
+                )
                 message = output["message"]
                 status_code = output["status_code"]
 
@@ -107,9 +109,7 @@ class ModelResource(DBBaseResource):
                     getattr(self.model_class, key_name) == key
                 )
             item = query.first()
-            current_app.logger.debug(
-                f"item {item} selected"
-            )
+            current_app.logger.debug(f"item {item} selected")
         except Exception as err:
             msg = err.args[0]
             current_app.logger.error(msg)
@@ -164,7 +164,9 @@ class ModelResource(DBBaseResource):
             current_app.logger.debug("Completed validate_process function")
 
             if output["status"]:
-                current_app.logger.debug("Output process_get_input status: True")
+                current_app.logger.debug(
+                    "Output process_get_input status: True"
+                )
                 data = output["data"]
             else:
                 message = output["message"]
@@ -386,7 +388,9 @@ class ModelResource(DBBaseResource):
                     "Processing continuing with updated query/data"
                 )
             else:
-                current_app.logger.debug("Output process_put_input status: False")
+                current_app.logger.debug(
+                    "Output process_put_input status: False"
+                )
                 message = output["message"]
                 status_code = output["status_code"]
 
@@ -522,7 +526,9 @@ class ModelResource(DBBaseResource):
         query = self.model_class.query
         if self.process_patch_input is not None:
             try:
-                current_app.logger.debug("function process_patch_input started")
+                current_app.logger.debug(
+                    "function process_patch_input started"
+                )
                 output = self.process_patch_input(query, data, kwargs)
             except Exception as err:
                 msg = f"{err.args}"
@@ -545,7 +551,9 @@ class ModelResource(DBBaseResource):
                     "Processing continuing with updated query/data"
                 )
             else:
-                current_app.logger.debug("Output process_put_input status: False")
+                current_app.logger.debug(
+                    "Output process_put_input status: False"
+                )
                 message = output["message"]
                 status_code = output["status_code"]
 
@@ -575,7 +583,7 @@ class ModelResource(DBBaseResource):
             status, data = self.screen_data(
                 self.model_class.deserialize(data),
                 obj_params,
-                skip_missing_data=True
+                skip_missing_data=True,
             )
         except Exception as err:
             msg = f"malformed data: {err.args[0]}"
@@ -670,9 +678,10 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_delete_input is not None:
-
             try:
-                current_app.logger.debug("function process_delete_input started")
+                current_app.logger.debug(
+                    "function process_delete_input started"
+                )
                 output = self.process_delete_input(query, kwargs)
             except Exception as err:
                 msg = f"{err.args}"

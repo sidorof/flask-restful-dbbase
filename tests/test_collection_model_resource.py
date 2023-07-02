@@ -82,11 +82,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 def process_get_input(self, qry, data):
                     """Sets the status_id to 6 for no good reason."""
                     data["status_id"] = 6
-                    return {
-                        "status": True,
-                        "query": qry,
-                        "data": data
-                    }
+                    return {"status": True, "query": qry, "data": data}
 
             cls.api.add_resource(Sample1CollectionResource, "/samples1")
             cls.needs_setup = False
@@ -101,22 +97,16 @@ class TestCollectionModelResource(unittest.TestCase):
                     # use explicit variables to make it easier to validate
                     if "set_status" in data:
                         status = data.pop("set_status")[0]
-                        if status == "good True status":\
-                            return {
-                                "status": True,
-                                "query": qry,
-                                "data": data
-                            }
+                        if status == "good True status":
+                            return {"status": True, "query": qry, "data": data}
                         elif status == "bad True status":
-                            return {
-                                "status": True
-                            }
+                            return {"status": True}
 
                         elif status == "good False status":
                             return {
                                 "status": False,
                                 "message": status,
-                                "status_code": 400
+                                "status_code": 400,
                             }
                         elif status == "bad False status":
                             return {
@@ -193,7 +183,6 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test__validate_process(self):
-
         class TestResource(CollectionModelResource):
             pass
             # model_class = self.Sample
@@ -201,84 +190,54 @@ class TestCollectionModelResource(unittest.TestCase):
         output = "not dict"
 
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
 
         # missing status
         output = {}
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
 
         # invalid status
         output = {"status": "hi there"}
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
 
         # True status, no query, data
         output = {"status": True}
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
         # True status, with query, no data
         output = {"status": True, "query": "stuff"}
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
         # True status, with query and data, no validation on type
         output = {"status": True, "query": "stuff", "data": "stuff"}
         self.assertIsNone(
-            validate_process(
-                output,
-                true_keys=["query", "data"]
-            )
+            validate_process(output, true_keys=["query", "data"])
         )
 
         # False status, no message, status_code
         output = {"status": False}
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
         # False status, with message, no status_code
         output = {"status": False, "message": "stuff"}
         self.assertRaises(
-            ValueError,
-            validate_process,
-            output,
-            true_keys=["query", "data"]
+            ValueError, validate_process, output, true_keys=["query", "data"]
         )
         # False status, with message and status_code, no validation on type
         output = {"status": False, "message": "stuff", "status_code": 400}
         self.assertIsNone(
-            validate_process(
-                output,
-                true_keys=["query", "data"]
-            )
+            validate_process(output, true_keys=["query", "data"])
         )
 
-
-
     def test__page_configs(self):
-
         db = self.db
 
         class TestModel(db.Model):
@@ -314,26 +273,16 @@ class TestCollectionModelResource(unittest.TestCase):
             },
         )
 
-        sample_config = {
-            "debug": "True"
-        }
+        sample_config = {"debug": "True"}
 
         configs = class_resource._page_configs(sample_config)
 
-        self.assertDictEqual(
-            configs,
-            {
-                "debug": True
-            }
-        )
+        self.assertDictEqual(configs, {"debug": True})
 
-        sample_config = {
-            "badvar": "test"
-        }
+        sample_config = {"badvar": "test"}
 
         self.assertRaises(
-            ValueError,
-            class_resource._page_configs, sample_config
+            ValueError, class_resource._page_configs, sample_config
         )
 
         sample_config = {}
@@ -341,12 +290,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
         configs = class_resource._page_configs(sample_config)
 
-        self.assertDictEqual(
-            configs,
-            {
-                "order_by": ["id"]
-            }
-        )
+        self.assertDictEqual(configs, {"order_by": ["id"]})
 
     def test_config_params_order(self):
         """
@@ -395,12 +339,11 @@ class TestCollectionModelResource(unittest.TestCase):
             )
             Sample = self.Sample
             qry = (
-                Sample.query
-                    .filter(Sample.owner_id.in_([1, 3]))
-                    .order_by(Sample.id, Sample.status_id)
-                    .offset(30)
-                    .limit(20)
-                    .all()
+                Sample.query.filter(Sample.owner_id.in_([1, 3]))
+                .order_by(Sample.id, Sample.status_id)
+                .offset(30)
+                .limit(20)
+                .all()
             )
 
             tmp = res.json
@@ -417,10 +360,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 len(qry),
             )
 
-            self.assertListEqual(
-                res.get_json()[Sample._class()],
-                tmp1
-            )
+            self.assertListEqual(res.get_json()[Sample._class()], tmp1)
 
             self.assertEqual(res.content_type, "application/json")
 
@@ -441,10 +381,9 @@ class TestCollectionModelResource(unittest.TestCase):
             Sample = self.Sample
 
             qry = (
-                Sample.query
-                    .filter(Sample.owner_id.in_([1, 3]))
-                    .order_by(Sample.id.desc())
-                    .all()
+                Sample.query.filter(Sample.owner_id.in_([1, 3]))
+                .order_by(Sample.id.desc())
+                .all()
             )
 
             tmp = res.json
@@ -457,10 +396,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 len(qry),
             )
 
-            self.assertListEqual(
-                res.get_json()[Sample._class()],
-                tmp1
-            )
+            self.assertListEqual(res.get_json()[Sample._class()], tmp1)
 
             self.assertEqual(res.content_type, "application/json")
 
@@ -481,10 +417,9 @@ class TestCollectionModelResource(unittest.TestCase):
 
             Sample = self.Sample
             qry = (
-                Sample.query
-                    .filter(Sample.owner_id.__gt__(Sample.status_id))
-                    .order_by(Sample.id.desc())
-                    .all()
+                Sample.query.filter(Sample.owner_id.__gt__(Sample.status_id))
+                .order_by(Sample.id.desc())
+                .all()
             )
 
             tmp = res.json
@@ -497,10 +432,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 len(qry),
             )
 
-            self.assertListEqual(
-                res.get_json()[Sample._class()],
-                tmp1
-            )
+            self.assertListEqual(res.get_json()[Sample._class()], tmp1)
 
             self.assertEqual(res.content_type, "application/json")
 
@@ -520,10 +452,9 @@ class TestCollectionModelResource(unittest.TestCase):
             )
             Sample = self.Sample
             qry = (
-                Sample.query
-                    .filter(Sample.owner_id.in_([1, 3]))
-                    .order_by(Sample.id.desc())
-                    .all()
+                Sample.query.filter(Sample.owner_id.in_([1, 3]))
+                .order_by(Sample.id.desc())
+                .all()
             )
 
             tmp = res.json
@@ -536,22 +467,17 @@ class TestCollectionModelResource(unittest.TestCase):
                 len(qry),
             )
 
-            self.assertListEqual(
-                res.get_json()[Sample._class()],
-                tmp1
-            )
+            self.assertListEqual(res.get_json()[Sample._class()], tmp1)
 
             self.assertEqual(res.content_type, "application/json")
 
     def test_config_params_op_codes1(self):
-
         # test OP_CODES
         # test like, ilike, notilike  separately
         op_codes = ["eq", "ne", "gt", "ge", "lt", "le"]
         value = 50
 
         for op in op_codes:
-
             with self.app.test_client() as client:
                 if self.needs_setup:
                     self.set_db()
@@ -564,7 +490,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 Sample = self.Sample
 
                 func = getattr(Sample.param1, f"__{op}__")
-                qry = Sample.query .filter(func(value)).all()
+                qry = Sample.query.filter(func(value)).all()
 
                 res_qry = res.json
                 self.assertEqual(res.status_code, 200)
@@ -574,21 +500,16 @@ class TestCollectionModelResource(unittest.TestCase):
                     len(res_qry[Sample._class()]),
                     len(db_qry),
                 )
-                self.assertEqual(
-                    res_qry[Sample._class()],
-                    db_qry
-                )
+                self.assertEqual(res_qry[Sample._class()], db_qry)
 
                 self.assertEqual(res.content_type, "application/json")
 
     def test_config_params_missing_value1(self):
-
         # test OP_CODES
         # test like, ilike, notilike  separately
         op_codes = ["eq", "ne", "gt", "ge", "lt", "le"]
 
         for op in op_codes:
-
             with self.app.test_client() as client:
                 if self.needs_setup:
                     self.set_db()
@@ -608,7 +529,6 @@ class TestCollectionModelResource(unittest.TestCase):
         value = "\\%f\\%"
 
         for op in op_codes:
-
             with self.app.test_client() as client:
                 if self.needs_setup:
                     self.set_db()
@@ -621,7 +541,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 Sample = self.Sample
 
                 func = getattr(Sample.param2, op)
-                qry = Sample.query .filter(func(value))
+                qry = Sample.query.filter(func(value))
                 qry = qry.all()
 
                 res_qry = res.json
@@ -632,10 +552,7 @@ class TestCollectionModelResource(unittest.TestCase):
                     len(res_qry[Sample._class()]),
                     len(db_qry),
                 )
-                self.assertEqual(
-                    res_qry[Sample._class()],
-                    db_qry
-                )
+                self.assertEqual(res_qry[Sample._class()], db_qry)
 
                 self.assertEqual(res.content_type, "application/json")
 
@@ -644,7 +561,6 @@ class TestCollectionModelResource(unittest.TestCase):
         value = "[]"
 
         for op in op_codes:
-
             with self.app.test_client() as client:
                 if self.needs_setup:
                     self.set_db()
@@ -662,7 +578,6 @@ class TestCollectionModelResource(unittest.TestCase):
         value = "\\%f\\%"
 
         for op in op_codes:
-
             with self.app.test_client() as client:
                 if self.needs_setup:
                     self.set_db()
@@ -677,7 +592,6 @@ class TestCollectionModelResource(unittest.TestCase):
                 self.assertEqual(res.status_code, 400)
 
     def test_config_params_simple_eq(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -690,7 +604,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
             Sample = self.Sample
 
-            qry = Sample.query .filter(Sample.id == 40)
+            qry = Sample.query.filter(Sample.id == 40)
             qry = qry.all()
 
             res_qry = res.json
@@ -701,27 +615,18 @@ class TestCollectionModelResource(unittest.TestCase):
                 len(res_qry[Sample._class()]),
                 len(db_qry),
             )
-            self.assertEqual(
-                res_qry[Sample._class()],
-                db_qry
-            )
+            self.assertEqual(res_qry[Sample._class()], db_qry)
 
             self.assertEqual(res.content_type, "application/json")
 
     def test_config_params_debug1(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
 
             res = client.get(
                 "/samples1",
-                query_string={
-                    "id": 40,
-                    "pageConfig": {
-                        "debug": "True"
-                    }
-                },
+                query_string={"id": 40, "pageConfig": {"debug": "True"}},
                 headers=self.headers,
             )
 
@@ -731,58 +636,38 @@ class TestCollectionModelResource(unittest.TestCase):
             self.assertDictEqual(
                 res_qry,
                 {
-                "class_defaults": {
-                    "model_name": "Sample",
-                    "process_get_input": "Sets the status_id to 6 for no good reason.",
-                    "max_page_size": 5,
-                    "order_by": None,
-                    "op_codes": [
-                        "eq",
-                        "ne",
-                        "gt",
-                        "ge",
-                        "lt",
-                        "le",
-                        "like",
-                        "ilike",
-                        "notlike",
-                        "notilike"
-                    ]
-                },
-                "original_data": {
-                    "id": [
-                        "40"
+                    "class_defaults": {
+                        "model_name": "Sample",
+                        "process_get_input": "Sets the status_id to 6 for no good reason.",
+                        "max_page_size": 5,
+                        "order_by": None,
+                        "op_codes": [
+                            "eq",
+                            "ne",
+                            "gt",
+                            "ge",
+                            "lt",
+                            "le",
+                            "like",
+                            "ilike",
+                            "notlike",
+                            "notilike",
+                        ],
+                    },
+                    "original_data": {
+                        "id": ["40"],
+                        "pageConfig": ["{'debug': 'True'}"],
+                    },
+                    "converted_data": [
+                        ["id", "eq", ["40"]],
+                        ["status_id", "eq", 6],
                     ],
-                    "pageConfig": [
-                        "{'debug': 'True'}"
-                    ]
+                    "page_configs": {"debug": True, "order_by": ["status_id"]},
+                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample \nWHERE sample.id IN (?) AND sample.status_id = ? ORDER BY sample.status_id",
                 },
-                "converted_data": [
-                    [
-                        "id",
-                        "eq",
-                        [
-                            "40"
-                        ]
-                    ],
-                    [
-                        "status_id",
-                        "eq",
-                        6
-                    ]
-                ],
-                "page_configs": {
-                    "debug": True,
-                    "order_by": [
-                        "status_id"
-                    ]
-                },
-                "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample \nWHERE sample.id IN (?) AND sample.status_id = ? ORDER BY sample.status_id"
-                }
             )
 
     def test_config_params_debug2(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -791,11 +676,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 "/samples",
                 query_string={
                     "id": 40,
-                    "pageConfig": {
-                        "debug": "True",
-                        "limit": 40
-
-                    }
+                    "pageConfig": {"debug": "True", "limit": 40},
                 },
                 headers=self.headers,
             )
@@ -821,36 +702,20 @@ class TestCollectionModelResource(unittest.TestCase):
                             "like",
                             "ilike",
                             "notlike",
-                            "notilike"
-                        ]
+                            "notilike",
+                        ],
                     },
                     "original_data": {
-                        "id": [
-                            "40"
-                        ],
-                        "pageConfig": [
-                            "{'debug': 'True', 'limit': 40}"
-                        ]
+                        "id": ["40"],
+                        "pageConfig": ["{'debug': 'True', 'limit': 40}"],
                     },
-                    "converted_data": [
-                        [
-                            "id",
-                            "eq",
-                            [
-                                "40"
-                            ]
-                        ]
-                    ],
-                    "page_configs": {
-                        "debug": True,
-                        "limit": 40
-                    },
-                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample \nWHERE sample.id IN (?)\n LIMIT ? OFFSET ?"
-                }
+                    "converted_data": [["id", "eq", ["40"]]],
+                    "page_configs": {"debug": True, "limit": 40},
+                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample \nWHERE sample.id IN (?)\n LIMIT ? OFFSET ?",
+                },
             )
 
     def test_config_params_invalid_order_var(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -859,11 +724,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 "/samples",
                 query_string={
                     "id": 40,
-                    "pageConfig": {
-                        "debug": "True",
-                        "orderBy": "test"
-
-                    }
+                    "pageConfig": {"debug": "True", "orderBy": "test"},
                 },
                 headers=self.headers,
             )
@@ -871,8 +732,7 @@ class TestCollectionModelResource(unittest.TestCase):
             res_qry = res.json
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
-                res_qry,
-                {'message': 'test is not a column in Sample'}
+                res_qry, {"message": "test is not a column in Sample"}
             )
 
         # now with descending order
@@ -884,11 +744,7 @@ class TestCollectionModelResource(unittest.TestCase):
                 "/samples",
                 query_string={
                     "id": 40,
-                    "pageConfig": {
-                        "debug": "True",
-                        "orderBy": "-test"
-
-                    }
+                    "pageConfig": {"debug": "True", "orderBy": "-test"},
                 },
                 headers=self.headers,
             )
@@ -896,12 +752,10 @@ class TestCollectionModelResource(unittest.TestCase):
             res_qry = res.json
             self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
-                res_qry,
-                {'message': 'test is not a column in Sample'}
+                res_qry, {"message": "test is not a column in Sample"}
             )
 
     def test_config_params_fmt_of_class_order_var(self):
-
         with self.app.test_client() as client:
             if self.needs_setup:
                 self.set_db()
@@ -912,7 +766,7 @@ class TestCollectionModelResource(unittest.TestCase):
                     "set_status": "good True status",
                     "pageConfig": {
                         "debug": "True",
-                    }
+                    },
                 },
                 headers=self.headers,
             )
@@ -938,31 +792,20 @@ class TestCollectionModelResource(unittest.TestCase):
                             "like",
                             "ilike",
                             "notlike",
-                            "notilike"
-                        ]
+                            "notilike",
+                        ],
                     },
                     "original_data": {
-                        "set_status": [
-                            "good True status"
-                        ],
-                        "pageConfig": [
-                            "{'debug': 'True'}"
-                        ]
+                        "set_status": ["good True status"],
+                        "pageConfig": ["{'debug': 'True'}"],
                     },
                     "converted_data": [],
-                    "page_configs": {
-                        "debug": True,
-                        "order_by": [
-                            "status_id"
-                        ]
-                    },
-                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample ORDER BY sample.status_id"
-                }
-
+                    "page_configs": {"debug": True, "order_by": ["status_id"]},
+                    "query": "SELECT sample.id AS sample_id, sample.owner_id AS sample_owner_id, sample.param1 AS sample_param1, sample.param2 AS sample_param2, sample.status_id AS sample_status_id \nFROM sample ORDER BY sample.status_id",
+                },
             )
 
     def test_config_params_bad_input_process(self):
-
         # True, but not followed by tuple of (query, data)
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -1004,10 +847,7 @@ class TestCollectionModelResource(unittest.TestCase):
 
             res_qry = res.json
             self.assertEqual(res.status_code, 400)
-            self.assertDictEqual(
-                res_qry,
-                {"message": "good False status"}
-            )
+            self.assertDictEqual(res_qry, {"message": "good False status"})
 
         # # False, without correct message format
         with self.app.test_client() as client:

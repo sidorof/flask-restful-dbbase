@@ -8,7 +8,6 @@ from os import path
 from dateutil.parser import parse
 import inflect
 
-from flask import current_app
 from flask_restful import Resource
 from dbbase.utils import xlate
 

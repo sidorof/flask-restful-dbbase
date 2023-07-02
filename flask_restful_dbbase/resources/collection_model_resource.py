@@ -5,7 +5,6 @@ This module implements a starting point for collection model resources.
 """
 import json
 import inspect
-import logging
 
 from dbbase.utils import xlate
 from flask import current_app
@@ -302,14 +301,18 @@ class CollectionModelResource(DBBaseResource):
             current_app.logger.debug("Completed validate_process function")
 
             if output["status"]:
-                current_app.logger.debug("Output process_get_input status: True")
+                current_app.logger.debug(
+                    "Output process_get_input status: True"
+                )
                 query = output["query"]
                 data = output["data"]
             else:
                 message = output["message"]
                 status_code = output["status_code"]
 
-                current_app.logger.debug("Output process_get_input status: False")
+                current_app.logger.debug(
+                    "Output process_get_input status: False"
+                )
                 current_app.logger.debug(f"Message: {message}, {status_code}")
                 return {"message": message}, status_code
 
