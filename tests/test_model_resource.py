@@ -255,6 +255,7 @@ class TestModelResource(unittest.TestCase):
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_bad_date_data(self):
+
         bad_datetbl = {"today": "wrong", "now": "wrong"}
         with self.app.test_client() as client:
             if self.needs_setup:
@@ -267,13 +268,13 @@ class TestModelResource(unittest.TestCase):
                 data=json.dumps(bad_datetbl),
                 headers=self.headers,
             )
-            self.assertEqual(res.status_code, 400)
             self.assertDictEqual(
                 res.get_json(),
-                {
-                    "message": "(builtins.TypeError) SQLite Date type only accepts Python date objects as input."
-                },
+                {"message": "(builtins.TypeError) SQLite Date type "
+                     "only accepts Python date objects as input."
+                }
             )
+            self.assertEqual(res.status_code, 400)
             self.assertEqual(res.content_type, "application/json")
 
             # now set date conversions
@@ -703,7 +704,7 @@ class TestModelResource(unittest.TestCase):
                         {
                             "pub_year": "The value two "
                             "thousand 4 is not a number"
-                        },
+                        }
                     ]
                 },
             )
@@ -725,6 +726,7 @@ class TestModelResource(unittest.TestCase):
             res = client.patch(
                 f"/books/{id}", data=json.dumps(book), headers=self.headers
             )
+
             self.assertEqual(res.status_code, 200)
             self.assertDictEqual(
                 res.get_json(),
@@ -1311,13 +1313,13 @@ class TestModelBadDatabase(unittest.TestCase):
             self.db.drop_all()
             res = client.get("/throw-aways/1", headers=self.headers)
 
-            self.assertEqual(res.status_code, 500)
             self.assertDictEqual(
                 res.get_json(),
                 {
                     "message": "(sqlite3.OperationalError) no such table: throwaway"
                 },
             )
+            self.assertEqual(res.status_code, 400)
             self.assertEqual(res.content_type, "application/json")
 
     def test_post_with_bad_db(self):
@@ -1338,6 +1340,7 @@ class TestModelBadDatabase(unittest.TestCase):
             model_class = ThrowAwayPost
 
             def process_post_input(self, data):
+                # destroy first function
                 self.model_class.query.first = "bad"
 
                 return {"status": True, "data": data}
@@ -1347,7 +1350,7 @@ class TestModelBadDatabase(unittest.TestCase):
 
         with self.app.test_client() as client:
             item = dict(name="test")
-            self.db.drop_all()
+            # self.db.drop_all()
 
             res = client.post(
                 "/throw-away-posts",

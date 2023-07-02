@@ -3,14 +3,18 @@
 This module implements a starting point for model resources.
 
 """
+import logging
 from os import path
 from dateutil.parser import parse
 import inflect
 
+from flask import current_app
 from flask_restful import Resource
 from dbbase.utils import xlate
 
 from ..doc_utils import MetaDoc
+
+logger = logging.getLogger(__name__)
 
 
 class DBBaseResource(Resource):
@@ -425,6 +429,7 @@ class DBBaseResource(Resource):
             if not read_only and not_relation:
                 if col_key in data:
                     value = data[col_key]
+
                     # find reasons to exclude
                     tmp_errors = self._check_numeric_casting(
                         col_key, value, col_params
@@ -459,9 +464,13 @@ class DBBaseResource(Resource):
             if required:
                 errors.append({"missing_columns": required})
 
+        logger.debug("Screen data completed")
+
         if errors:
+            logger.debug(f"False, {errors}")
             return False, errors
 
+        logger.debug(f"True, {data}")
         return True, data
 
     @staticmethod

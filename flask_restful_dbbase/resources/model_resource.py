@@ -3,7 +3,8 @@
 This module implements a starting point for model resources.
 
 """
-from flask_restful import request, current_app
+from flask import current_app
+from flask_restful import request
 from .dbbase_resource import DBBaseResource
 from ..validations import validate_process
 
@@ -59,27 +60,38 @@ class ModelResource(DBBaseResource):
         FUNC_NAME = "get"
 
         # the correct key test - raises error if improper url
+        current_app.logger.debug("Checking key in kwargs")
         kdict = self._check_key(kwargs)
+        current_app.logger.debug(f"Completed key in kwargs: {kdict}")
 
         # for use only with self.process_get_input
         data = request.args.to_dict(flat=False)
+        current_app.logger.debug(f"Request args: {data}")
         query = self.model_class.query
         if self.process_get_input is not None:
-            current_app.logger.debug("function process_get_input started")
-            output = self.process_get_input(query, data, kwargs)
-            current_app.logger.debug("function process_get_input finished")
+            try:
+                current_app.logger.debug("function process_get_input started")
+                output = self.process_get_input(query, data, kwargs)
+            except Exception as err:
+                current_app.logger.error(err.args)
+                return "Failure in process_get_input function", 500
 
             current_app.logger.debug("function validate_process started")
             validate_process(output, true_keys=["query", "data"])
             current_app.logger.debug("function validate_process finished")
 
             if output["status"]:
+                current_app.logger.debug(
+                    "Output process_get_input status: True"
+                )
+
                 query = output["query"]
                 data = output["data"]
                 current_app.logger.debug(
                     "Processing continuing with updated query/data"
                 )
             else:
+                current_app.logger.debug("Output process_get_input status: False")
                 message = output["message"]
                 status_code = output["status_code"]
 
@@ -101,7 +113,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             msg = err.args[0]
             current_app.logger.error(msg)
-            return {"message": msg}, 500
+            return {"message": msg}, 400
 
         sfields, sfield_relations = self._get_serializations(FUNC_NAME)
         current_app.logger.debug("Serial fields: {sfields}")
@@ -127,7 +139,7 @@ class ModelResource(DBBaseResource):
         """
         FUNC_NAME = "post"
         # may be used later
-        # url = request.path
+        url = request.path
         status_code = 201
 
         if request.is_json:
@@ -144,10 +156,15 @@ class ModelResource(DBBaseResource):
             return {"message": "JSON format is required"}, 415
 
         if self.process_post_input is not None:
+            current_app.logger.debug("function process_post_input started")
             output = self.process_post_input(data)
+            current_app.logger.debug("Completed process_post_input")
+
             validate_process(output, true_keys=["data"])
+            current_app.logger.debug("Completed validate_process function")
 
             if output["status"]:
+                current_app.logger.debug("Output process_get_input status: True")
                 data = output["data"]
             else:
                 message = output["message"]
@@ -158,12 +175,15 @@ class ModelResource(DBBaseResource):
         obj_params = self.get_obj_params()
 
         try:
+            current_app.logger.debug(
+                "Sceening/filtering data for unnecessary variables"
+            )
             status, data = self.screen_data(
                 self.model_class.deserialize(data), obj_params
             )
         except Exception as err:
             msg = f"malformed data: {err.args[0]}"
-            current_app.logger(msg)
+            current_app.logger.error(msg)
             return {"message": msg}, 400
 
         if status is False:
@@ -174,10 +194,12 @@ class ModelResource(DBBaseResource):
 
         item = None
 
+        current_app.logger.debug("Checking for key names/ids")
         status, kdict = self._all_keys_found(key_names, data)
 
         if status:
             # verify it does not already exist
+            current_app.logger.debug("Verifying keys not already present")
             query = self.model_class.query
             for key_name, value in kdict.items():
                 query = query.filter(
@@ -261,29 +283,44 @@ class ModelResource(DBBaseResource):
         adjust_before = self.before_commit.get(FUNC_NAME)
 
         if adjust_before is not None:
+            current_app.logger.debug(
+                "Running adjust_before function prior to commit"
+            )
             status, result, status_code = self._item_adjust(
                 adjust_before, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         try:
+            current_app.logger.debug("Posting to database")
             item.save()
         except Exception as err:
+            self.model_class.db.session.rollback()
             msg = err.args[0]
             current_app.logger.error(msg)
+            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after:
+            current_app.logger.debug(
+                "Running adjust_after function after commit"
+            )
             status, result, status_code = self._item_adjust(
                 adjust_after, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
@@ -304,13 +341,15 @@ class ModelResource(DBBaseResource):
         url = request.path
         FUNC_NAME = "put"
         status_code = 200
-
         try:
+            current_app.logger.debug("Checking key in kwargs")
             kdict = self._check_key(kwargs)
         except Exception as err:
             msg = err.args[0]
             current_app.logger.info(msg)
             return {"message": msg}, 400
+
+        current_app.logger.debug(f"Completed key in kwargs: {kdict}")
 
         if request.is_json:
             try:
@@ -325,17 +364,33 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_put_input is not None:
-            output = self.process_put_input(query, data, kwargs)
+            try:
+                current_app.logger.debug("function process_put_input started")
+                output = self.process_put_input(query, data, kwargs)
+            except Exception as err:
+                current_app.logger.error(err.args)
 
+            current_app.logger.debug("function validate_process started")
             validate_process(output, true_keys=["query", "data"])
+            current_app.logger.debug("function validate_process finished")
 
             if output["status"]:
+                current_app.logger.debug(
+                    "Output process_put_input status: True"
+                )
+
                 query = output["query"]
                 data = output["data"]
+
+                current_app.logger.debug(
+                    "Processing continuing with updated query/data"
+                )
             else:
+                current_app.logger.debug("Output process_put_input status: False")
                 message = output["message"]
                 status_code = output["status_code"]
 
+                current_app.logger.debug(f"{message}: {status_code}")
                 return message, status_code
 
         status, kdict = self._all_keys_found(list(kdict.keys()), data)
@@ -356,9 +411,21 @@ class ModelResource(DBBaseResource):
 
         # use the key(s) from the url
         data.update(kdict)
-        status, data = self.screen_data(
-            self.model_class.deserialize(data), self.get_obj_params()
-        )
+
+        obj_params = self.get_obj_params()
+
+        try:
+            current_app.logger.debug(
+                "Sceening/filtering data for unnecessary variables"
+            )
+            status, data = self.screen_data(
+                self.model_class.deserialize(data), obj_params
+            )
+        except Exception as err:
+            msg = f"malformed data: {err.args[0]}"
+            current_app.logger.error(msg)
+            return {"message": msg}, 400
+
         if status is False:
             current_app.logger.info(f"{str(data)}: 400")
             return {"message": data}, 400
@@ -371,32 +438,46 @@ class ModelResource(DBBaseResource):
 
         adjust_before = self.before_commit.get(FUNC_NAME)
         if adjust_before:
+            current_app.logger.debug(
+                "Running adjust_before function prior to commit"
+            )
             status, result, status_code = self._item_adjust(
                 adjust_before, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         try:
+            current_app.logger.debug("Saving to database")
             item.save()
 
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
+            self.model_class.db.session.rollback()
             current_app.logger.info(msg)
             current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
             return {"message": msg}, 400
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after:
+            current_app.logger.debug(
+                "Running adjust_after function after commit"
+            )
             status, result, status_code = self._item_adjust(
                 adjust_after, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
@@ -419,10 +500,14 @@ class ModelResource(DBBaseResource):
         status_code = 200
 
         try:
+            current_app.logger.debug("Checking key in kwargs")
             kdict = self._check_key(kwargs)
         except Exception as err:
             msg = err.args[0]
+            current_app.logger.info(msg)
             return {"message": msg}, 400
+
+        current_app.logger.debug(f"Completed key in kwargs: {kdict}")
 
         if request.is_json:
             try:
@@ -436,17 +521,35 @@ class ModelResource(DBBaseResource):
 
         query = self.model_class.query
         if self.process_patch_input is not None:
-            output = self.process_patch_input(query, data, kwargs)
+            try:
+                current_app.logger.debug("function process_patch_input started")
+                output = self.process_patch_input(query, data, kwargs)
+            except Exception as err:
+                msg = f"{err.args}"
+                current_app.logger.error(msg)
+                return {"message": msg}, 500
 
+            current_app.logger.debug("function validate_process started")
             validate_process(output, true_keys=["query", "data"])
+            current_app.logger.debug("function validate_process finished")
 
             if output["status"]:
+                current_app.logger.debug(
+                    "Output process_put_input status: True"
+                )
+
                 query = output["query"]
                 data = output["data"]
+
+                current_app.logger.debug(
+                    "Processing continuing with updated query/data"
+                )
             else:
+                current_app.logger.debug("Output process_put_input status: False")
                 message = output["message"]
                 status_code = output["status_code"]
 
+                current_app.logger.debug(f"{message}: {status_code}")
                 return message, status_code
 
         for key_name, value in kdict.items():
@@ -455,18 +558,32 @@ class ModelResource(DBBaseResource):
         try:
             item = query.first()
         except Exception as err:
+            self.model_class.db.session.rollback()
             msg = err.args[0]
             current_app.logger.error(msg)
-            return {"message": msg}, 500
+            return {"message": msg}, 400
 
         data = self.model_class.deserialize(data)
 
         data.update(kdict)
-        status, data = self.screen_data(
-            data, self.get_obj_params(), skip_missing_data=True
-        )
+        obj_params = self.get_obj_params()
+
+        try:
+            current_app.logger.debug(
+                "Sceening/filtering data for unnecessary variables"
+            )
+            status, data = self.screen_data(
+                self.model_class.deserialize(data),
+                obj_params,
+                skip_missing_data=True
+            )
+        except Exception as err:
+            msg = f"malformed data: {err.args[0]}"
+            current_app.logger.error(msg)
+            return {"message": msg}, 400
 
         if status is False:
+            current_app.logger.info(f"{str(data)}: 400")
             return {"message": data}, 400
 
         if item is None:
@@ -476,16 +593,24 @@ class ModelResource(DBBaseResource):
                 setattr(item, key, value)
 
         adjust_before = self.before_commit.get(FUNC_NAME)
+
         if adjust_before is not None:
+            current_app.logger.debug(
+                "Running adjust_before function prior to commit"
+            )
             status, result, status_code = self._item_adjust(
                 adjust_before, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         try:
+            current_app.logger.debug("Saving to database")
             item.save()
         except Exception as err:
             msg = err.args[0]
@@ -501,12 +626,19 @@ class ModelResource(DBBaseResource):
 
         adjust_after = self.after_commit.get(FUNC_NAME)
         if adjust_after:
+            current_app.logger.debug(
+                "Running adjust_after function after commit"
+            )
+
             status, result, status_code = self._item_adjust(
                 adjust_after, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
@@ -528,15 +660,28 @@ class ModelResource(DBBaseResource):
         FUNC_NAME = "delete"
         status_code = 200
         try:
+            current_app.logger.debug("Checking key in kwargs")
             kdict = self._check_key(kwargs)
         except Exception as err:
             msg = err.args[0]
             return {"message": msg}, 400
 
+        current_app.logger.debug(f"Completed key in kwargs: {kdict}")
+
         query = self.model_class.query
         if self.process_delete_input is not None:
-            output = self.process_delete_input(query, kwargs)
+
+            try:
+                current_app.logger.debug("function process_delete_input started")
+                output = self.process_delete_input(query, kwargs)
+            except Exception as err:
+                msg = f"{err.args}"
+                current_app.logger.error(msg)
+                return {"message": msg}, 500
+
+            current_app.logger.debug("function validate_process started")
             validate_process(output, true_keys=["query"])
+            current_app.logger.debug("function validate_process finished")
 
             if output["status"]:
                 query = output["query"]
@@ -548,6 +693,7 @@ class ModelResource(DBBaseResource):
 
         for key_name, value in kdict.items():
             query = query.filter(getattr(self.model_class, key_name) == value)
+
         try:
             item = query.first()
         except Exception as err:
@@ -562,15 +708,22 @@ class ModelResource(DBBaseResource):
 
         adjust_before = self.before_commit.get(FUNC_NAME)
         if adjust_before is not None:
+            current_app.logger.debug(
+                "Running adjust_before function prior to commit"
+            )
             status, result, status_code = self._item_adjust(
                 adjust_before, item, status_code
             )
             if status:
                 item = result
             else:
+                current_app.logger.debug(
+                    f"Return diverted: {result}: {status_code}"
+                )
                 return result, status_code
 
         try:
+            current_app.logger.debug("Deleting from database")
             item.delete()
         except Exception as err:
             self.model_class.db.session.rollback()
