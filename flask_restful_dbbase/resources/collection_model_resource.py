@@ -314,7 +314,9 @@ class CollectionModelResource(DBBaseResource):
                 current_app.logger.debug(
                     "  Output process_get_input status: False"
                 )
-                current_app.logger.debug(f"  Message: {message}, {status_code}")
+                current_app.logger.debug(
+                    f"  Message: {message}, {status_code}"
+                )
                 return {"message": message}, status_code
 
         query_data = []

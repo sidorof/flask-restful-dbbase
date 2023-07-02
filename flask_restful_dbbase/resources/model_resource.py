@@ -72,7 +72,9 @@ class ModelResource(DBBaseResource):
         query = self.model_class.query
         if self.process_get_input is not None:
             try:
-                current_app.logger.debug("  function process_get_input started")
+                current_app.logger.debug(
+                    "  function process_get_input started"
+                )
                 output = self.process_get_input(query, data, kwargs)
             except Exception as err:
                 current_app.logger.error(err.args)
@@ -119,7 +121,9 @@ class ModelResource(DBBaseResource):
 
         sfields, sfield_relations = self._get_serializations(FUNC_NAME)
         current_app.logger.debug("  Serial fields: {sfields}")
-        current_app.logger.debug("  Serial field relations: {sfield_relations}")
+        current_app.logger.debug(
+            "  Serial field relations: {sfield_relations}"
+        )
         if item:
             result = item.to_dict(
                 serial_fields=sfields,
@@ -374,7 +378,9 @@ class ModelResource(DBBaseResource):
         query = self.model_class.query
         if self.process_put_input is not None:
             try:
-                current_app.logger.debug("  function process_put_input started")
+                current_app.logger.debug(
+                    "  function process_put_input started"
+                )
                 output = self.process_put_input(query, data, kwargs)
             except Exception as err:
                 current_app.logger.error(err.args)
