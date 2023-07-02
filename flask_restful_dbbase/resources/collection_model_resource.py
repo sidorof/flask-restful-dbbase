@@ -238,13 +238,14 @@ class CollectionModelResource(DBBaseResource):
 
             return new_var, "eq", value
 
-    def get(self):
-        FUNC_NAME = "get"
+    def get(self, **kwargs):
+        FUNC_NAME = "GET"
         name = self.model_class._class()
         url = request.path
+        current_app.logger.info(f"{FUNC_NAME} {url} {kwargs}")
 
         data = request.args.to_dict(flat=False)
-        current_app.logger.debug(f"args received: {data}")
+        current_app.logger.info(f"  args received: {data}")
 
         orig_data = request.args.to_dict(flat=False)
 
@@ -262,15 +263,15 @@ class CollectionModelResource(DBBaseResource):
         serial_field_relations = configs.get("serial_field_relations")
         debug = configs["debug"] if "debug" in configs else False
 
-        current_app.logger.debug(f"order_by: {order_by}")
-        current_app.logger.debug(f"page_size: {page_size}")
-        current_app.logger.debug(f"limit: {limit}")
-        current_app.logger.debug(f"offset: {offset}")
-        current_app.logger.debug(f"serial_fields: {serial_fields}")
+        current_app.logger.debug(f"  order_by: {order_by}")
+        current_app.logger.debug(f"  page_size: {page_size}")
+        current_app.logger.debug(f"  limit: {limit}")
+        current_app.logger.debug(f"  offset: {offset}")
+        current_app.logger.debug(f"  serial_fields: {serial_fields}")
         current_app.logger.debug(
-            f"serial_field_relations: {serial_field_relations}"
+            f"  serial_field_relations: {serial_field_relations}"
         )
-        current_app.logger.debug(f"debug: {debug}")
+        current_app.logger.debug(f"  debug: {debug}")
 
         query = self.model_class.query
 
@@ -288,21 +289,21 @@ class CollectionModelResource(DBBaseResource):
             #           "status_code": status_code
             #       }
             #   Anything other than that results in a 500 error
-            current_app.logger.debug("Starting process_get_input function")
+            current_app.logger.debug("  Starting process_get_input function")
             try:
                 output = self.process_get_input(query, data)
             except Exception as err:
                 current_app.logger.error(err.args)
                 return "Failure in process_get_input function", 500
 
-            current_app.logger.debug("Completed process_get_input function")
+            current_app.logger.debug("  Completed process_get_input function")
             # bare minimum check
             validate_process(output, true_keys=["query", "data"])
-            current_app.logger.debug("Completed validate_process function")
+            current_app.logger.debug("  Completed validate_process function")
 
             if output["status"]:
                 current_app.logger.debug(
-                    "Output process_get_input status: True"
+                    "  Output process_get_input status: True"
                 )
                 query = output["query"]
                 data = output["data"]
@@ -311,21 +312,21 @@ class CollectionModelResource(DBBaseResource):
                 status_code = output["status_code"]
 
                 current_app.logger.debug(
-                    "Output process_get_input status: False"
+                    "  Output process_get_input status: False"
                 )
-                current_app.logger.debug(f"Message: {message}, {status_code}")
+                current_app.logger.debug(f"  Message: {message}, {status_code}")
                 return {"message": message}, status_code
 
         query_data = []
 
-        current_app.logger.debug("Converting query parameters")
+        current_app.logger.debug("  Converting query parameters")
         for var, value in data.items():
             # classify op and convert var from camel_case
             try:
                 query_data.append(self._classify_op(var, value))
             except Exception as err:
                 return {"message": f"{err.args}"}, 400
-        current_app.logger.debug("Completed conversion")
+        current_app.logger.debug("  Completed conversion")
 
         obj_params = self.get_obj_params()
         query_data = [
@@ -335,7 +336,7 @@ class CollectionModelResource(DBBaseResource):
         ]
 
         # query filtering
-        current_app.logger.debug("Building SqlAlchemy query filtering")
+        current_app.logger.debug("  Building SqlAlchemy query filtering")
         for new_var, op, value in query_data:
             var = getattr(self.model_class, new_var)
             if isinstance(value, str) and value[:4] == "var:":
@@ -355,7 +356,7 @@ class CollectionModelResource(DBBaseResource):
                 func = getattr(var, op)
                 query = query.filter(func(value))
 
-        current_app.logger.debug("Adding order_by to SqlAlchemy query")
+        current_app.logger.debug("  Adding order_by to SqlAlchemy query")
         if order_by:
             msg = "{order} is not a column in {name}"
             order_list = []
@@ -383,20 +384,20 @@ class CollectionModelResource(DBBaseResource):
             query = query.order_by(*order_list)
 
         if offset is not None:
-            current_app.logger.debug("Adding offset to SqlAlchemy query")
+            current_app.logger.debug("  Adding offset to SqlAlchemy query")
             query = query.offset(offset)
 
         if page_size is not None:
-            current_app.logger.debug("Adding page_size to SqlAlchemy query")
+            current_app.logger.debug("  Adding page_size to SqlAlchemy query")
             query = query.limit(page_size)
 
         if limit is not None:
-            current_app.logger.debug("Adding limit to SqlAlchemy query")
+            current_app.logger.debug("  Adding limit to SqlAlchemy query")
             # works same as page size, more familiar for dbs
             query = query.limit(limit)
 
         if debug:
-            current_app.logger.debug("Building debug explanation")
+            current_app.logger.debug("  Building debug explanation")
             if self.process_get_input is None:
                 get_input_doc = None
             else:
@@ -415,8 +416,8 @@ class CollectionModelResource(DBBaseResource):
                 "query": str(query),
             }, 200
 
-        current_app.logger.debug("Completed SqlAlchemy query:")
-        current_app.logger.debug(f"{query}")
+        current_app.logger.debug("  Completed SqlAlchemy query:")
+        current_app.logger.debug(f"  {query}")
         query = query.all()
 
         if serial_fields is None:
@@ -425,7 +426,7 @@ class CollectionModelResource(DBBaseResource):
             )
 
         try:
-            current_app.logger.debug("Returning completed query")
+            current_app.logger.debug("  Returning completed query")
             return (
                 {
                     self.model_class._class(): [
