@@ -419,6 +419,11 @@ class ModelResource(DBBaseResource):
         try:
             item = query.first()
 
+            if item:
+                current_app.logger.debug(f"Existing {item} found in db")
+            else:
+                current_app.logger.debug("Record not found in db")
+
         except Exception as err:
             msg = err.args[0]
             current_app.logger.error(msg)
@@ -448,6 +453,8 @@ class ModelResource(DBBaseResource):
             return {"message": data}, 400
 
         if item is None:
+            current_app.logger.info(f"")
+
             item = self.model_class(**data)
         else:
             for key, value in data.items():
