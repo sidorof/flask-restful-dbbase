@@ -43,7 +43,7 @@ Since part of the point of these functions is to determine whether to go forward
 Use the following formats as a guide.
 
 +----------------+----------------------------------+----------------------------------+
-|                | Args                             |  Returns a dictionary                 |
+|                | Args                             |  Returns a dictionary            |
 |                +------+-------+--------+----------+---------+------------------------+
 | Method         | self | query |  data  |  kwargs  |  status |   result               |
 +----------------+------+-------+--------+----------+---------+------------------------+
