@@ -5,7 +5,7 @@ This module implements utilities.
 from dbbase.utils import xlate
 
 
-class MetaDoc(object):
+class MetaDoc:
     """
     This class provides a scaffolding for holding documentation
     used when generating meta documents.
@@ -46,7 +46,10 @@ class MetaDoc(object):
     def __init__(
         self,
         resource_class,
-        requirements=None,
+
+        # not implemented yet
+        # requirements=None,
+
         methods=None,
     ):
         self.resource_class = resource_class
@@ -107,6 +110,8 @@ class MetaDoc(object):
         return doc
 
     def add_methods(self, doc, method):
+        """ Accumulated methods for the docs.
+        """
         doc.setdefault("methods", {})
         if method is None:
             for tmp_method in self.all_methods:
@@ -128,7 +133,7 @@ class MetaDoc(object):
             doc["methods"][method] = MethodDoc(method).to_dict(self)
 
 
-class MethodDoc(object):
+class MethodDoc:
     """
     This class holds details about a method.
 
@@ -158,7 +163,7 @@ class MethodDoc(object):
         self.input_modifier = input_modifier
         self.before_commit = before_commit
         self.after_commit = after_commit
-        self.use_default_response = True
+        self.use_default_response = use_default_response
 
         if responses is None:
             self.responses = []
@@ -184,9 +189,8 @@ class MethodDoc(object):
                 dict([[key, db.doc_column(resource_class.model_class, key)]])
                 for key in keys
             ]
-        else:
-            key = keys[0]
-            return {key: db.doc_column(resource_class.model_class, key)}
+        key = keys[0]
+        return {key: db.doc_column(resource_class.model_class, key)}
 
     @staticmethod
     def _get_input_props(resource_class):

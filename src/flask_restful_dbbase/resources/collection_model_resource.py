@@ -117,6 +117,7 @@ class CollectionModelResource(DBBaseResource):
     OP_CODES2 = ["like", "ilike", "notlike", "notilike"]
 
     def __init__(self):
+        super().__init__()
         if self.model_class is None:
             msg = "A model class must be set for this resource to function."
             raise ValueError(msg)
@@ -155,8 +156,7 @@ class CollectionModelResource(DBBaseResource):
                 elif new_key == "page_size":
                     new_value = int(value)
                     if self.max_page_size is not None:
-                        if new_value > self.max_page_size:
-                            new_value = self.max_page_size
+                        new_value = min(new_value, self.max_page_size)
 
                 elif new_key in ["page_size", "offset", "limit"]:
                     new_value = int(value)
@@ -164,7 +164,7 @@ class CollectionModelResource(DBBaseResource):
                 elif new_key == "debug":
                     new_value = value.lower() == "true"
                 else:
-                    new_key == "serial_fields"
+                    # new_key == "serial_fields"
                     new_value = [xlate(val, camel_case=False) for val in value]
 
                 tmp[new_key] = new_value
@@ -203,7 +203,7 @@ class CollectionModelResource(DBBaseResource):
 
             return new_var, "in", value
 
-        elif isinstance(value, list) and len(value) == 2:
+        if isinstance(value, list) and len(value) == 2:
             # Note that val could be a variable such as var:my_variable
             # xlate of my_variable is handled when adding to query filter
             op, val = value
@@ -220,7 +220,7 @@ class CollectionModelResource(DBBaseResource):
 
             return new_var, op, val
 
-        elif isinstance(value, list) and len(value) == 1:
+        if isinstance(value, list) and len(value) == 1:
             if value[0] in self.OP_CODES1 + self.OP_CODES2:
                 # mistake concluded
                 raise ValueError(
@@ -232,13 +232,13 @@ class CollectionModelResource(DBBaseResource):
 
             return new_var, "eq", value
 
-        else:
-            # default
-            new_var = xlate(var, camel_case=False)
+        # default
+        new_var = xlate(var, camel_case=False)
 
-            return new_var, "eq", value
+        return new_var, "eq", value
 
     def get(self, **kwargs):
+        """ Get method"""
         FUNC_NAME = "GET"
         name = self.model_class._class()
         url = request.path

@@ -72,7 +72,7 @@ def create_resource(
         for method in stop_method_list:
             del class_dict[method]
             del class_dict[f"process_{method}_input"]
-        class_dict["methods"] = set([method.upper() for method in methods])
+        class_dict["methods"] = set(method.upper() for method in methods)
 
     class_dict.update(params)
 

@@ -1,0 +1,43 @@
+[project]
+name="flask-restful-dbbase"
+description="Flask-Restful combined with dbbase"
+version="0.4.1"
+authors=[{name="Don Smiley", email="dsmiley@sidorof.com"}]
+
+dependencies=[
+    "pydantic==1.10.7",
+    "Flask==2.2.2",
+    "jinja2==3.0.3",
+    "SQLAlchemy < 1.4",
+    "python-dateutil==2.8.1",
+    "inflect",
+    "Flask-Restful",
+    "Flask-SQLAlchemy",
+    "DBBase",
+]
+
+[build-system]
+requires = ["setuptools", "wheel", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 79
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.pylint]
+max-line-length = 79
+disable = [
+    # "C0103", # (invalid-name)
+    # "C0114", # (missing-module-docstring)
+    # "C0115", # (missing-class-docstring)
+    # "C0116", # (missing-function-docstring)
+    # "R0903", # (too-few-public-methods)
+    # "R0913", # (too-many-arguments)
+    # "W0105", # (pointless-string-statement)
+    "E1101",
+]
