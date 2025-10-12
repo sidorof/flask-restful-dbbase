@@ -138,7 +138,7 @@ class ModelResource(DBBaseResource):
         current_app.logger.debug(msg)
         return {"message": msg}, 404
 
-    def post(self):
+    def post(self, **kwargs):
         """
         This function is the HTTP POST method for a resource handling
         a single item.
@@ -165,7 +165,7 @@ class ModelResource(DBBaseResource):
 
         if self.process_post_input is not None:
             current_app.logger.debug("  function process_post_input started")
-            output = self.process_post_input(data)
+            output = self.process_post_input(data, kwargs)
             current_app.logger.debug("  Completed process_post_input")
 
             validate_process(output, true_keys=["data"])
