@@ -1267,3 +1267,5 @@ def test_create_doc():
         },
         "responses": [{"message": "a unique response"}],
     }
+
+    db.session.close()

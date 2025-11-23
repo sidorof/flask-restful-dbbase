@@ -135,6 +135,7 @@ class TestModelResource(unittest.TestCase):
         cls.db.session.remove()
         cls.db.drop_all()
         cls.db.Model.metadata.clear()
+        cls.db.session.close()
         cls.db = None
         del cls.db
 
