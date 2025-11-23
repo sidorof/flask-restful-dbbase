@@ -227,7 +227,7 @@ class CollectionModelResource(DBBaseResource):
                     "There must be a value paired with the operator. "
                     "Example: [operator, value]"
                 )
-            if value in [["None"], []"null"]]:
+            if value in [["None"], ["null"]]:
                 value = None
             new_var = xlate(var, camel_case=False)
 
