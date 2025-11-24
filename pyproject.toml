@@ -1,7 +1,7 @@
 [project]
 name="flask-restful-dbbase"
 description="Flask-Restful combined with dbbase"
-version="0.4.4"
+version="0.4.5"
 authors=[{name="Don Smiley", email="dsmiley@sidorof.com"}]
 
 dependencies=[

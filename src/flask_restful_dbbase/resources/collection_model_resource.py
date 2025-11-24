@@ -117,7 +117,8 @@ class CollectionModelResource(DBBaseResource):
     OP_CODES2 = ["like", "ilike", "notlike", "notilike"]
 
     def __init__(self):
-        super().__init__()
+        # super().__init__()
+        DBBaseResource.__init__(self)
         if self.model_class is None:
             msg = "A model class must be set for this resource to function."
             raise ValueError(msg)
