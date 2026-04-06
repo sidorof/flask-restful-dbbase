@@ -1,5 +1,16 @@
 # Changelog
-## (0.4.0) -
+## (0.4.6) -
+### Changed
+*   Changed filtering in model collections. The use of op codes is now in the form of a dictionary. For example:
+
+```
+    param = {
+        "description": '{ "op": "like", "value": "test" }'
+    }
+
+```
+From JavaScript, such filtering is converted to a string before being sent to avoid confusing the url. Then, it is converted back into a dictionary.
+
 ### Changed
 *   Added richer set of filtering in model collections.
 *   Refactored process_{method}_input validation. Such functions must now output a dictionary with for cleaner validations.

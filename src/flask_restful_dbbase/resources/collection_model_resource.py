@@ -201,14 +201,17 @@ class CollectionModelResource(DBBaseResource):
         """
         if var.endswith("[]"):
             new_var = xlate(var[:-2], camel_case=False)
-
             return new_var, "in", value
 
-        if isinstance(value, list) and len(value) == 2:
+        try:
+            value = json.loads(value[0])
+        except:
+            pass
+
+        if isinstance(value, dict) and len(value) == 2:
             # Note that val could be a variable such as var:my_variable
             # xlate of my_variable is handled when adding to query filter
-            op, val = value
-
+            op, val = value.values()
             new_var = xlate(var, camel_case=False)
 
             if op not in self.OP_CODES1 + self.OP_CODES2:
