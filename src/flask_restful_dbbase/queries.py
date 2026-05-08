@@ -1,5 +1,13 @@
 # queries.py
+"""
+This module implements query related functions.
+"""
+
+import json
+import inspect
+
 from flask import current_app
+from dbbase.utils import xlate
 
 PAGE_CONFIGS = [
     "page_size",
@@ -19,7 +27,7 @@ OP_CODES1 = ["eq", "ne", "gt", "ge", "lt", "le"]
 OP_CODES2 = ["contains", "like", "ilike", "notlike", "notilike"]
 
 
-def query(res, data):
+def query(res, data, req_data):
     """
     Implements a complex query within a POST.
 
@@ -41,7 +49,7 @@ def query(res, data):
     configs = {}
     for key in ["pageConfig", "page_config"]:
         if key in data:
-            configs = page_configs(data.pop(key))
+            configs = page_configs(res, data.pop(key))
             break
 
     order_by = configs.get("order_by")
@@ -63,12 +71,12 @@ def query(res, data):
     current_app.logger.debug(f"  debug: {debug}")
     # end of page config
 
-    query = res.model_class.query
+    sa_query = res.model_class.query
 
     filters = data["query"].get("filters", None)
 
     if filters:
-        query = process_filters(res, filters, query)
+        sa_query = process_filters(res, filters, sa_query)
 
     current_app.logger.debug("  Adding order_by to SqlAlchemy query")
     if order_by:
@@ -78,12 +86,14 @@ def query(res, data):
             if order.startswith("-"):
                 order = order[1:]
                 if hasattr(res.model_class, order):
-                    order_list.append(
-                        getattr(res.model_class, order).desc()
-                    )
+                    order_list.append(getattr(res.model_class, order).desc())
                 else:
                     return (
-                        {"message": msg.format(order=order, name=name)},
+                        {
+                            "message": msg.format(
+                                order=order, name=req_data.name
+                            )
+                        },
                         400,
                     )
             else:
@@ -91,24 +101,28 @@ def query(res, data):
                     order_list.append(getattr(res.model_class, order))
                 else:
                     return (
-                        {"message": msg.format(order=order, name=name)},
+                        {
+                            "message": msg.format(
+                                order=order, name=req_data.name
+                            )
+                        },
                         400,
                     )
 
-        query = query.order_by(*order_list)
+        sa_query = sa_query.order_by(*order_list)
 
     if offset is not None:
         current_app.logger.debug("  Adding offset to SqlAlchemy query")
-        query = query.offset(offset)
+        sa_query = sa_query.offset(offset)
 
     if page_size is not None:
         current_app.logger.debug("  Adding page_size to SqlAlchemy query")
-        query = query.limit(page_size)
+        sa_query = sa_query.limit(page_size)
 
     if limit is not None:
         current_app.logger.debug("  Adding limit to SqlAlchemy query")
         # works same as page size, more familiar for dbs
-        query = query.limit(limit)
+        sa_query = sa_query.limit(limit)
 
     if debug:
         current_app.logger.debug("  Building debug explanation")
@@ -127,30 +141,28 @@ def query(res, data):
             # "original_data": orig_data,
             "converted_data": data,
             "page_configs": configs,
-            "query": str(query),
+            "query": str(sa_query),
         }, 200
 
     current_app.logger.debug("  Completed SqlAlchemy query:")
-    current_app.logger.debug(f"  {query}")
-    query = query.all()
+    current_app.logger.debug(f"  {sa_query}")
+    sa_query = sa_query.all()
 
     if serial_fields is None:
-        serial_fields, serial_field_relations = res._get_serializations(
-            "get"
-        )
+        serial_fields, serial_field_relations = res._get_serializations("get")
 
     try:
         current_app.logger.debug("  Returning completed query")
 
         answer = {
-                res.model_class._class(): [
-                    item.to_dict(
-                        serial_fields=serial_fields,
-                        serial_field_relations=serial_field_relations,
-                    )
-                    for item in query
-                ],
-            }
+            res.model_class._class(): [
+                item.to_dict(
+                    serial_fields=serial_fields,
+                    serial_field_relations=serial_field_relations,
+                )
+                for item in sa_query
+            ],
+        }
         current_app.logger.debug(f"Returning {answer}")
 
         return (
@@ -160,28 +172,27 @@ def query(res, data):
                         serial_fields=serial_fields,
                         serial_field_relations=serial_field_relations,
                     )
-                    for item in query
+                    for item in sa_query
                 ],
             },
             200,
             {
-                'Content-type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
+                "Content-type": "application/json",
+                "Access-Control-Allow-Origin": "*",
             },
         )
 
     except Exception as err:
         msg = err.args[0]
         status_code = 500
-        return_msg = f"Internal Server Error: method {FUNC_NAME}: {url}"
-        current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
-        return {"message": return_msg}, 500
+        return_msg = (
+            f"Internal Server Error: method {res.FUNC_NAME}: {res.url}"
+        )
+        current_app.logger.error(
+            f"{res.url} method {req_data.func_name}: {msg}"
+        )
+        return {"message": return_msg}, status_code
 
-    return {
-        "status": False,
-        "message": message,
-        "status_code": status_code
-    }
 
 def _filter_var(res, value):
     """
@@ -190,30 +201,27 @@ def _filter_var(res, value):
     comp_var = xlate(value[4:], camel_case=False)
     return getattr(res.model_class, comp_var)
 
+
 def _filter_op1(res, op, var, value):
     """
     Creates column variable and filter for op1 operators"
     """
-    col_var = getattr(
-        res.model_class,
-        xlate(var, camel_case=False)
-    )
+    col_var = getattr(res.model_class, xlate(var, camel_case=False))
 
     if value.startswith("var:"):
-        value = res._filter_var(value)
+        value = _filter_var(res, value)
     func = getattr(col_var, f"__{op}__")
     return func(value)
+
 
 def _filter_op2(res, op, var, value):
     """
     Creates column variable and filter for op2 operators"
     """
-    col_var = getattr(
-        res.model_class,
-        xlate(var, camel_case=False)
-    )
+    col_var = getattr(res.model_class, xlate(var, camel_case=False))
     func = getattr(col_var, op)
     return func(value)
+
 
 def _filter_in(res, var, value):
     """
@@ -221,33 +229,35 @@ def _filter_in(res, var, value):
     """
     if isinstance(value, list):
         col_var = getattr(res.model_class, var)
-        return column.in_(value)
+        return col_var.in_(value)
 
     msg = f"Value must be a list: {value}"
     current_app.logger.info(msg)
     raise ValueError(msg)
+
 
 def _filter(res, item):
     """
     Structure of item:
         {"var": var, "filter": {"op": op, "value": value}}
     """
-    var, op, value = res._parse_filter(item)
+    var, op, value = _parse_filter(item)
 
     col_var = xlate(var, camel_case=False)
     if op == "in":
-        clause = res._filter_in(col_var, value)
+        clause = _filter_in(res, col_var, value)
     elif op in OP_CODES1:
-        clause = res._filter_op1(op, col_var, value)
+        clause = _filter_op1(res, op, col_var, value)
     elif op in OP_CODES2:
-        clause = res._filter_op2(op, col_var, value)
+        clause = _filter_op2(res, op, col_var, value)
     else:
         msg = f"unknown op code: {op}"
         current_app.logger.info(msg)
         raise ValueError(msg)
     return clause
 
-def _parse_filter(res, item):
+
+def _parse_filter(item):
     if not isinstance(item, dict):
         msg = f"Item must be a dict: {item}"
         current_app.logger.info(msg)
@@ -281,7 +291,8 @@ def _parse_filter(res, item):
 
     return var, op, value
 
-def _classify_op(res, var, value):
+
+def _classify_op(var, value):
     """
     Classifies the operation using the variable. Also,
     translation from camel to snake takes place as well
@@ -315,12 +326,8 @@ def _classify_op(res, var, value):
         new_var = xlate(var, camel_case=False)
 
         if op not in OP_CODES1 + OP_CODES2:
-            str_list = str(OP_CODES1 + OP_CODES2).replace(
-                "'", ""
-            )
-            raise ValueError(
-                f'Op code "{op}" wrong. Must be in {str_list}'
-            )
+            str_list = str(OP_CODES1 + OP_CODES2).replace("'", "")
+            raise ValueError(f'Op code "{op}" wrong. Must be in {str_list}')
 
         return new_var, op, val
 
@@ -342,7 +349,8 @@ def _classify_op(res, var, value):
 
     return new_var, "eq", value
 
-def process_filters(res, filters, query):
+
+def process_filters(res, filters, sa_query):
     """
     NOTE: this is an early pass at POST queries. It needs
         enriching on features and design. Also, it needs
@@ -418,13 +426,69 @@ def process_filters(res, filters, query):
                     for i in range(2, len(value)):
                         clause_list.append(_filter(res, value[i]))
 
-                    query = query.filter(clause_list)
+                    sa_query = sa_query.filter(clause_list)
 
             else:
                 msg = f"op of {op} is not supported"
                 current_app.logger.info(msg)
                 raise ValueError(msg)
         else:
-            query = query.filter(res._filter(item))
+            sa_query = sa_query.filter(_filter(res, item))
 
-    return query
+    return sa_query
+
+
+def page_configs(res, configs):
+    """
+    Converts any config variables to snake case and
+    verifies the variables are part of page configs.
+
+    NOTE: what if a None or null is sent through?
+    """
+    tmp = {}
+    if isinstance(configs, list):
+        configs = configs[0]
+
+    if isinstance(configs, str):
+        configs = json.loads(configs.replace("'", '"'))
+
+    for key, value in configs.items():
+        new_key = xlate(key, camel_case=False)
+        if new_key in PAGE_CONFIGS:
+            # run the gauntlet
+            if new_key == "order_by":
+                # account for field name conversion
+                if isinstance(value, list):
+                    new_value = [xlate(val, camel_case=False) for val in value]
+                else:
+                    new_value = [xlate(value, camel_case=False)]
+
+            elif new_key == "limit":
+                new_value = int(value)
+
+            elif new_key == "page_size":
+                new_value = int(value)
+                if res.max_page_size is not None:
+                    new_value = min(new_value, res.max_page_size)
+
+            elif new_key in ["page_size", "offset", "limit"]:
+                new_value = int(value)
+
+            elif new_key == "debug":
+                new_value = value.lower() == "true"
+            else:
+                # new_key == "serial_fields"
+                new_value = [xlate(val, camel_case=False) for val in value]
+
+            tmp[new_key] = new_value
+
+        else:
+            raise ValueError(f"Unknown page config value: {new_key}")
+
+    if "order_by" not in tmp and res.order_by is not None:
+        if isinstance(res.order_by, list):
+            tmp["order_by"] = res.order_by
+        else:
+            tmp["order_by"] = [res.order_by]
+
+    return tmp
