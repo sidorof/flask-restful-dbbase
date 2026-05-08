@@ -101,6 +101,7 @@ class CollectionModelResource(DBBaseResource):
 
     model_name = None
     process_get_input = None
+    process_post_input = None
     max_page_size = None
     order_by = None
 
@@ -113,8 +114,13 @@ class CollectionModelResource(DBBaseResource):
         "serial_fields",
     ]
 
+    # codes instantiated as field.__op__
     OP_CODES1 = ["eq", "ne", "gt", "ge", "lt", "le"]
-    OP_CODES2 = ["like", "ilike", "notlike", "notilike"]
+
+    # codes instantiated as:
+    #   func = getattr(column.field, "ilike")
+    #   filter(func(value))
+    OP_CODES2 = ["contains", "like", "ilike", "notlike", "notilike"]
 
     def __init__(self):
         # super().__init__()
@@ -124,123 +130,308 @@ class CollectionModelResource(DBBaseResource):
             raise ValueError(msg)
         self.model_name = self.model_class._class()
 
-    def _page_configs(self, configs):
-        """
-        Converts any config variables to snake case and
-        verifies the variables are part of page configs.
+    # def _page_configs(self, configs):
+    #     """
+    #     Converts any config variables to snake case and
+    #     verifies the variables are part of page configs.
+    #
+    #     NOTE: what if a None or null is sent through?
+    #     """
+    #     tmp = {}
+    #     if isinstance(configs, list):
+    #         configs = configs[0]
+    #
+    #     if isinstance(configs, str):
+    #         configs = json.loads(configs.replace("'", '"'))
+    #
+    #     for key, value in configs.items():
+    #         new_key = xlate(key, camel_case=False)
+    #         if new_key in self._PAGE_CONFIGS:
+    #             # run the gauntlet
+    #             if new_key == "order_by":
+    #                 # account for field name conversion
+    #                 if isinstance(value, list):
+    #                     new_value = [
+    #                         xlate(val, camel_case=False) for val in value
+    #                     ]
+    #                 else:
+    #                     new_value = [xlate(value, camel_case=False)]
+    #
+    #             elif new_key == "limit":
+    #                 new_value = int(value)
+    #
+    #             elif new_key == "page_size":
+    #                 new_value = int(value)
+    #                 if self.max_page_size is not None:
+    #                     new_value = min(new_value, self.max_page_size)
+    #
+    #             elif new_key in ["page_size", "offset", "limit"]:
+    #                 new_value = int(value)
+    #
+    #             elif new_key == "debug":
+    #                 new_value = value.lower() == "true"
+    #             else:
+    #                 # new_key == "serial_fields"
+    #                 new_value = [xlate(val, camel_case=False) for val in value]
+    #
+    #             tmp[new_key] = new_value
+    #
+    #         else:
+    #             raise ValueError(f"Unknown page config value: {new_key}")
+    #
+    #     if "order_by" not in tmp and self.order_by is not None:
+    #         if isinstance(self.order_by, list):
+    #             tmp["order_by"] = self.order_by
+    #         else:
+    #             tmp["order_by"] = [self.order_by]
+    #
+    #     return tmp
 
-        NOTE: what if a None or null is sent through?
-        """
-        tmp = {}
-        if isinstance(configs, list):
-            configs = configs[0]
-
-        if isinstance(configs, str):
-            configs = json.loads(configs.replace("'", '"'))
-
-        for key, value in configs.items():
-            new_key = xlate(key, camel_case=False)
-            if new_key in self._PAGE_CONFIGS:
-                # run the gauntlet
-                if new_key == "order_by":
-                    # account for field name conversion
-                    if isinstance(value, list):
-                        new_value = [
-                            xlate(val, camel_case=False) for val in value
-                        ]
-                    else:
-                        new_value = [xlate(value, camel_case=False)]
-
-                elif new_key == "limit":
-                    new_value = int(value)
-
-                elif new_key == "page_size":
-                    new_value = int(value)
-                    if self.max_page_size is not None:
-                        new_value = min(new_value, self.max_page_size)
-
-                elif new_key in ["page_size", "offset", "limit"]:
-                    new_value = int(value)
-
-                elif new_key == "debug":
-                    new_value = value.lower() == "true"
-                else:
-                    # new_key == "serial_fields"
-                    new_value = [xlate(val, camel_case=False) for val in value]
-
-                tmp[new_key] = new_value
-
-            else:
-                raise ValueError(f"Unknown page config value: {new_key}")
-
-        if "order_by" not in tmp and self.order_by is not None:
-            if isinstance(self.order_by, list):
-                tmp["order_by"] = self.order_by
-            else:
-                tmp["order_by"] = [self.order_by]
-
-        return tmp
-
-    def _classify_op(self, var, value):
-        """
-        Classifies the operation using the variable. Also,
-        translation from camel to snake takes place as well
-
-        var, value
-            select where var = value   normal
-
-        var[], list | single value
-            select item1 or item2 or item3 ...
-
-        value, (op, value)
-            "eq ne gt lt ..."
-
-        return
-            op, new_var, value
-
-        """
-        if var.endswith("[]"):
-            new_var = xlate(var[:-2], camel_case=False)
-            return new_var, "in", value
-
-        try:
-            value = json.loads(value[0])
-        except:
-            pass
-
-        if isinstance(value, dict) and len(value) == 2:
-            # Note that val could be a variable such as var:my_variable
-            # xlate of my_variable is handled when adding to query filter
-            op, val = value.values()
-            new_var = xlate(var, camel_case=False)
-
-            if op not in self.OP_CODES1 + self.OP_CODES2:
-                str_list = str(self.OP_CODES1 + self.OP_CODES2).replace(
-                    "'", ""
-                )
-                raise ValueError(
-                    f'Op code "{op}" wrong. Must be in {str_list}'
-                )
-
-            return new_var, op, val
-
-        if isinstance(value, list) and len(value) == 1:
-            if value[0] in self.OP_CODES1 + self.OP_CODES2:
-                # mistake concluded
-                raise ValueError(
-                    "There must be a value paired with the operator. "
-                    "Example: [operator, value]"
-                )
-            if value in [["None"], ["null"]]:
-                value = None
-            new_var = xlate(var, camel_case=False)
-
-            return new_var, "eq", value
-
-        # default
-        new_var = xlate(var, camel_case=False)
-
-        return new_var, "eq", value
+    # def _filter_var(self, value):
+    #     """
+    #     Creates comparison variable from "var:variable"
+    #     """
+    #     comp_var = xlate(value[4:], camel_case=False)
+    #     return getattr(self.model_class, comp_var)
+    #
+    # def _filter_op1(self, op, var, value):
+    #     """
+    #     Creates column variable and filter for op1 operators"
+    #     """
+    #     col_var = getattr(
+    #         self.model_class,
+    #         xlate(var, camel_case=False)
+    #     )
+    #
+    #     if value.startswith("var:"):
+    #         value = self._filter_var(value)
+    #     func = getattr(col_var, f"__{op}__")
+    #     return func(value)
+    #
+    # def _filter_op2(self, op, var, value):
+    #     """
+    #     Creates column variable and filter for op2 operators"
+    #     """
+    #     col_var = getattr(
+    #         self.model_class,
+    #         xlate(var, camel_case=False)
+    #     )
+    #     func = getattr(col_var, op)
+    #     return func(value)
+    #
+    # def _filter_in(self, var, value):
+    #     """
+    #     Creates a column variable and filter for in list.
+    #     """
+    #     if isinstance(value, list):
+    #         col_var = getattr(self.model_class, var)
+    #         return column.in_(value)
+    #
+    #     msg = f"Value must be a list: {value}"
+    #     current_app.logger.info(msg)
+    #     raise ValueError(msg)
+    #
+    # def _filter(self, item):
+    #     """
+    #     Structure of item:
+    #         {"var": var, "filter": {"op": op, "value": value}}
+    #     """
+    #     var, op, value = self._parse_filter(item)
+    #
+    #     col_var = xlate(var, camel_case=False)
+    #     if op == "in":
+    #         clause = self._filter_in(col_var, value)
+    #     elif op in self.OP_CODES1:
+    #         clause = self._filter_op1(op, col_var, value)
+    #     elif op in self.OP_CODES2:
+    #         clause = self._filter_op2(op, col_var, value)
+    #     else:
+    #         msg = f"unknown op code: {op}"
+    #         current_app.logger.info(msg)
+    #         raise ValueError(msg)
+    #     return clause
+    #
+    # def _parse_filter(self, item):
+    #     if not isinstance(item, dict):
+    #         msg = f"Item must be a dict: {item}"
+    #         current_app.logger.info(msg)
+    #         raise ValueError(msg)
+    #
+    #     if "var" not in item:
+    #         msg = f"a column variable is required {item}"
+    #         current_app.logger.info(msg)
+    #         raise ValueError(msg)
+    #
+    #     if "filter" not in item:
+    #         msg = f"a filter is required {item}"
+    #         current_app.logger.info(msg)
+    #         raise ValueError(msg)
+    #
+    #     filter_ = item["filter"]
+    #
+    #     if "op" not in filter_:
+    #         msg = f"an 'or' is required {filter_}"
+    #         current_app.logger.info(msg)
+    #         raise ValueError(msg)
+    #
+    #     if "value" not in filter_:
+    #         msg = f"a 'value' is required {filter_}"
+    #         current_app.logger.info(msg)
+    #         raise ValueError(msg)
+    #
+    #     var = item["var"]
+    #     op = filter_["op"]
+    #     value = filter_["value"]
+    #
+    #     return var, op, value
+    #
+    # def _classify_op(self, var, value):
+    #     """
+    #     Classifies the operation using the variable. Also,
+    #     translation from camel to snake takes place as well
+    #
+    #     var, value
+    #         select where var = value   normal
+    #
+    #     var[], list | single value
+    #         select item1 or item2 or item3 ...
+    #
+    #     value, (op, value)
+    #         "eq ne gt lt ..."
+    #
+    #     return
+    #         op, new_var, value
+    #
+    #     """
+    #     if var.endswith("[]"):
+    #         new_var = xlate(var[:-2], camel_case=False)
+    #         return new_var, "in", value
+    #
+    #     try:
+    #         value = json.loads(value[0])
+    #     except:
+    #         pass
+    #
+    #     if isinstance(value, dict) and len(value) == 2:
+    #         # Note that val could be a variable such as var:my_variable
+    #         # xlate of my_variable is handled when adding to query filter
+    #         op, val = value.values()
+    #         new_var = xlate(var, camel_case=False)
+    #
+    #         if op not in self.OP_CODES1 + self.OP_CODES2:
+    #             str_list = str(self.OP_CODES1 + self.OP_CODES2).replace(
+    #                 "'", ""
+    #             )
+    #             raise ValueError(
+    #                 f'Op code "{op}" wrong. Must be in {str_list}'
+    #             )
+    #
+    #         return new_var, op, val
+    #
+    #     if isinstance(value, list) and len(value) == 1:
+    #         if value[0] in self.OP_CODES1 + self.OP_CODES2:
+    #             # mistake concluded
+    #             raise ValueError(
+    #                 "There must be a value paired with the operator. "
+    #                 "Example: [operator, value]"
+    #             )
+    #         if value in [["None"], ["null"]]:
+    #             value = None
+    #         new_var = xlate(var, camel_case=False)
+    #
+    #         return new_var, "eq", value
+    #
+    #     # default
+    #     new_var = xlate(var, camel_case=False)
+    #
+    #     return new_var, "eq", value
+    #
+    # def process_filters(self, filters, query):
+    #     """
+    #     NOTE: this is an early pass at POST queries. It needs
+    #         enriching on features and design. Also, it needs
+    #         integration with features in common with GET.
+    #     For processing in POST
+    #     Separate dictionary for each item to enable
+    #     dupe fields
+    #
+    #     format = [
+    #         { field: { op: operator, value: val}}
+    #         { field: { op: operator, value: val}}
+    #         { field: { op: operator, value: val}}
+    #     ]
+    #
+    #     example: {
+    #         var: description,
+    #         filter: {
+    #             op: 'ilike',    operator
+    #             value: 'val1'   value
+    #         }
+    #     }
+    #
+    #     for each filter, look first for an op,
+    #         if yes, it's probably an 'or'
+    #         if no, process as variable
+    #     params = {
+    #         "query": {
+    #             "filters": [
+    #                 {
+    #                     "op": "or",
+    #                     "value": [
+    #                         {
+    #                             "description": {
+    #                                 "op":"ilike",
+    #                                 "value":"%coin%"
+    #                             }
+    #                         },
+    #                         {
+    #                             "description": {
+    #                                 "op": "ilike",
+    #                                 "value": "%sterling%"
+    #                             }
+    #                         }
+    #                     ]
+    #                 }
+    #             ]
+    #         }
+    #     }
+    #
+    #     """
+    #     for item in filters:
+    #         # item {'description': '{"op":"ilike","value":"%coin%"}'}
+    #         if "op" in item:
+    #             # is it a field or and/or
+    #             #   (skipping 'and' for now)
+    #             #   also, see how this only does one level of 'or'
+    #             op = item["op"]
+    #             if op == "or":
+    #                 # should be 2+ clauses
+    #                 value = item["value"]
+    #                 length = len(value)
+    #                 if length == 1:
+    #                     msg = "Cannot have an 'or' with one clause"
+    #                     current_app.logger.info(msg)
+    #                     raise ValueError(msg)
+    #
+    #                 if length >= 2:
+    #                     col_filter0 = self._filter(value[0])
+    #                     col_filter1 = self._filter(value[1])
+    #
+    #                     clause_list = col_filter0 | col_filter1
+    #
+    #                     for i in range(2, len(value)):
+    #                         clause_list.append(self._filter(value[i]))
+    #
+    #                     query = query.filter(clause_list)
+    #
+    #             else:
+    #                 msg = f"op of {op} is not supported"
+    #                 current_app.logger.info(msg)
+    #                 raise ValueError(msg)
+    #         else:
+    #             query = query.filter(self._filter(item))
+    #
+    #     return query
 
     def get(self, **kwargs):
         """ Get method"""
