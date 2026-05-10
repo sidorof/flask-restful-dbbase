@@ -57,9 +57,9 @@ class ModelResource(DBBaseResource):
         """
         # may be used later
         url = request.path
-        FUNC_NAME = "get"
+        func_name = "get"
 
-        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
+        current_app.logger.info(f"{func_name.upper()} {url} {kwargs}")
 
         # the correct key test - raises error if improper url
         current_app.logger.debug("  Checking key in kwargs")
@@ -119,7 +119,7 @@ class ModelResource(DBBaseResource):
             current_app.logger.error(msg)
             return {"message": msg}, 400
 
-        sfields, sfield_relations = self._get_serializations(FUNC_NAME)
+        sfields, sfield_relations = self._get_serializations(func_name)
         current_app.logger.debug("  Serial fields: {sfields}")
         current_app.logger.debug(
             "  Serial field relations: {sfield_relations}"
@@ -143,12 +143,12 @@ class ModelResource(DBBaseResource):
         This function is the HTTP POST method for a resource handling
         a single item.
         """
-        FUNC_NAME = "post"
+        func_name = "post"
         # may be used later
         url = request.path
         status_code = 201
 
-        current_app.logger.info(f"{FUNC_NAME.upper()} {url}")
+        current_app.logger.info(f"{func_name.upper()} {url}")
 
         if request.is_json:
             try:
@@ -290,7 +290,7 @@ class ModelResource(DBBaseResource):
 
                     getattr(item, key).append(sub_class(**sub_data))
 
-        adjust_before = self.before_commit.get(FUNC_NAME)
+        adjust_before = self.before_commit.get(func_name)
 
         if adjust_before is not None:
             current_app.logger.debug(
@@ -314,10 +314,10 @@ class ModelResource(DBBaseResource):
             self.model_class.db.session.rollback()
             msg = err.args[0]
             current_app.logger.error(msg)
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {func_name}: {msg}")
             return {"message": msg}, 400
 
-        adjust_after = self.after_commit.get(FUNC_NAME)
+        adjust_after = self.after_commit.get(func_name)
         if adjust_after:
             current_app.logger.debug(
                 "  Running adjust_after function after commit"
@@ -333,7 +333,7 @@ class ModelResource(DBBaseResource):
                 )
                 return result, status_code
 
-        ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
+        ser_fields, rel_ser_fields = self._get_serializations(func_name)
 
         return (
             item.to_dict(
@@ -349,10 +349,10 @@ class ModelResource(DBBaseResource):
         single item.
         """
         url = request.path
-        FUNC_NAME = "put"
+        func_name = "put"
         status_code = 200
 
-        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
+        current_app.logger.info(f"{func_name.upper()} {url} {kwargs}")
 
         try:
             current_app.logger.debug("  Checking key in kwargs")
@@ -460,7 +460,7 @@ class ModelResource(DBBaseResource):
             for key, value in data.items():
                 setattr(item, key, value)
 
-        adjust_before = self.before_commit.get(FUNC_NAME)
+        adjust_before = self.before_commit.get(func_name)
         if adjust_before:
             current_app.logger.debug(
                 "  Running adjust_before function prior to commit"
@@ -485,10 +485,10 @@ class ModelResource(DBBaseResource):
             msg = err.args[0]
             self.model_class.db.session.rollback()
             current_app.logger.info(msg)
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {func_name}: {msg}")
             return {"message": msg}, 400
 
-        adjust_after = self.after_commit.get(FUNC_NAME)
+        adjust_after = self.after_commit.get(func_name)
         if adjust_after:
             current_app.logger.debug(
                 "  Running adjust_after function after commit"
@@ -504,7 +504,7 @@ class ModelResource(DBBaseResource):
                 )
                 return result, status_code
 
-        ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
+        ser_fields, rel_ser_fields = self._get_serializations(func_name)
 
         return (
             item.to_dict(
@@ -520,10 +520,10 @@ class ModelResource(DBBaseResource):
         a single item.
         """
         url = request.path
-        FUNC_NAME = "patch"
+        func_name = "patch"
         status_code = 200
 
-        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
+        current_app.logger.info(f"{func_name.upper()} {url} {kwargs}")
 
         try:
             current_app.logger.debug("  Checking key in kwargs")
@@ -622,7 +622,7 @@ class ModelResource(DBBaseResource):
             for key, value in data.items():
                 setattr(item, key, value)
 
-        adjust_before = self.before_commit.get(FUNC_NAME)
+        adjust_before = self.before_commit.get(func_name)
 
         if adjust_before is not None:
             current_app.logger.debug(
@@ -645,7 +645,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             msg = err.args[0]
             self.model_class.db.session.rollback()
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {func_name}: {msg}")
             return (
                 {
                     "message": "An error occurred updating the "
@@ -654,7 +654,7 @@ class ModelResource(DBBaseResource):
                 500,
             )
 
-        adjust_after = self.after_commit.get(FUNC_NAME)
+        adjust_after = self.after_commit.get(func_name)
         if adjust_after:
             current_app.logger.debug(
                 "  Running adjust_after function after commit"
@@ -671,7 +671,7 @@ class ModelResource(DBBaseResource):
                 )
                 return result, status_code
 
-        ser_fields, rel_ser_fields = self._get_serializations(FUNC_NAME)
+        ser_fields, rel_ser_fields = self._get_serializations(func_name)
 
         return (
             item.to_dict(
@@ -687,10 +687,10 @@ class ModelResource(DBBaseResource):
         handling a single item.
         """
         url = request.path
-        FUNC_NAME = "delete"
+        func_name = "delete"
         status_code = 200
 
-        current_app.logger.info(f"{FUNC_NAME.upper()} {url} {kwargs}")
+        current_app.logger.info(f"{func_name.upper()} {url} {kwargs}")
 
         try:
             current_app.logger.debug("  Checking key in kwargs")
@@ -740,7 +740,7 @@ class ModelResource(DBBaseResource):
             current_app.logger.debug(msg)
             return {"message": msg}, 404
 
-        adjust_before = self.before_commit.get(FUNC_NAME)
+        adjust_before = self.before_commit.get(func_name)
         if adjust_before is not None:
             current_app.logger.debug(
                 "  Running adjust_before function prior to commit"
@@ -762,7 +762,7 @@ class ModelResource(DBBaseResource):
         except Exception as err:
             self.model_class.db.session.rollback()
             msg = err.args[0]
-            current_app.logger.error(f"{url} method {FUNC_NAME}: {msg}")
+            current_app.logger.error(f"{url} method {func_name}: {msg}")
             return (
                 {
                     "message": "An error occurred deleting the "

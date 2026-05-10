@@ -29,23 +29,9 @@ OP_CODES2 = ["contains", "like", "ilike", "notlike", "notilike"]
 
 def query(res, data, req_data):
     """
-    Implements a complex query within a POST.
-
-    It is meant to be used as follows:
-
-    process_post_input = query
-
-    This looks for a key of 'query' in the data, if found
-    the query is processed.
+    Implements a query sourced from either the collection
+    resource and the query resource.
     """
-    # enforce it is a query
-    if "query" not in data:
-        return_msg = "Missing the 'query' key."
-        current_app.logger.error(return_msg)
-        return {"message": return_msg}, 400
-
-    # NOTE: dupe code alert
-    # page configs
     configs = {}
     for key in ["pageConfig", "page_config"]:
         if key in data:
@@ -73,7 +59,7 @@ def query(res, data, req_data):
 
     sa_query = res.model_class.query
 
-    filters = data["query"].get("filters", None)
+    filters = data.get("filters", None)
 
     if filters:
         sa_query = process_filters(res, filters, sa_query)
